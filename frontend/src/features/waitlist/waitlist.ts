@@ -273,22 +273,26 @@ export class Waitlist implements OnInit {
     ],
   };
 
-  readonly faqs = [
-    {
-      q: 'Is it really free to join?',
-      a: 'Yes. Joining the waitlist costs nothing, and every account starts on the Free plan with 3 roasts a month — no card required.',
-    },
-    {
-      q: 'When do I get access?',
-      a: "We're opening spots in small batches so the AI scoring holds up under load. The sooner you join, the sooner your invite lands — sharing your link moves you up the queue.",
-    },
-    {
-      q: 'What can I compare?',
-      a: 'Any two or three of your past roasts. We score all of them on the same 8 dimensions and call a data-backed winner — no more guessing which thumbnail to publish.',
-    },
-    {
-      q: 'Does it work with my existing channel?',
-      a: "Yes — once you're in, you can connect YouTube to sync your real CTR against our predicted scores and see which threshold actually drives clicks for your channel.",
-    },
-  ];
+readonly faqs = [
+  {
+    q: 'What is Thumbnail Roast?',
+    a: 'Thumbnail Roast is an AI-powered tool that analyzes your YouTube thumbnails and tells you exactly why they aren\'t getting clicks. It scores your thumbnail across 8 dimensions (CTR potential, emotion, curiosity, readability, contrast, mobile visibility, face impact, and branding) and gives you 3 specific, prioritized fixes ranked by estimated CTR impact. No generic advice — just data-backed truth in 15 seconds.',
+  },
+  {
+    q: 'Is it really free to join?',
+    a: 'Yes. Joining the waitlist costs nothing, and every account starts on the Free plan with 3 roasts a month — no card required.',
+  },
+  {
+    q: 'When do I get access?',
+    a: "We're opening spots in small batches so the AI scoring holds up under load. The sooner you join, the sooner your invite lands — sharing your link moves you up the queue.",
+  },
+  {
+    q: 'What can I compare?',
+    a: 'Any two or three of your past roasts. We score all of them on the same 8 dimensions and call a data-backed winner — no more guessing which thumbnail to publish.',
+  },
+  {
+    q: 'Does it work with my existing channel?',
+    a: "Yes — once you're in, you can connect YouTube to sync your real CTR against our predicted scores and see which threshold actually drives clicks for your channel.",
+  },
+];
 }
