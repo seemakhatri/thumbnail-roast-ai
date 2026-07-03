@@ -1,0 +1,302 @@
+.analyze {
+  padding: 120px 24px 140px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.analyze__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+// Single, restrained glow — MetaLumna never stacks effects
+.analyze__glow {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse at top, rgba(255, 77, 0, 0.055) 0%, transparent 65%);
+}
+
+// ─── HEADER — centered eyebrow first, MetaLumna order ────────────────────────
+.analyze__header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+// MetaLumna pattern: spaced uppercase eyebrow above everything
+.analyze__eyebrow {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+// Remove the eyebrow-line — MetaLumna doesn't use them
+.analyze__eyebrow-line {
+  display: none;
+}
+
+.analyze__title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(30px, 4.2vw, 50px);
+  font-weight: 800;
+  letter-spacing: -1.8px;
+  line-height: 1.06;
+  margin-bottom: 16px;
+}
+
+.analyze__sub {
+  font-size: 15px;
+  color: var(--muted2);
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+// ─── UPLOAD BOX ──────────────────────────────────────────────────────────────
+.analyze__box {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  app-upload-dropzone,
+  app-loading-state {
+    display: block;
+    width: 100%;
+  }
+}
+
+// ─── LOADING WRAPPER ─────────────────────────────────────────────────────────
+.analyze__loading {
+  width: 100%;
+}
+
+// ─── ERROR STATE ─────────────────────────────────────────────────────────────
+.analyze__error {
+  padding: 48px 36px;
+  text-align: center;
+  border-radius: 16px;
+  border: 1px solid rgba(239, 68, 68, 0.18);
+  background: rgba(239, 68, 68, 0.04);
+}
+
+.analyze__error-icon {
+  font-size: 32px;
+  margin-bottom: 14px;
+}
+
+.analyze__error-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.analyze__error-msg {
+  color: var(--muted2);
+  font-size: 13.5px;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+.analyze__retry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  border-radius: 9px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--accent2);
+    transform: translateY(-1px);
+  }
+}
+
+// ─── VALIDATION ERROR ────────────────────────────────────────────────────────
+.analyze__validation-error {
+  margin-top: 10px;
+  color: var(--red);
+  font-size: 12.5px;
+  text-align: center;
+}
+
+// ─── CTA BUTTON ──────────────────────────────────────────────────────────────
+.analyze__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px;
+  margin-top: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: not-allowed;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: -0.1px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &--ready {
+    border-color: transparent;
+    background: var(--text); // White button — MetaLumna primary CTA style
+    color: var(--bg);
+    cursor: pointer;
+
+    &:hover {
+      background: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.analyze__cta-fire {
+  font-size: 15px;
+  line-height: 1;
+}
+
+// ─── PROOF BAR — simple horizontal list, no decorative separators ─────────────
+.analyze__proof {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.analyze__proof-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.analyze__proof-icon {
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+.analyze__proof-text {
+  font-size: 12px;
+  color: var(--muted);
+
+  strong {
+    color: var(--muted2);
+    font-weight: 500;
+  }
+}
+
+// Subtle dot separator
+.analyze__proof-sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--muted);
+  opacity: 0.4;
+}
+
+// ─── FADE-UP ─────────────────────────────────────────────────────────────────
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  opacity: 0;
+  animation: fadeUp 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+
+  &.d1 {
+    animation-delay: 0.05s;
+  }
+  &.d2 {
+    animation-delay: 0.18s;
+  }
+  &.d3 {
+    animation-delay: 0.32s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .analyze {
+    padding: 80px 16px 100px;
+  }
+
+  .analyze__box {
+    max-width: 100%;
+  }
+
+  .analyze__proof {
+    gap: 14px;
+  }
+
+  .analyze__proof-sep {
+    display: none;
+  }
+}
+
+// ─── CTA ICON ──────────────────────────────────────────────────────────────
+.analyze__cta-icon {
+  flex-shrink: 0;
+}
+
+.analyze__cta--ready .analyze__cta-icon {
+  color: var(--bg);
+}
+
+.analyze__retry-icon {
+  flex-shrink: 0;
+}
+
+.analyze__proof-icon {
+  flex-shrink: 0;
+  color: var(--muted);
+  opacity: 0.7;
+}

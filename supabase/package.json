@@ -1,0 +1,12 @@
+{
+  "name": "thumbnail-roast-backend",
+  "version": "1.0.0",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.107.0",
+    "stripe": "^22.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

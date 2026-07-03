@@ -1,0 +1,76 @@
+@if (loading()) {
+<div class="post-loading">
+  <div class="skeleton skeleton--hero"></div>
+  <div class="post-layout">
+    <div class="skeleton skeleton--title"></div>
+    <div class="skeleton skeleton--body"></div>
+  </div>
+</div>
+} @else if (notFound()) {
+<div class="not-found">
+  <h1>Post not found</h1>
+  <p>This post may have been moved or deleted.</p>
+  <a routerLink="/blog" class="btn-primary">← Back to blog</a>
+</div>
+} @else if (post(); as p) {
+<!-- Hero image -->
+@if (p.cover_image_url) {
+<div class="post-hero">
+  <img [src]="p.cover_image_url" [alt]="p.title" class="post-hero__img" />
+</div>
+}
+
+<div class="post-layout">
+
+  <!-- Header -->
+  <header class="post-header">
+    @if (p.category_name) {
+    <span class="post-tag">{{ p.category_name }}</span>
+    }
+    <h1 class="post-title">{{ p.title }}</h1>
+    <p class="post-excerpt">{{ p.excerpt }}</p>
+    <div class="post-byline">
+      @if (p.author_name) {
+      <span>By {{ p.author_name }}</span>
+      <span class="divider">·</span>
+      }
+      <time [dateTime]="p.published_at">{{ p.published_at | date:'mediumDate' }}</time>
+      @if (p.read_time_minutes) {
+      <span class="divider">·</span>
+      <span>{{ p.read_time_minutes }} min read</span>
+      }
+    </div>
+  </header>
+
+  <!-- Body content -->
+  <article class="post-body prose" [innerHTML]="renderContent(p.content)">
+  </article>
+
+  <!-- FAQ section (if exists) -->
+  @if (p.faq && p.faq.length > 0) {
+  <section class="post-faq">
+    <h2 class="post-faq__title">Frequently asked questions</h2>
+    <div class="faq-list">
+      @for (item of p.faq; track item.question) {
+      <details class="faq-item">
+        <summary class="faq-item__question">{{ item.question }}</summary>
+        <p class="faq-item__answer">{{ item.answer }}</p>
+      </details>
+      }
+    </div>
+  </section>
+  }
+
+  <!-- CTA -->
+  <div class="post-cta">
+    <h2 class="post-cta__title">Ready to test your thumbnail?</h2>
+    <p class="post-cta__sub">
+      Get an AI-powered score, roast, and specific improvements in under 10 seconds. Free.
+    </p>
+    <a routerLink="/analyze" class="btn-primary">Analyze a thumbnail →</a>
+  </div>
+
+  <!-- Back link -->
+  <a routerLink="/blog" class="back-link">← All posts</a>
+</div>
+}

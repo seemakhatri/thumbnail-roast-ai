@@ -1,0 +1,62 @@
+<section class="analyze" id="analyze" aria-label="Analyze your thumbnail">
+
+  <div class="analyze__bg" aria-hidden="true">
+    <div class="analyze__glow"></div>
+  </div>
+
+  <!-- Section header — eyebrow first, MetaLumna order -->
+  <div class="analyze__header fade-up d1">
+    <span class="analyze__eyebrow">Try it now</span>
+    <h2 class="analyze__title">Drop your thumbnail.<br>Get the truth.</h2>
+    <p class="analyze__sub">No account needed. Results in under 15 seconds.</p>
+  </div>
+
+  <!-- Upload box -->
+  <div class="analyze__box fade-up d2">
+
+    @if (isWorking()) {
+    <div class="analyze__loading">
+      <app-loading-state [progress]="progress()" [status]="status()" [imageUrl]="previewUrl()" />
+    </div>
+
+    } @else if (error()) {
+    <div class="analyze__error">
+      <div class="analyze__error-icon" aria-hidden="true">⚠️</div>
+      <h3 class="analyze__error-title">Analysis failed</h3>
+      <p class="analyze__error-msg">{{ error() }}</p>
+      <button type="button" class="analyze__retry-btn" (click)="reset()">
+        <lucide-angular [img]="icons.refreshCw" size="16" class="analyze__retry-icon" />
+        Try Again
+      </button>
+    </div>
+
+    } @else {
+    <app-upload-dropzone (fileSelected)="onFileSelected($event)" (validationError)="onValidationError($event)" />
+
+    @if (validationError()) {
+    <p class="analyze__validation-error" role="alert">{{ validationError() }}</p>
+    }
+
+    <button type="button" class="analyze__cta" [class.analyze__cta--ready]="!!selectedFile()"
+      [disabled]="!selectedFile()" (click)="startAnalysis()" [attr.aria-disabled]="!selectedFile()">
+      <lucide-angular [img]="icons.flame" size="18" class="analyze__cta-icon" />
+      {{ selectedFile() ? 'Roast This Thumbnail' : 'Select a Thumbnail First' }}
+    </button>
+    }
+
+  </div>
+
+  <!-- Proof bar -->
+  <div class="analyze__proof fade-up d3" aria-label="Quick facts" role="list">
+    @for (stat of proofStats; track stat.label) {
+    <div class="analyze__proof-item" role="listitem">
+      <lucide-angular [img]="stat.icon" size="14" class="analyze__proof-icon" />
+      <span class="analyze__proof-text" [innerHTML]="stat.label"></span>
+    </div>
+    @if (!$last) {
+    <div class="analyze__proof-sep" aria-hidden="true"></div>
+    }
+    }
+  </div>
+
+</section>

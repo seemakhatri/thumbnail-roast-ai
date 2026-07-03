@@ -1,0 +1,18 @@
+<main class="legal-layout">
+  <div class="legal-layout__bg" aria-hidden="true">
+    <div class="legal-layout__glow"></div>
+  </div>
+
+  <div class="legal-layout__container">
+    <div class="legal-layout__header">
+      <h1 class="legal-layout__title">{{ title }}</h1>
+      @if (lastUpdated) {
+        <p class="legal-layout__updated">Last updated: {{ lastUpdated }}</p>
+      }
+    </div>
+
+    <div class="legal-layout__content">
+      <ng-content />
+    </div>
+  </div>
+</main>

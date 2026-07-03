@@ -1,0 +1,69 @@
+// roast-card.scss
+.roast-card {
+  border: 1px solid rgba(239, 68, 68, 0.18);
+  border-radius: 16px;
+  padding: 22px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.055), rgba(255, 77, 0, 0.03));
+}
+
+.roast-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.roast-card__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.roast-card__title {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.roast-card__sub {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.roast-card__quote {
+  font-size: 14px;
+  line-height: 1.75;
+  color: #d4d4d4;
+  font-style: italic;
+  padding: 16px 18px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid var(--accent);
+  margin: 0 0 14px;
+}
+
+.roast-card__tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.roast-card__tag {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  line-height: 1.4;
+}

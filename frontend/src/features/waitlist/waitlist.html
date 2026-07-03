@@ -1,0 +1,416 @@
+<!-- ══════════════ NAV — matches the real app navbar exactly ══════════════ -->
+<header class="wl-nav">
+    <div class="wl-nav__row">
+     <a class="wl-nav__logo" routerLink="/">
+  <img src="assets/FINAL.svg" alt="ThumbnailRoast" class="wl-nav__logo-icon" />
+  <span class="wl-nav__logo-text">Thumbnail<span class="wl-nav__logo-accent">Roast</span></span>
+</a>
+        <button type="button" class="wl-nav__cta" (click)="scrollToForm()">
+            Join Waitlist
+            <lucide-angular [img]="icons.arrowRight" size="14" />
+        </button>
+    </div>
+</header>
+
+<main class="wl">
+
+    <!-- ══════════════ HERO ══════════════ -->
+    <section class="wl-hero">
+        <div class="wl-hero__bg" aria-hidden="true"></div>
+
+        <div class="status-badge fade-up d1">
+            <span class="pulse-dot"></span>
+            <span>Building in public — {{ waitlistCount() }} creators already waiting</span>
+        </div>
+
+        <h1 class="wl-hero__title fade-up d2">
+            Know why your thumbnail won't get <br>
+            <span class="gradient-text">clicked.</span>
+        </h1>
+
+        <p class="wl-hero__sub fade-up d3">
+            Most creators never know why their thumbnails fail. ThumbnailRoast tells you
+            <span class="highlight">exactly what to fix</span> — in 15 seconds. No guesswork, no fluff.
+        </p>
+
+        <button type="button" class="wl-hero__cta fade-up d4" (click)="scrollToForm()">
+            <lucide-angular [img]="icons.flame" size="18" />
+            Get Early Access — It's Free
+        </button>
+
+        <p class="wl-hero__note fade-up d4">
+            <lucide-angular [img]="icons.lock" size="12" /> No card required · takes 10 seconds
+        </p>
+    </section>
+
+    <!-- ══════════════ COMPARE SHOWCASE — the "aha" moment ══════════════ -->
+    <section class="cshow">
+        <div class="cshow__header">
+            <span class="features__eyebrow">See it in action</span>
+            <h2 class="features__title">Stop guessing which thumbnail wins.<br>Let the data decide.</h2>
+            <p class="features__sub">Upload two or three variants. We score every dimension side by side and call a
+                data-backed winner — the way it'll look the second you're in.</p>
+        </div>
+
+        <div class="cshow__panel">
+            <div class="cshow__winner-strip">
+                <lucide-angular [img]="icons.trophy" size="18" class="cshow__trophy" />
+                <div>
+                    <span class="cshow__winner-label">Winner</span>
+                    <strong class="cshow__winner-name">{{ compareLeft.label }}</strong>
+                </div>
+                <span class="cshow__winner-score">{{ compareLeft.score }}</span>
+            </div>
+
+            <div class="cshow__cards">
+                <!-- Card A (winner) -->
+                <div class="cc cc--winner">
+                    <div class="cc__thumb cc__thumb--a">
+                        <span class="cc__winner-tag"><lucide-angular [img]="icons.trophy" size="11" /> Winner</span>
+                    </div>
+                    <div class="cc__body">
+                        <div class="cc__top">
+                            <span class="cc__score cc__score--green">{{ compareLeft.score }}</span>
+                            <span class="cc__tag cc__tag--green">{{ compareLeft.verdict }}</span>
+                        </div>
+                        <p class="cc__label">{{ compareLeft.label }}</p>
+                        <div class="cc__metrics">
+                            @for (m of compareLeft.metrics; track m.name) {
+                            <div class="cc__metric-row">
+                                <span>{{ m.name }}</span>
+                                <div class="cc__metric-track">
+                                    <div class="cc__metric-fill" [style.width.%]="m.value"
+                                        style="background:var(--green)"></div>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cshow__vs">VS</div>
+
+                <!-- Card B -->
+                <div class="cc">
+                    <div class="cc__thumb cc__thumb--b"></div>
+                    <div class="cc__body">
+                        <div class="cc__top">
+                            <span class="cc__score cc__score--red">{{ compareRight.score }}</span>
+                            <span class="cc__tag cc__tag--yellow">{{ compareRight.verdict }}</span>
+                        </div>
+                        <p class="cc__label">{{ compareRight.label }}</p>
+                        <div class="cc__metrics">
+                            @for (m of compareRight.metrics; track m.name) {
+                            <div class="cc__metric-row">
+                                <span>{{ m.name }}</span>
+                                <div class="cc__metric-track">
+                                    <div class="cc__metric-fill" [style.width.%]="m.value"
+                                        style="background:var(--red)"></div>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cshow__verdict">
+                <lucide-angular [img]="icons.sparkles" size="16" />
+                <span><strong>{{ compareLeft.label }}</strong> wins with a score of <strong
+                        class="cshow__verdict-num">{{ compareLeft.score }}</strong> — stronger curiosity and contrast
+                    make up for the busier layout.</span>
+            </div>
+
+            <div class="demo-blur demo-blur--panel">
+                <div class="unlock-badge">
+                    <lucide-angular [img]="icons.lock" size="18" class="lock-icon" />
+                    <div>
+                        <strong>Join the waitlist to unlock Compare</strong>
+                        <span class="unlock-sub">Run this on your own thumbnails the day you get in</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ ROAST DEMO ══════════════ -->
+    <section class="rshow">
+        <div class="demo-wrap">
+            <div class="demo-label">
+                <span>Or get the full roast on one thumbnail</span>
+                <span class="demo-label-blink">● LIVE</span>
+            </div>
+            <div class="demo-card">
+                <div class="demo-bar">
+                    <div class="dot-r"></div>
+                    <div class="dot-y"></div>
+                    <div class="dot-g"></div>
+                    <div class="demo-url">thumbnailroast.com/results/…</div>
+                </div>
+                <div class="demo-content">
+                    <div class="demo-thumb-row">
+                        <div class="demo-thumb-img">
+                            <span class="demo-analyzed-chip"><lucide-angular [img]="icons.check" size="9" />
+                                ANALYZED</span>
+                            <div class="demo-thumb-txt">PAINT<br>THIS!</div>
+                        </div>
+                        <div class="demo-thumb-meta">
+                            <h4>Paint This — Easy Landscape Tutorial</h4>
+                            <p>Analyzed in 4.2 seconds</p>
+                        </div>
+                    </div>
+
+                    <div class="mini-card score-card">
+                        <div class="mini-card-label">Overall Score</div>
+                        <div class="score-display">
+                            <div class="score-ring">
+                                <svg viewBox="0 0 120 120" class="ring-svg">
+                                    <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.06)"
+                                        stroke-width="8" />
+                                    <circle cx="60" cy="60" r="54" fill="none" stroke="url(#grad)" stroke-width="8"
+                                        stroke-linecap="round" stroke-dasharray="339.292" stroke-dashoffset="125.538"
+                                        class="ring-progress" />
+                                    <defs>
+                                        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#eab308" />
+                                            <stop offset="100%" style="stop-color:#f59e0b" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <span class="score-number">63</span>
+                            </div>
+                            <div class="score-meta">
+                                <span class="score-verdict">"Competent but forgettable"</span>
+                                <div class="mini-bar-track">
+                                    <div class="mini-bar-fill"
+                                        style="width:63%;background:linear-gradient(90deg,#eab308,#f59e0b);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mini-card roast-card">
+                        <div class="mini-card-label"><lucide-angular [img]="icons.flame" size="11" /> The Roast</div>
+                        <div class="roast-text">"A pleasant tutorial, but the thumbnail blends into the feed.
+                            Readability and emotional hook need serious work."</div>
+                        <div class="roast-impact"><span class="impact-badge">−42% potential CTR</span></div>
+                    </div>
+
+                    <div class="mini-card fix-card">
+                        <div class="mini-card-label"><lucide-angular [img]="icons.zap" size="11" /> Highest Impact Fix
+                        </div>
+                        <div style="font-size:13px;font-weight:600;margin-bottom:6px;">Integrate a human element</div>
+                        <div style="font-size:12px;color:var(--muted2);line-height:1.55;">Add creator's face with a
+                            positive expression — builds trust for "easy" tutorials.</div>
+                        <div class="fix-impact"><lucide-angular [img]="icons.trendingUp" size="12" /> +18% estimated CTR
+                        </div>
+                    </div>
+
+                    <div class="demo-blur">
+                        <div class="unlock-badge">
+                            <lucide-angular [img]="icons.lock" size="18" class="lock-icon" />
+                            <div>
+                                <strong>Join the waitlist to unlock</strong>
+                                <span class="unlock-sub">Full score breakdown, roast, and 3 specific fixes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ HOW IT WORKS + FEATURES ══════════════ -->
+    <section class="features" id="how-it-works">
+        <div class="features__header">
+            <span class="features__eyebrow">What we analyze</span>
+            <h2 class="features__title">Not a generator.<br>An intelligence layer.</h2>
+            <p class="features__sub">Every tool can make a thumbnail. Nobody tells you exactly why yours isn't clicking
+                — until now.</p>
+        </div>
+
+        <div class="features__steps">
+            @for (step of steps; track step.num) {
+            <div class="features__step">
+                <div class="features__step-top">
+                    <div class="features__step-num">0{{ step.num }}</div>
+                    <div class="features__step-icon-wrapper"><lucide-angular [img]="step.icon" size="18"
+                            class="features__step-icon" /></div>
+                </div>
+                <h3 class="features__step-title">{{ step.title }}</h3>
+                <p class="features__step-desc">{{ step.desc }}</p>
+            </div>
+            }
+        </div>
+
+        <div class="features__grid">
+            @for (feat of features; track feat.name) {
+            <article class="features__cell">
+                <div class="features__icon" [style.background]="feat.bg" [style.border]="'1px solid ' + feat.border">
+                    <lucide-angular [img]="feat.icon" size="19" class="features__icon-svg" />
+                </div>
+                <h3 class="features__name">{{ feat.name }}</h3>
+                <p class="features__desc">{{ feat.desc }}</p>
+                @if (feat.badge) { <span class="features__badge">{{ feat.badge }}</span> }
+            </article>
+            }
+        </div>
+
+        <div class="features__metrics">
+            <div class="features__metrics-label">8 scored dimensions</div>
+            <div class="features__metrics-list">
+                @for (m of metrics; track m) { <span class="features__metric-chip">{{ m }}</span> }
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ PRICING TEASER ══════════════ -->
+    <section class="pricing-teaser">
+        <div class="pricing-teaser__header">
+            <span class="features__eyebrow">Pricing</span>
+            <h2 class="features__title">Simple, creator-first pricing.</h2>
+            <p class="features__sub">Start free. Waitlist members lock in launch pricing — no card required to join.</p>
+        </div>
+        <div class="pricing-teaser__grid">
+            @for (plan of plans; track plan.name) {
+            <div class="pt-card" [class.pt-card--featured]="plan.featured">
+                @if (plan.featured) { <span class="pt-card__badge">Most Popular</span> }
+                <div class="pt-card__name">{{ plan.name }}</div>
+                <div class="pt-card__price"><span>$</span>{{ plan.price }}<small>/mo</small></div>
+                <div class="pt-card__tag">{{ plan.tag }}</div>
+            </div>
+            }
+        </div>
+    </section>
+
+    <!-- ══════════════ FAQ ══════════════ -->
+    <section class="faq">
+        <div class="faq__header">
+            <span class="features__eyebrow">Questions</span>
+            <h2 class="features__title">Before you join</h2>
+        </div>
+        <div class="faq__list">
+            @for (item of faqs; track item.q; let i = $index) {
+            <div class="faq__item" [class.faq__item--open]="openFaq() === i">
+                <button type="button" class="faq__q" (click)="toggleFaq(i)">
+                    {{ item.q }}
+                    <lucide-angular [img]="icons.chevronDown" size="16" class="faq__chevron" />
+                </button>
+                @if (openFaq() === i) { <p class="faq__a">{{ item.a }}</p> }
+            </div>
+            }
+        </div>
+    </section>
+
+    <!-- ══════════════ WAITLIST FORM ══════════════ -->
+    <div class="form-section" id="join-waitlist">
+        <div class="form-card">
+
+            @if (!joined) {
+            <div class="form-header">
+                <div class="form-badge"><lucide-angular [img]="icons.zap" size="12" /> Limited Access</div>
+                <h2>Get Early Access</h2>
+                <p>Join <strong>{{ waitlistCount() }}</strong> other creators. We'll notify you the moment your spot
+                    opens — no spam, ever.</p>
+            </div>
+
+            <form [formGroup]="form" (ngSubmit)="joinWaitlist()">
+
+                @if (error) { <div class="error-banner">{{ error }}</div> }
+
+                <!-- Honeypot — hidden from real users, bots fill it in and get silently dropped -->
+                <div class="hp-field" aria-hidden="true">
+                    <label for="wl-company">Company website</label>
+                    <input id="wl-company" type="text" formControlName="company_website" tabindex="-1"
+                        autocomplete="off">
+                </div>
+
+                <div class="field">
+                    <label for="wl-name">Your name</label>
+                    <input id="wl-name" type="text" formControlName="name" placeholder="Alex Kumar" autocomplete="name">
+                </div>
+
+                <div class="field">
+                    <label for="wl-email">Email address <span class="req">*</span></label>
+                    <input id="wl-email" type="email" formControlName="email" placeholder="alex@example.com"
+                        autocomplete="email" required>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="wl-role">I'm a…</label>
+                        <select id="wl-role" formControlName="role">
+                            <option value="">Select role</option>
+                            <option value="youtuber">YouTuber</option>
+                            <option value="content_creator">Content Creator</option>
+                            <option value="video_editor">Video Editor</option>
+                            <option value="marketer">Marketer</option>
+                            <option value="agency">Agency / Team</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="wl-source">How did you find us?</label>
+                        <select id="wl-source" formControlName="referral_source">
+                            <option value="">Select source</option>
+                            <option value="twitter">Twitter / X</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="reddit">Reddit</option>
+                            <option value="producthunt">Product Hunt</option>
+                            <option value="friend">Friend / Referral</option>
+                            <option value="google">Google Search</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" [disabled]="loading">
+                    @if (loading) { <span class="btn-spinner"></span> Joining… }
+                    @else { <lucide-angular [img]="icons.flame" size="16" /> Join the Waitlist — It's Free }
+                </button>
+
+                <div class="form-guarantee">
+                    <span><lucide-angular [img]="icons.check" size="12" /> No spam. Unsubscribe anytime.</span>
+                    <span><lucide-angular [img]="icons.gift" size="12" /> 100% free access</span>
+                </div>
+            </form>
+
+            } @else {
+            <div class="success-state">
+                <div class="success-ring"><lucide-angular [img]="icons.checkCircle" size="30" /></div>
+                <h3>You're on the list!</h3>
+                <p>We'll email you the moment your access opens. Share the word to move up the queue.</p>
+                @if (position()) {
+                <div class="position-chip">You're #<span class="position-num">{{ position() }}</span> on the waitlist
+                </div>
+                }
+                <div class="share-row-success">
+                    <button type="button" class="share-btn x" (click)="shareOnX()">Share on X</button>
+                    <button type="button" class="share-btn" (click)="copyLink()"><lucide-angular [img]="icons.copy"
+                            size="14" /> Copy Link</button>
+                </div>
+            </div>
+            }
+
+        </div>
+    </div>
+
+    <footer class="wl-footer">
+        <div class="wl-nav__logo">
+            <img src="assets/FINAL.svg" alt="ThumbnailRoast" class="wl-nav__logo-icon"
+                style="width:20px;height:20px;" />
+            <span class="wl-nav__logo-text">Thumbnail<span class="wl-nav__logo-accent">Roast</span></span>
+        </div>
+        <p>© 2026 ThumbnailRoast. All rights reserved.</p>
+    </footer>
+
+</main>
+
+<!-- ══════════════ STICKY MOBILE CTA ══════════════ -->
+@if (!joined) {
+<div class="wl-sticky">
+    <button type="button" class="wl-sticky__btn" (click)="scrollToForm()">
+        <lucide-angular [img]="icons.flame" size="16" /> Join Waitlist
+    </button>
+</div>
+}

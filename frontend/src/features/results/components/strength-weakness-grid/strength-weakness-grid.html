@@ -1,0 +1,34 @@
+<!-- strength-weakness-grid.html -->
+<div class="sw-grid">
+
+  <!-- Strengths -->
+  <div class="sw-card sw-card--green" [@fadeLeft]>
+    <div class="sw-card__heading sw-card__heading--green">
+      <span>✅</span> Strengths
+    </div>
+    <ul class="sw-list">
+      @for (item of report().strengths; track item; let i = $index) {
+        <li class="sw-item" [style.animation-delay]="(i * 80) + 'ms'">
+          <span class="sw-item__icon sw-item__icon--green">✓</span>
+          <span>{{ item }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <!-- Weaknesses -->
+  <div class="sw-card sw-card--red" [@fadeRight]>
+    <div class="sw-card__heading sw-card__heading--red">
+      <span>⚠️</span> Weaknesses
+    </div>
+    <ul class="sw-list">
+      @for (item of report().weaknesses; track item; let i = $index) {
+        <li class="sw-item" [style.animation-delay]="(i * 80) + 'ms'">
+          <span class="sw-item__icon sw-item__icon--red">✗</span>
+          <span>{{ item }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+
+</div>

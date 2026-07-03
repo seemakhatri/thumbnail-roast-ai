@@ -1,0 +1,11 @@
+<div class="card card-inner competitor-card" id="competitor-section">
+  <div class="competitor-heading">🎯 Competitor Intel</div>
+  <ul class="competitor-list">
+    @for (insight of report().competitor_insights; track insight) {
+      <li class="competitor-item">
+        <span class="competitor-dot">→</span>
+        <span>{{ insight }}</span>
+      </li>
+    }
+  </ul>
+</div>

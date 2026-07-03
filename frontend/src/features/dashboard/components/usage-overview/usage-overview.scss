@@ -1,0 +1,54 @@
+.usage-overview__heading {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.usage-overview__stats {
+  margin-bottom: 12px;
+}
+
+.usage-overview__count {
+  font-family: 'Syne', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.usage-overview__used {
+  color: var(--accent2);
+}
+
+.usage-overview__sep,
+.usage-overview__limit {
+  color: var(--muted);
+}
+
+.usage-overview__label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted2);
+  margin-top: 4px;
+}
+
+.usage-overview__bar-bg {
+  height: 6px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.usage-overview__bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.4s ease;
+}
+
+.usage-overview__remaining {
+  font-size: 13px;
+  color: var(--muted2);
+  line-height: 1.5;
+}

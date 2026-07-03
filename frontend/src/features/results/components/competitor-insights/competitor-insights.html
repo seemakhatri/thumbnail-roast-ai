@@ -1,0 +1,12 @@
+<!-- competitor-insights.html -->
+<div class="competitor">
+  <div class="competitor__eyebrow">🎯 Competitor Intel</div>
+  <div class="competitor__list">
+    @for (insight of report().competitor_insights; track insight; let i = $index) {
+      <div class="competitor__card" [@stagger] [style.animation-delay]="(i * 100) + 'ms'">
+        <div class="competitor__arrow">→</div>
+        <p class="competitor__text">{{ insight }}</p>
+      </div>
+    }
+  </div>
+</div>

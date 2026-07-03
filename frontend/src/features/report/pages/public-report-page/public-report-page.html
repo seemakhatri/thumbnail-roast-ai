@@ -1,0 +1,24 @@
+<section class="page-shell page-shell--results">
+  @if (loading()) {
+    <div class="results-section">
+      <div class="skeleton skeleton--bar"></div>
+      <div class="skeleton skeleton--card skeleton--tall"></div>
+      <div class="sw-grid">
+        <div class="skeleton skeleton--card"></div>
+        <div class="skeleton skeleton--card"></div>
+      </div>
+    </div>
+  } @else if (error()) {
+    <div class="state-card state-card--error">
+      <div class="state-icon">🔍</div>
+      <h2>Report not found</h2>
+      <p>{{ error() }}</p>
+      <div class="state-actions">
+        <button type="button" class="btn-primary" (click)="retry()">Retry</button>
+        <a routerLink="/analyze" class="btn-ghost">Roast Your Thumbnail</a>
+      </div>
+    </div>
+  } @else if (report()) {
+    <app-report-view [report]="report()!" [showTabs]="true" />
+  }
+</section>

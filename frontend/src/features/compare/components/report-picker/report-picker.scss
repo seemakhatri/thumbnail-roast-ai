@@ -1,0 +1,214 @@
+.picker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.picker__label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+
+// Empty trigger
+.picker__trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1.5px dashed rgba(255, 77, 0, 0.25);
+  border-radius: 12px;
+  background: rgba(255, 77, 0, 0.03);
+  color: var(--muted2);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  text-align: left;
+}
+
+.picker__trigger:hover {
+  border-color: rgba(255, 77, 0, 0.5);
+  color: var(--text);
+  background: rgba(255, 77, 0, 0.06);
+}
+
+.picker__trigger-icon {
+  font-size: 18px;
+  color: var(--accent);
+  line-height: 1;
+}
+
+// Picked display
+.picker__picked {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.picker__thumb {
+  width: 80px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.picker__picked-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.picker__score {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.picker__roast-title {
+  font-size: 12px;
+  color: var(--muted2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.picker__clear {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  line-height: 1;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.picker__clear:hover {
+  color: var(--text);
+}
+
+// Dropdown
+.picker__dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.picker__dropdown::-webkit-scrollbar { width: 4px; }
+.picker__dropdown::-webkit-scrollbar-track { background: transparent; }
+.picker__dropdown::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+.picker__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.picker__row:last-child {
+  border-bottom: none;
+}
+
+.picker__row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.picker__row--skeleton {
+  cursor: default;
+  pointer-events: none;
+}
+
+.picker__row-thumb {
+  width: 64px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 5px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.picker__row-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.picker__row-title {
+  font-size: 12.5px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.picker__row-date {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.picker__row-score {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.picker__empty {
+  padding: 20px;
+  font-size: 13px;
+  color: var(--muted2);
+  text-align: center;
+}
+
+// Skeleton shimmer
+.skeleton {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

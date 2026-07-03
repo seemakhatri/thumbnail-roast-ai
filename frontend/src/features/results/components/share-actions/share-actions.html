@@ -1,0 +1,33 @@
+@if (showTabs()) {
+<div class="share-row">
+  <div class="tab-nav">
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'overview'" (click)="setTab('overview')">
+      Overview
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'recommendations'"
+      (click)="setTab('recommendations')">
+      Recommendations
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab() === 'competitor'" (click)="setTab('competitor')">
+      Competitor Intel
+    </button>
+  </div>
+  <div class="share-actions">
+    @if (report()) {
+    <button type="button" class="btn-sm" (click)="copyShareLink()">🔗 Share Report</button>
+    <button type="button" class="btn-sm" (click)="tweetScore()">𝕏 Tweet Score</button>
+    }
+    <a routerLink="/analyze" class="btn-sm orange">🔥 New Analysis</a>
+  </div>
+</div>
+} @else {
+<div class="share-row">
+  <div></div>
+  <div class="share-actions">
+    @if (report()) {
+    <button type="button" class="btn-sm" (click)="copyShareLink()">🔗 Copy Share Link</button>
+    }
+    <a routerLink="/analyze" class="btn-sm orange">🔥 New Analysis</a>
+  </div>
+</div>
+}

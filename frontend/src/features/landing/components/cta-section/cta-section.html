@@ -1,0 +1,59 @@
+<!-- cta-section.html -->
+<section class="cta" id="cta" aria-label="Call to action">
+
+  <div class="cta__bg" aria-hidden="true">
+    <div class="cta__glow"></div>
+    <div class="cta__grid"></div>
+  </div>
+
+  <!-- Score preview cards — decorative, very subtle -->
+  <div class="cta__score-previews" aria-hidden="true">
+    @for (card of scoreCards; track card.score) {
+      <div class="cta__score-card" [class]="'cta__score-card--' + card.color">
+        <div class="cta__score-card-label">{{ card.label }}</div>
+        <div class="cta__score-card-score">{{ card.score }}</div>
+        <div class="cta__score-bar">
+          <div
+            class="cta__score-bar-fill"
+            [style.width.%]="card.score"
+            [class]="'cta__score-bar-fill--' + card.color"
+          ></div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Content -->
+  <div class="cta__content">
+    <!-- Eyebrow: MetaLumna spaced uppercase, no pill -->
+    <span class="cta__eyebrow">
+      <span class="cta__eyebrow-dot" aria-hidden="true"></span>
+      It's free to start
+    </span>
+
+    <h2 class="cta__title">
+      Your next thumbnail<br>
+      could be your best.
+    </h2>
+
+    <p class="cta__sub">
+      Find out exactly what's holding it back.<br>
+      Free, instant, brutal.
+    </p>
+
+    <div class="cta__actions">
+      <button
+        class="cta__btn"
+        type="button"
+        (click)="scrollToAnalyze()"
+      >
+        Roast My Thumbnail — It's Free
+      </button>
+    </div>
+
+    <div class="cta__fine">
+      No account needed &nbsp;·&nbsp; 3 free roasts/month &nbsp;·&nbsp; Results in ~15 seconds
+    </div>
+  </div>
+
+</section>

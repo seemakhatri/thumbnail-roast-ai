@@ -1,0 +1,14 @@
+{
+  "tasks": {
+    "serve": "supabase functions serve",
+    "serve:noauth": "supabase functions serve --no-verify-jwt"
+  },
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.107.0?target=denonext",
+    "stripe": "https://esm.sh/stripe@22.2.0?target=denonext"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.window", "dom"]
+  }
+}

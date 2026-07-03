@@ -1,0 +1,42 @@
+[edge_runtime]
+enabled = true
+
+[functions.create-checkout]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/create-checkout/index.ts"
+
+[functions.stripe-webhook]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/stripe-webhook/index.ts"
+
+[functions.analyze-thumbnail]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/analyze-thumbnail/index.ts"
+
+[functions.compare-thumbnails]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/compare-thumbnails/index.ts"
+
+[functions.dashboard]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/dashboard/index.ts"
+
+[functions.get-dashboard]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/get-dashboard/index.ts"
+
+[functions.get-report]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/get-report/index.ts"
+
+[functions.youtube-sync]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/youtube-sync/index.ts"

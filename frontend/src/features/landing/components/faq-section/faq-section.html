@@ -1,0 +1,59 @@
+<!-- faq-section.html -->
+<section class="faq" id="faq" aria-label="Frequently asked questions">
+
+  <div class="faq__layout">
+
+    <!-- Left: header (sticky on desktop) -->
+    <div class="faq__left">
+      <span class="faq__eyebrow">FAQ</span>
+      <h2 class="faq__title">Common questions.</h2>
+      <p class="faq__sub">
+        Still unsure? These are the questions we get
+        the most&nbsp;— answered honestly.
+      </p>
+
+      <a
+        class="faq__still-unsure"
+        href="mailto:hello@thumbnailroast.com"
+        aria-label="Email support"
+      >
+        Something else? Email us →
+      </a>
+    </div>
+
+    <!-- Right: accordion -->
+    <div class="faq__list" role="list">
+      @for (item of faqs; track item.question; let i = $index) {
+        <div
+          class="faq__item"
+          role="listitem"
+          [class.faq__item--open]="openItems().includes(i)"
+        >
+          <button
+            class="faq__question"
+            type="button"
+            [attr.aria-expanded]="openItems().includes(i)"
+            [attr.aria-controls]="'faq-answer-' + i"
+            (click)="toggle(i)"
+          >
+            <span>{{ item.question }}</span>
+            <span class="faq__icon" aria-hidden="true">
+              {{ openItems().includes(i) ? '−' : '+' }}
+            </span>
+          </button>
+
+          <div
+            class="faq__answer"
+            [id]="'faq-answer-' + i"
+            [attr.aria-hidden]="!openItems().includes(i)"
+            role="region"
+          >
+            <p>{{ item.answer }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+  </div>
+
+</section>

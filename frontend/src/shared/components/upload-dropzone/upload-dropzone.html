@@ -1,0 +1,62 @@
+<input #fileInput type="file" accept="image/jpeg,image/png,image/webp" class="upload-dropzone__input"
+  (change)="onFileInput($event)" />
+
+<div class="upload-zone" [class.upload-zone--dragging]="isDragging()" [class.upload-zone--has-file]="selectedFile()"
+  (click)="!selectedFile() && openFilePicker(fileInput)" (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" role="button" [attr.tabindex]="selectedFile() ? -1 : 0"
+  (keydown.enter)="!selectedFile() && openFilePicker(fileInput)"
+  (keydown.space)="!selectedFile() && (openFilePicker(fileInput)); $event.preventDefault()"
+  aria-label="Upload thumbnail image">
+
+  <!-- Drag-over animated border -->
+  @if (isDragging()) {
+  <div class="drag-border" aria-hidden="true"></div>
+  }
+
+  @if (selectedFile()) {
+
+  <!-- ─── PREVIEW STATE ─── -->
+  <div class="zone-preview">
+    <div class="zone-preview__thumb-wrap">
+      <img [src]="previewObjectUrl()" alt="Selected thumbnail preview" class="zone-preview__img" />
+      <div class="zone-preview__check">✓</div>
+    </div>
+    <p class="zone-preview__name">{{ selectedFile()!.name }}</p>
+    <button type="button" class="zone-preview__replace" (click)="replaceFile(fileInput); $event.stopPropagation()">
+      ↩ Replace image
+    </button>
+  </div>
+
+  } @else if (isDragging()) {
+
+  <!-- ─── DRAG-OVER STATE ─── -->
+  <div class="zone-drag">
+    <div class="zone-drag__icon">⬇️</div>
+    <p class="zone-drag__title">Drop it here</p>
+    <p class="zone-drag__sub">Release to upload your thumbnail</p>
+  </div>
+
+  } @else {
+
+  <!-- ─── IDLE STATE ─── -->
+  <div class="zone-idle">
+    <div class="zone-idle__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+      </svg>
+    </div>
+    <p class="zone-idle__title">Drop your thumbnail here</p>
+    <p class="zone-idle__sub">or click to browse files</p>
+    <div class="zone-idle__formats">
+      <span class="fmt-tag">JPG</span>
+      <span class="fmt-tag">PNG</span>
+      <span class="fmt-tag">WEBP</span>
+      <span class="fmt-tag">Max 10 MB</span>
+    </div>
+  </div>
+
+  }
+
+</div>

@@ -1,0 +1,119 @@
+<section class="blog-hero">
+  <div class="blog-hero__inner">
+    <p class="blog-hero__eyebrow">Thumbnail Roast Blog</p>
+    <h1 class="blog-hero__title">CTR knowledge,<br>no fluff</h1>
+    <p class="blog-hero__sub">
+      Original research, teardowns, and guides on what actually
+      drives clicks on YouTube thumbnails.
+    </p>
+  </div>
+</section>
+
+<!-- Featured posts -->
+@if (featured().length > 0) {
+  <section class="featured-section">
+    <div class="section-inner">
+      <p class="section-label">Featured</p>
+      <div class="featured-grid">
+        @for (post of featured(); track post.slug) {
+          <a [routerLink]="['/blog', post.slug]" class="featured-card">
+            @if (post.cover_image_url) {
+              <img [src]="post.cover_image_url" [alt]="post.title" class="featured-card__img" loading="lazy" />
+            } @else {
+              <div class="featured-card__img featured-card__img--placeholder"></div>
+            }
+            <div class="featured-card__body">
+              @if (post.category_name) {
+                <span class="post-tag">{{ post.category_name }}</span>
+              }
+              <h2 class="featured-card__title">{{ post.title }}</h2>
+              <p class="featured-card__excerpt">{{ post.excerpt }}</p>
+              <div class="post-meta">
+                <span>{{ post.published_at | date:'mediumDate' }}</span>
+                @if (post.read_time_minutes) {
+                  <span>·</span>
+                  <span>{{ post.read_time_minutes }} min read</span>
+                }
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+}
+
+<!-- Category filter -->
+<section class="posts-section">
+  <div class="section-inner">
+    <div class="category-pills">
+      <button
+        class="pill"
+        [class.pill--active]="activeCategory() === null"
+        (click)="filterByCategory(null)">
+        All
+      </button>
+      @for (cat of categories(); track cat.id) {
+        <button
+          class="pill"
+          [class.pill--active]="activeCategory() === cat.slug"
+          (click)="filterByCategory(cat.slug)">
+          {{ cat.name }}
+        </button>
+      }
+    </div>
+
+    @if (loading()) {
+      <div class="posts-grid">
+        @for (n of [1,2,3,4,5,6]; track n) {
+          <div class="post-card post-card--skeleton"></div>
+        }
+      </div>
+    } @else if (posts().length === 0) {
+      <div class="empty-state">
+        <p>No posts yet in this category.</p>
+        <button class="pill pill--active" (click)="filterByCategory(null)">View all posts</button>
+      </div>
+    } @else {
+      <div class="posts-grid">
+        @for (post of posts(); track post.slug) {
+          <a [routerLink]="['/blog', post.slug]" class="post-card">
+            @if (post.cover_image_url) {
+              <img [src]="post.cover_image_url" [alt]="post.title" class="post-card__img" loading="lazy" />
+            } @else {
+              <div class="post-card__img post-card__img--placeholder"></div>
+            }
+            <div class="post-card__body">
+              @if (post.category_name) {
+                <span class="post-tag">{{ post.category_name }}</span>
+              }
+              <h3 class="post-card__title">{{ post.title }}</h3>
+              <p class="post-card__excerpt">{{ post.excerpt }}</p>
+              <div class="post-meta">
+                <span>{{ post.published_at | date:'mediumDate' }}</span>
+                @if (post.read_time_minutes) {
+                  <span>·</span>
+                  <span>{{ post.read_time_minutes }} min read</span>
+                }
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="blog-cta">
+  <div class="section-inner">
+    <div class="blog-cta__card">
+      <h2 class="blog-cta__title">Stop guessing, start measuring</h2>
+      <p class="blog-cta__sub">
+        Upload a thumbnail and get an instant AI score, roast, and
+        specific improvements in under 10 seconds.
+      </p>
+      <a routerLink="/analyze" class="btn-primary">Analyze your thumbnail →</a>
+    </div>
+  </div>
+</section>

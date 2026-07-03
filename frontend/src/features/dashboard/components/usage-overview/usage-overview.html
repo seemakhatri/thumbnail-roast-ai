@@ -1,0 +1,21 @@
+<div class="card card-inner usage-overview">
+  <div class="usage-overview__heading">📊 Usage This Month</div>
+  <div class="usage-overview__stats">
+    <div class="usage-overview__count">
+      <span class="usage-overview__used">{{ used() }}</span>
+      <span class="usage-overview__sep">/</span>
+      <span class="usage-overview__limit">{{ limit() }}</span>
+    </div>
+    <span class="usage-overview__label">analyses used</span>
+  </div>
+  <div class="usage-overview__bar-bg">
+    <div class="usage-overview__bar-fill" [style.width.%]="percent()"></div>
+  </div>
+  <p class="usage-overview__remaining">
+    @if (remaining() > 0) {
+      {{ remaining() }} analysis{{ remaining() === 1 ? '' : 'es' }} remaining on your {{ plan() }} plan.
+    } @else {
+      You've reached your monthly limit. Upgrade to keep roasting.
+    }
+  </p>
+</div>

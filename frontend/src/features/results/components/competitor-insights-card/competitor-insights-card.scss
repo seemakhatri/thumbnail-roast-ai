@@ -1,0 +1,36 @@
+.competitor-card {
+  grid-column: 1 / -1;
+}
+
+.competitor-heading {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.competitor-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.competitor-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(168, 85, 247, 0.15);
+  background: rgba(168, 85, 247, 0.05);
+  font-size: 13.5px;
+  color: var(--muted2);
+  line-height: 1.6;
+}
+
+.competitor-dot {
+  color: var(--purple);
+  flex-shrink: 0;
+  font-weight: 700;
+}

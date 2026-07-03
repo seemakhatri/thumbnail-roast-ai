@@ -1,0 +1,235 @@
+// upload-dropzone.scss
+
+.upload-dropzone__input {
+  display: none;
+}
+
+// ─── UPLOAD ZONE BASE ─────────────────────────────────────
+.upload-zone {
+  width: 100%;
+  border: 1.5px dashed rgba(255, 77, 0, 0.32);
+  border-radius: 18px;
+  padding: 40px 28px;
+  text-align: center;
+  background: radial-gradient(ellipse at center top, rgba(255, 77, 0, 0.055) 0%, transparent 62%);
+  cursor: pointer;
+  transition: border-color 0.28s, background 0.28s, transform 0.25s;
+  position: relative;
+  overflow: hidden;
+
+  &:hover:not(.upload-zone--has-file):not(.upload-zone--dragging) {
+    border-color: rgba(255, 77, 0, 0.62);
+    background: radial-gradient(ellipse at center top, rgba(255, 77, 0, 0.1) 0%, transparent 62%);
+    transform: translateY(-2px);
+  }
+
+  // Has file — green tint border, no pointer cursor on the outer zone
+  &--has-file {
+    cursor: default;
+    border-style: solid;
+    border-color: rgba(34, 197, 94, 0.3);
+    background: radial-gradient(ellipse at center top, rgba(34, 197, 94, 0.04) 0%, transparent 60%);
+  }
+
+  // Drag over — orange pulse
+  &--dragging {
+    border-color: var(--accent) !important;
+    border-width: 2px;
+    transform: translateY(-3px);
+    background: radial-gradient(ellipse at center top, rgba(255, 77, 0, 0.12) 0%, transparent 60%);
+    box-shadow: 0 0 0 4px rgba(255, 77, 0, 0.08), 0 8px 40px rgba(255, 77, 0, 0.14);
+  }
+}
+
+// Animated drag border overlay
+.drag-border {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--accent);
+  border-radius: 17px;
+  box-shadow:
+    inset 0 0 28px rgba(255, 77, 0, 0.07),
+    0 0 28px rgba(255, 77, 0, 0.12);
+  animation: dragBorderPulse 1s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes dragBorderPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+// ─── IDLE STATE ───────────────────────────────────────────
+.zone-idle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.zone-idle__icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: rgba(255, 77, 0, 0.09);
+  border: 1px solid rgba(255, 77, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent2);
+  margin-bottom: 16px;
+  transition: background 0.2s, border-color 0.2s;
+
+  .upload-zone:hover & {
+    background: rgba(255, 77, 0, 0.16);
+    border-color: rgba(255, 77, 0, 0.38);
+  }
+}
+
+.zone-idle__title {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  margin-bottom: 6px;
+}
+
+.zone-idle__sub {
+  font-size: 13px;
+  color: var(--muted2);
+  margin-bottom: 18px;
+}
+
+.zone-idle__formats {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.fmt-tag {
+  padding: 3px 9px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 10.5px;
+  color: var(--muted);
+  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+}
+
+// ─── DRAG STATE ───────────────────────────────────────────
+.zone-drag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.zone-drag__icon {
+  font-size: 36px;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: rgba(255, 77, 0, 0.14);
+  border: 1.5px solid rgba(255, 77, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: dragIconBreath 1s ease-in-out infinite;
+}
+
+@keyframes dragIconBreath {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
+
+.zone-drag__title {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent2);
+}
+
+.zone-drag__sub {
+  font-size: 12px;
+  color: rgba(255, 112, 64, 0.7);
+}
+
+// ─── PREVIEW STATE ────────────────────────────────────────
+.zone-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.zone-preview__thumb-wrap {
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.5);
+}
+
+.zone-preview__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.zone-preview__check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.5);
+}
+
+.zone-preview__name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted2);
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zone-preview__replace {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted2);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}

@@ -1,0 +1,154 @@
+<section class="compare-page">
+  <div class="compare-page__header">
+    <div class="section-label">A/B Testing</div>
+    <h1 class="section-title">Compare Thumbnails</h1>
+    <p class="section-sub">
+      Pick two or three of your past roasts and we'll tell you which one wins — and exactly why.
+    </p>
+  </div>
+
+  @if (!compareService.hasResult()) {
+
+  <!-- Onboarding / Empty State -->
+  @if (!compareService.slotA() && !compareService.slotB()) {
+  <div class="compare-onboarding">
+    <lucide-angular [img]="icons.zap" size="40" class="onboarding-icon" />
+    <h3>Why compare thumbnails?</h3>
+    <ul class="benefit-list">
+      <li>
+        <lucide-angular [img]="icons.barChart" size="24" class="benefit-icon" />
+        <div>
+          <strong>Factor-by-factor breakdown</strong>
+          <p>See exactly which visual elements make one thumbnail more effective, not just a score</p>
+        </div>
+      </li>
+      <li>
+        <lucide-angular [img]="icons.target" size="24" class="benefit-icon" />
+        <div>
+          <strong>Weighted for your niche</strong>
+          <p>Face, text, contrast, and color are weighted differently for gaming vs. finance vs. food</p>
+        </div>
+      </li>
+      <li>
+        <lucide-angular [img]="icons.rocket" size="24" class="benefit-icon" />
+        <div>
+          <strong>Which wins where</strong>
+          <p>Get a separate verdict for mobile feed, search, and suggested/sidebar placement</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+  }
+
+  <!-- Quick Stats Bar -->
+  @if (compareService.slotA() || compareService.slotB()) {
+  <div class="compare-quick-stats">
+    <div class="stat-pill" [class.active]="compareService.slotA()">
+      <span class="stat-label">A</span>
+      <span class="stat-score">{{ compareService.slotA()?.overall_score ?? '—' }}</span>
+      <span class="stat-unit">/100</span>
+    </div>
+    <div class="stat-pill" [class.active]="compareService.slotB()">
+      <span class="stat-label">B</span>
+      <span class="stat-score">{{ compareService.slotB()?.overall_score ?? '—' }}</span>
+      <span class="stat-unit">/100</span>
+    </div>
+    @if (showSlotC() && compareService.slotC()) {
+    <div class="stat-pill active">
+      <span class="stat-label">C</span>
+      <span class="stat-score">{{ compareService.slotC()?.overall_score ?? '—' }}</span>
+      <span class="stat-unit">/100</span>
+    </div>
+    }
+  </div>
+  }
+
+  <!-- Slot pickers -->
+  <div class="compare-slots">
+    <app-report-picker label="Thumbnail A" [exclude]="excludeFromA()" (selected)="onPickedA($event)" />
+
+    <div class="compare-vs">VS</div>
+
+    <app-report-picker label="Thumbnail B" [exclude]="excludeFromB()" (selected)="onPickedB($event)" />
+
+    @if (showSlotC()) {
+    <div class="compare-vs">VS</div>
+
+    <div class="compare-slot-c-wrap">
+      <app-report-picker label="Thumbnail C (optional)" [exclude]="excludeFromC()" (selected)="onPickedC($event)" />
+      <button type="button" class="btn-remove-c" (click)="removeThird()">
+        <lucide-angular [img]="icons.x" size="12" />
+        Remove
+      </button>
+    </div>
+    }
+  </div>
+
+  <!-- Add third slot -->
+  @if (!showSlotC()) {
+  <button type="button" class="btn-add-third" (click)="addThird()">
+    <lucide-angular [img]="icons.plus" size="14" />
+    Add a third thumbnail
+  </button>
+  }
+
+  <!-- Insight Teaser -->
+  @if (compareService.canCompare()) {
+  <div class="compare-insight-teaser">
+    <lucide-angular [img]="icons.search" size="28" class="insight-icon" />
+    <p>We'll analyze these thumbnails across <strong>8 weighted factors</strong> and 4 placement surfaces:</p>
+    <ul class="dimension-list">
+      <li>Face & Emotion</li>
+      <li>Text Legibility</li>
+      <li>Contrast & Color</li>
+      <li>Composition</li>
+      <li>Curiosity Gap</li>
+      <li>+ Mobile/Sidebar/Search verdicts</li>
+    </ul>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (compareService.error()) {
+  <div class="compare-error">
+    <lucide-angular [img]="icons.alertCircle" size="16" />
+    {{ compareService.error() }}
+  </div>
+  }
+
+  <!-- Compare CTA -->
+  <div class="compare-cta">
+    <button type="button" class="btn-primary btn-primary--lg"
+      [disabled]="!compareService.canCompare() || compareService.loading()" (click)="run()">
+      @if (compareService.loading()) {
+      <span class="btn-spinner"></span>
+      Analyzing differences…
+      } @else {
+      <lucide-angular [img]="icons.flame" size="16" />
+      See Detailed Breakdown
+      }
+    </button>
+
+    <p class="compare-hint">
+      <strong>You'll get:</strong> Weighted winner • Factor-by-factor breakdown • Placement verdicts • Improvement roadmap
+    </p>
+  </div>
+
+  } @else {
+
+  <!-- Results -->
+  <app-compare-result [result]="compareService.result()!" />
+
+  <!-- Reset -->
+  <div class="compare-again">
+    <button type="button" class="btn-ghost" (click)="reset()">
+      ← Compare different thumbnails
+    </button>
+    <a routerLink="/analyze" class="btn-primary">
+      <lucide-angular [img]="icons.flame" size="16" />
+      Roast a new thumbnail
+    </a>
+  </div>
+
+  }
+</section>

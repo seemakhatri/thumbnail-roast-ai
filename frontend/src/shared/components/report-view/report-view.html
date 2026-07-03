@@ -1,0 +1,32 @@
+<div class="report-view" [@pageEnter]>
+
+  <!-- Share actions bar -->
+  <app-share-actions [report]="report()" [showTabs]="showTabs()" />
+
+  <!-- Hero card — score ring + thumbnail + verdict -->
+  <app-report-hero-card [report]="report()" />
+
+  <!-- ⚡ Highest impact fix -->
+  <app-priority-recommendation [report]="report()" />
+
+  <!-- 8-metric breakdown grid -->
+  <app-metrics-grid [report]="report()" />
+
+  <!-- 🔥 Roast -->
+  <app-roast-card [report]="report()" />
+
+  <!-- ✅ / ⚠️ Strengths + Weaknesses -->
+  <app-strength-weakness-grid [report]="report()" />
+
+  <!-- Prioritised recommendations -->
+  <app-recommendations-timeline [report]="report()" />
+
+  <!-- 🎯 Competitor insights -->
+  <app-competitor-insights [report]="report()" />
+
+  <!-- 🔒 Upgrade banner — only for free users -->
+  @if (showUpgradeBanner()) {
+    <app-upgrade-banner />
+  }
+
+</div>

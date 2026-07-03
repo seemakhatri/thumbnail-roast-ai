@@ -1,0 +1,64 @@
+<div class="picker">
+  <span class="picker__label">{{ label() }}</span>
+
+  <!-- Picked state -->
+  @if (picked()) {
+    <div class="picker__picked">
+      <img [src]="picked()!.image_url" [alt]="picked()!.roast_title" class="picker__thumb" />
+      <div class="picker__picked-info">
+        <span class="picker__score" [style.color]="scoreColor(picked()!.overall_score)">
+          {{ picked()!.overall_score }}
+        </span>
+        <span class="picker__roast-title">{{ picked()!.roast_title }}</span>
+      </div>
+      <button type="button" class="picker__clear" (click)="clear()">×</button>
+    </div>
+  } @else {
+    <!-- Empty slot trigger -->
+    <button type="button" class="picker__trigger" (click)="toggle()">
+      <span class="picker__trigger-icon">+</span>
+      <span>Choose a thumbnail</span>
+    </button>
+  }
+
+  <!-- Dropdown list -->
+  @if (open()) {
+    <div class="picker__dropdown">
+
+      @if (loading()) {
+        <div class="picker__row picker__row--skeleton">
+          <div class="skeleton" style="width:64px;height:36px;border-radius:6px;flex-shrink:0"></div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <div class="skeleton" style="height:12px;width:70%"></div>
+            <div class="skeleton" style="height:10px;width:40%"></div>
+          </div>
+        </div>
+        <div class="picker__row picker__row--skeleton">
+          <div class="skeleton" style="width:64px;height:36px;border-radius:6px;flex-shrink:0"></div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <div class="skeleton" style="height:12px;width:55%"></div>
+            <div class="skeleton" style="height:10px;width:35%"></div>
+          </div>
+        </div>
+      } @else if (error()) {
+        <p class="picker__empty">{{ error() }}</p>
+      } @else if (available().length === 0) {
+        <p class="picker__empty">No other thumbnails to pick.</p>
+      } @else {
+        @for (report of available(); track report.id) {
+          <button type="button" class="picker__row" (click)="pick(report)">
+            <img [src]="report.image_url" [alt]="report.roast_title" class="picker__row-thumb" />
+            <div class="picker__row-info">
+              <span class="picker__row-title">{{ report.roast_title || 'Untitled' }}</span>
+              <span class="picker__row-date">{{ report.created_at | date:'MMM d, y' }}</span>
+            </div>
+            <span class="picker__row-score" [style.color]="scoreColor(report.overall_score)">
+              {{ report.overall_score }}
+            </span>
+          </button>
+        }
+      }
+
+    </div>
+  }
+</div>

@@ -1,0 +1,77 @@
+// share-actions.scss
+:host { display: block; }
+
+.share-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 4px;
+  padding: 12px 0 8px;
+  // Sticky so tabs remain visible while scrolling
+  position: sticky;
+  top: 64px; // adjust to match your nav height
+  z-index: 10;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.tab-btn {
+  padding: 8px 18px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: var(--muted2);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &.active {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border2);
+  }
+
+  &:hover:not(.active) {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.share-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .share-row {
+    position: static; // disable sticky on small screens to avoid layout issues
+    border-bottom: none;
+    padding: 0;
+  }
+
+  .tab-nav {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    padding: 7px 13px;
+    font-size: 12px;
+  }
+}

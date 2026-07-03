@@ -1,0 +1,477 @@
+.cr {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ── Recurring pattern banner ────────────────────────────────────────────
+.cr-pattern {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 77, 0, 0.18);
+  background: rgba(255, 77, 0, 0.04);
+}
+
+.cr-pattern__icon {
+  color: var(--accent2);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.cr-pattern__label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.cr-pattern__msg {
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.55;
+  margin: 0;
+}
+
+// ── Headline banner ──────────────────────────────────────────────────────
+.cr-headline {
+  padding: 22px 26px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(255, 77, 0, 0.06), rgba(255, 77, 0, 0.01));
+
+  &--tie {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  }
+}
+
+.cr-headline__top {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.cr-confidence-tag,
+.cr-niche-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  border: 1px solid var(--border2);
+  color: var(--muted2);
+}
+
+.cr-confidence-tag[data-tier='clear_winner'] {
+  color: var(--green);
+  border-color: rgba(34, 197, 94, 0.25);
+  background: rgba(34, 197, 94, 0.08);
+}
+.cr-confidence-tag[data-tier='close_call'] {
+  color: var(--yellow);
+  border-color: rgba(234, 179, 8, 0.25);
+  background: rgba(234, 179, 8, 0.08);
+}
+.cr-confidence-tag[data-tier='context_dependent'] {
+  color: var(--muted2);
+}
+
+.cr-headline__text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text);
+  margin: 0;
+}
+
+.cr-headline__trophy {
+  color: var(--accent2);
+  flex-shrink: 0;
+}
+
+// ── Composite score battle ───────────────────────────────────────────────
+.cr-composite {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.cr-composite__row {
+  display: grid;
+  grid-template-columns: 90px 1fr 40px;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 0;
+  border-radius: 10px;
+
+  &--winner {
+    background: rgba(255, 255, 255, 0.02);
+  }
+}
+
+.cr-composite__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cr-composite__thumb {
+  width: 40px;
+  height: 22px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border2);
+}
+
+.cr-composite__label {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.cr-composite__crown {
+  color: var(--accent2);
+}
+
+.cr-composite__bar-track {
+  height: 10px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.cr-composite__bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cr-composite__score {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  text-align: right;
+  color: var(--text);
+}
+
+// ── Shared section header ────────────────────────────────────────────────
+.cr-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cr-section__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cr-section__sub {
+  font-size: 12.5px;
+  color: var(--muted2);
+  margin: -8px 0 0;
+}
+
+// ── Factor breakdown ──────────────────────────────────────────────────────
+.cr-factors {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cr-factor {
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.cr-factor__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.cr-factor__name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.cr-factor__advantage {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &--tie {
+    color: var(--muted);
+  }
+}
+
+.cr-factor__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.cr-factor__bar-row {
+  display: grid;
+  grid-template-columns: 16px 1fr 28px;
+  align-items: center;
+  gap: 8px;
+}
+
+.cr-factor__bar-label {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.cr-factor__bar-track {
+  height: 6px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.cr-factor__bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cr-factor__bar-score {
+  font-size: 11px;
+  color: var(--muted2);
+  text-align: right;
+}
+
+.cr-factor__insight {
+  font-size: 12.5px;
+  color: var(--muted2);
+  line-height: 1.55;
+  margin: 0;
+}
+
+// ── Placement verdicts ────────────────────────────────────────────────────
+.cr-placements {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cr-placement-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.cr-placement-card__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cr-placement-card__icon {
+  color: var(--accent2);
+}
+
+.cr-placement-card__label {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cr-placement-card__blurb {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.cr-placement-card__winner {
+  margin: 4px 0;
+}
+
+.cr-placement-card__winner-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  border: 1px solid;
+  font-size: 11px;
+  font-weight: 800;
+
+  &--tie {
+    color: var(--muted2);
+    border-color: var(--border2);
+  }
+}
+
+.cr-placement-card__reason {
+  font-size: 12px;
+  color: var(--muted2);
+  line-height: 1.5;
+  margin: 0;
+}
+
+// ── Swap suggestion ────────────────────────────────────────────────────────
+.cr-swap {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 77, 0, 0.3);
+  background: rgba(255, 77, 0, 0.03);
+}
+
+.cr-swap__icon {
+  color: var(--accent2);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.cr-swap__label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent2);
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.cr-swap__text {
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.55;
+  margin: 0;
+}
+
+// ── Improvement roadmap ───────────────────────────────────────────────────
+.cr-roadmap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.cr-roadmap-card {
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.cr-roadmap-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+
+.cr-roadmap-card__label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cr-roadmap-card__title {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.cr-roadmap-card__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cr-roadmap-card__steps li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 12.5px;
+  color: var(--muted2);
+  line-height: 1.5;
+
+  lucide-angular {
+    color: var(--green);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+}
+
+// ── Discrepancy notes ─────────────────────────────────────────────────────
+.cr-discrepancy {
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--muted2);
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  ul {
+    margin: 12px 0 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  li {
+    font-size: 12px;
+    color: var(--muted2);
+    line-height: 1.5;
+  }
+}

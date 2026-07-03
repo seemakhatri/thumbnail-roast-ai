@@ -1,0 +1,13 @@
+@if (!isWaitlistPage()) {
+  <app-navbar />
+}
+
+<main>
+  <router-outlet />
+</main>
+
+@if (!isWaitlistPage()) {
+  <app-footer />
+}
+
+<app-toast />

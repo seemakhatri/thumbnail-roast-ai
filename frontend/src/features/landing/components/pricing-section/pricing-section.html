@@ -1,0 +1,232 @@
+<!-- pricing-section.html -->
+<section class="pricing" id="pricing" aria-label="Pricing">
+
+  <!-- Header -->
+  <div class="pricing__header">
+    <span class="pricing__eyebrow">Pricing</span>
+    <h2 class="pricing__title">Simple, creator-first pricing.</h2>
+    <p class="pricing__sub">
+      Start free. Upgrade only when you're hooked&nbsp;—
+      which usually takes about one roast.
+    </p>
+  </div>
+
+  <!-- Carousel -->
+  <div class="pricing__carousel-wrapper">
+    <div 
+      class="pricing__carousel-track" 
+      [style.transform]="'translateX(-' + currentSlide() * 100 + '%)'"
+    >
+      <div class="pricing__grid" role="list">
+
+        <!-- FREE -->
+        <article
+          class="pricing__card"
+          role="listitem"
+          [class.pricing__card--current]="currentPlan() === 'free'"
+          aria-label="Free plan"
+        >
+          @if (currentPlan() === 'free') {
+            <div class="pricing__badge pricing__badge--current">Your Plan</div>
+          }
+          <div class="pricing__plan-name">Free</div>
+          <div class="pricing__price">
+            <span class="pricing__dollar">$</span>
+            <span class="pricing__amount">0</span>
+            <span class="pricing__period">/mo</span>
+          </div>
+          <p class="pricing__tagline">3 roasts/month. No card needed.</p>
+          <div class="pricing__divider" aria-hidden="true"></div>
+          <ul class="pricing__features" aria-label="Free plan features">
+            @for (f of plans[0].features; track f.text) {
+              <li class="pricing__feature" [class.pricing__feature--off]="!f.included">
+                <span class="pricing__feature-icon" aria-hidden="true">{{ f.included ? '✓' : '✕' }}</span>
+                <span [class.pricing__feature-dim]="!f.included">{{ f.text }}</span>
+              </li>
+            }
+          </ul>
+          <button
+            class="pricing__btn"
+            [class.pricing__btn--free]="getButtonStyle('free') === 'free'"
+            [class.pricing__btn--current]="getButtonStyle('free') === 'current'"
+            [class.pricing__btn--included]="getButtonStyle('free') === 'included'"
+            [class.pricing__btn--upgrade]="getButtonStyle('free') === 'upgrade'"
+            type="button"
+            [disabled]="isButtonDisabled('free') && currentPlan() !== 'free'"
+            (click)="selectPlan('free')"
+          >
+            {{ getButtonLabel('free') }}
+          </button>
+        </article>
+
+        <!-- CREATOR (featured) -->
+        <article
+          class="pricing__card pricing__card--featured"
+          role="listitem"
+          [class.pricing__card--current]="currentPlan() === 'creator'"
+          aria-label="Creator plan"
+        >
+          @if (currentPlan() === 'creator') {
+            <div class="pricing__badge pricing__badge--current">Your Plan</div>
+          } @else if (currentPlan() !== 'business' && currentPlan() !== 'agency') {
+            <div class="pricing__badge pricing__badge--popular">Most Popular</div>
+          }
+
+          <div class="pricing__plan-name">Creator</div>
+          <div class="pricing__price">
+            <span class="pricing__dollar">$</span>
+            <span class="pricing__amount pricing__amount--fire">19</span>
+            <span class="pricing__period">/mo</span>
+          </div>
+          <p class="pricing__tagline">For active creators who care about CTR.</p>
+          <div class="pricing__divider" aria-hidden="true"></div>
+          <ul class="pricing__features" aria-label="Creator plan features">
+            @for (f of plans[1].features; track f.text) {
+              <li class="pricing__feature">
+                <span class="pricing__feature-icon" aria-hidden="true">✓</span>
+                <span>{{ f.text }}</span>
+              </li>
+            }
+          </ul>
+          <button
+            class="pricing__btn"
+            [class.pricing__btn--upgrade]="getButtonStyle('creator') === 'upgrade'"
+            [class.pricing__btn--current]="getButtonStyle('creator') === 'current'"
+            [class.pricing__btn--included]="getButtonStyle('creator') === 'included'"
+            type="button"
+            [disabled]="isButtonDisabled('creator') || checkout.loading()"
+            (click)="selectPlan('creator')"
+          >
+            @if (checkout.loading()) { Loading… }
+            @else { {{ getButtonLabel('creator') }} }
+          </button>
+        </article>
+
+        <!-- BUSINESS -->
+        <article
+          class="pricing__card"
+          role="listitem"
+          [class.pricing__card--current]="currentPlan() === 'business'"
+          aria-label="Business plan"
+        >
+          @if (currentPlan() === 'business') {
+            <div class="pricing__badge pricing__badge--current">Your Plan</div>
+          } @else if (currentPlan() !== 'agency') {
+            <div class="pricing__badge pricing__badge--popular">Best Value</div>
+          }
+
+          <div class="pricing__plan-name">Business</div>
+          <div class="pricing__price">
+            <span class="pricing__dollar">$</span>
+            <span class="pricing__amount">49</span>
+            <span class="pricing__period">/mo</span>
+          </div>
+          <p class="pricing__tagline">For growing channels and small teams.</p>
+          <div class="pricing__divider" aria-hidden="true"></div>
+          <ul class="pricing__features" aria-label="Business plan features">
+            @for (f of plans[2].features; track f.text) {
+              <li class="pricing__feature">
+                <span class="pricing__feature-icon" aria-hidden="true">✓</span>
+                <span>{{ f.text }}</span>
+              </li>
+            }
+          </ul>
+          <button
+            class="pricing__btn"
+            [class.pricing__btn--upgrade]="getButtonStyle('business') === 'upgrade'"
+            [class.pricing__btn--current]="getButtonStyle('business') === 'current'"
+            [class.pricing__btn--included]="getButtonStyle('business') === 'included'"
+            type="button"
+            [disabled]="isButtonDisabled('business') || checkout.loading()"
+            (click)="selectPlan('business')"
+          >
+            @if (checkout.loading()) { Loading… }
+            @else { {{ getButtonLabel('business') }} }
+          </button>
+        </article>
+
+        <!-- AGENCY -->
+        <article
+          class="pricing__card"
+          role="listitem"
+          [class.pricing__card--current]="currentPlan() === 'agency'"
+          aria-label="Agency plan"
+        >
+          @if (currentPlan() === 'agency') {
+            <div class="pricing__badge pricing__badge--current">Your Plan</div>
+          }
+          <div class="pricing__plan-name">Agency</div>
+          <div class="pricing__price">
+            <span class="pricing__dollar">$</span>
+            <span class="pricing__amount">79</span>
+            <span class="pricing__period">/mo</span>
+          </div>
+          <p class="pricing__tagline">For teams, editors, multi-channel ops.</p>
+          <div class="pricing__divider" aria-hidden="true"></div>
+          <ul class="pricing__features" aria-label="Agency plan features">
+            @for (f of plans[3].features; track f.text) {
+              <li class="pricing__feature">
+                <span class="pricing__feature-icon" aria-hidden="true">✓</span>
+                <span>{{ f.text }}</span>
+              </li>
+            }
+          </ul>
+          <button
+            class="pricing__btn"
+            [class.pricing__btn--upgrade]="getButtonStyle('agency') === 'upgrade'"
+            [class.pricing__btn--current]="getButtonStyle('agency') === 'current'"
+            [class.pricing__btn--included]="getButtonStyle('agency') === 'included'"
+            type="button"
+            [disabled]="isButtonDisabled('agency') || checkout.loading()"
+            (click)="selectPlan('agency')"
+          >
+            @if (checkout.loading()) { Loading… }
+            @else { {{ getButtonLabel('agency') }} }
+          </button>
+        </article>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Carousel Controls -->
+  <div class="pricing__controls">
+    <button 
+      class="pricing__arrow" 
+      (click)="prevSlide()" 
+      [disabled]="currentSlide() === 0"
+      aria-label="Previous plans"
+    >
+      ←
+    </button>
+    
+    <div class="pricing__dots">
+      @for (dot of [0, 1, 2, 3]; track dot) {
+        <button 
+          class="pricing__dot" 
+          [class.pricing__dot--active]="currentSlide() === dot"
+          (click)="goToSlide(dot)"
+          [attr.aria-label]="'Go to slide ' + (dot + 1)"
+        ></button>
+      }
+    </div>
+    
+    <button 
+      class="pricing__arrow" 
+      (click)="nextSlide()" 
+      [disabled]="currentSlide() === 3"
+      aria-label="Next plans"
+    >
+      →
+    </button>
+  </div>
+
+  @if (checkout.error()) {
+    <p class="pricing__error" role="alert">{{ checkout.error() }}</p>
+  }
+
+  <p class="pricing__trust">
+    No contracts&nbsp;·&nbsp;Cancel anytime&nbsp;·&nbsp;Secure payments via Stripe
+  </p>
+
+</section>

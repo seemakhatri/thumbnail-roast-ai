@@ -1,0 +1,212 @@
+// ─── SHELL ───────────────────────────────────────────────────────────────────
+.cta {
+  padding: 160px 24px 160px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  // No border-top — MetaLumna CTA just sits with breathing room
+}
+
+// ─── BACKGROUND — single glow, very subtle ────────────────────────────────────
+.cta__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.cta__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle,
+    rgba(255, 77, 0, 0.06) 0%,
+    transparent 65%
+  );
+  border-radius: 50%;
+}
+
+// No grid in CTA — clean
+.cta__grid { display: none; }
+
+// ─── FLOATING SCORE CARDS — toned way down, more transparent ─────────────────
+.cta__score-previews {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cta__score-card {
+  position: absolute;
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 14px 16px;
+  width: 128px;
+  border: 1px solid var(--border);
+  // Much more transparent than before
+  opacity: 0.75;
+
+  &--green  { top: 20%; left: 7%;  transform: rotate(-3deg); }
+  &--yellow { top: 58%; left: 6%;  transform: rotate(2deg);  }
+  &--red    { top: 24%; right: 7%; transform: rotate(4deg);  }
+  &--blue   { top: 60%; right: 6%; transform: rotate(-2deg); }
+
+  @media (max-width: 900px) { display: none; }
+}
+
+.cta__score-card-label {
+  font-size: 9px;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.cta__score-card-score {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 8px;
+  letter-spacing: -1px;
+}
+
+/* Explicit selectors */
+.cta__score-card--green .cta__score-card-score {
+  color: #22c55e;
+}
+
+.cta__score-card--yellow .cta__score-card-score {
+  color: #eab308;
+}
+
+.cta__score-card--red .cta__score-card-score {
+  color: #ef4444;
+}
+
+.cta__score-card--blue .cta__score-card-score {
+  color: #3b82f6;
+}
+.cta__score-bar {
+  height: 3px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.cta__score-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+
+  &--green  { background: var(--green);  }
+  &--yellow { background: var(--yellow); }
+  &--red    { background: var(--red);    }
+  &--blue   { background: var(--blue);   }
+}
+
+// ─── CONTENT — MetaLumna minimal CTA: eyebrow + big headline + one button ────
+.cta__content {
+  position: relative;
+  z-index: 2;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+// Small eyebrow pill — subtler than before
+.cta__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+
+.cta__eyebrow-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: ctaDotPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ctaDotPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+// Big headline — MetaLumna "Let's talk." energy
+.cta__title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 800;
+  letter-spacing: -2.5px;
+  line-height: 1.02;
+  margin-bottom: 20px;
+}
+
+.cta__sub {
+  font-size: clamp(14px, 1.6vw, 17px);
+  color: var(--muted2);
+  line-height: 1.75;
+  font-weight: 300;
+  margin-bottom: 44px;
+}
+
+.cta__actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+// White button on dark — MetaLumna primary CTA style
+.cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 40px;
+  border-radius: 10px;
+  border: none;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: -0.1px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  &:active { transform: translateY(-1px); }
+}
+
+.cta__fine {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+}
+
+// ─── RESPONSIVE ──────────────────────────────────────────────────────────────
+@media (max-width: 600px) {
+  .cta {
+    padding: 100px 20px;
+  }
+
+  .cta__btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

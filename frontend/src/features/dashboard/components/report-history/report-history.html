@@ -1,0 +1,39 @@
+<div class="report-history">
+  <div class="report-history__header">
+    <h2 class="report-history__title">Recent Reports</h2>
+  </div>
+
+  @if (reports().length === 0) {
+    <div class="state-card state-card--empty">
+      <div class="state-icon">📭</div>
+      <h3>No reports yet</h3>
+      <p>Upload your first thumbnail to get a roast and see it here.</p>
+      <div class="state-actions">
+        <a routerLink="/analyze" class="btn-primary">Start Your First Roast</a>
+      </div>
+    </div>
+  } @else {
+    <div class="report-history__list">
+      @for (report of reports(); track report.id) {
+        <a [routerLink]="['/results', report.id]" class="report-history__item card">
+          <div class="report-history__thumb">
+            @if (report.image_url) {
+              <img [src]="report.image_url" [alt]="report.roast_title" />
+            }
+          </div>
+          <div class="report-history__content">
+            <div class="report-history__top">
+              <span class="report-history__score">{{ report.overall_score }}/100</span>
+              <span [class]="verdictDisplay(report.verdict).badgeClass + ' report-history__badge'">
+                {{ verdictDisplay(report.verdict).emoji }} {{ verdictDisplay(report.verdict).label }}
+              </span>
+            </div>
+            <h3 class="report-history__name">"{{ report.roast_title }}"</h3>
+            <p class="report-history__date">{{ formatDate(report.created_at) }}</p>
+          </div>
+          <span class="report-history__arrow">→</span>
+        </a>
+      }
+    </div>
+  }
+</div>

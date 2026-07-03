@@ -1,0 +1,11 @@
+<div class="sw-card weaknesses">
+  <div class="sw-heading red">⚠️ Weaknesses</div>
+  <ul class="sw-list">
+    @for (item of report().weaknesses; track item) {
+      <li class="sw-item">
+        <span class="sw-dot">•</span>
+        <span>{{ item }}</span>
+      </li>
+    }
+  </ul>
+</div>

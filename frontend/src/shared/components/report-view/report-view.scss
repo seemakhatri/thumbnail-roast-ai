@@ -1,0 +1,15 @@
+// report-view.scss
+:host { display: block; }
+
+.report-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 24px 100px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+@media (max-width: 640px) {
+  .report-view { padding: 0 16px 80px; }
+}

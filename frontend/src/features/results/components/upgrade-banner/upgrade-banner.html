@@ -1,0 +1,43 @@
+<!-- upgrade-banner.html -->
+<div class="upgrade">
+  <div class="upgrade__bg" aria-hidden="true"></div>
+
+  <!-- Locked features preview -->
+  <div class="upgrade__locked-features">
+    @for (feat of lockedFeatures; track feat.label) {
+      <div class="upgrade__locked-item">
+        <div class="upgrade__locked-icon">{{ feat.icon }}</div>
+        <div class="upgrade__locked-info">
+          <div class="upgrade__locked-title">{{ feat.label }}</div>
+          <div class="upgrade__locked-desc">{{ feat.desc }}</div>
+        </div>
+        <span class="upgrade__lock-badge">🔒</span>
+      </div>
+    }
+  </div>
+
+  <!-- CTA card -->
+  <div class="upgrade__cta">
+    <div class="upgrade__cta-eyebrow">Creator Plan</div>
+    <h3 class="upgrade__cta-title">Unlock the Full Roast</h3>
+    <p class="upgrade__cta-sub">Get 50 analyses/month, A/B comparisons, trend tracking, and priority AI processing.</p>
+
+    <div class="upgrade__cta-price">
+      <span class="upgrade__cta-amount">$19</span>
+      <span class="upgrade__cta-period">/month</span>
+    </div>
+
+    <ul class="upgrade__feature-list">
+      @for (f of features; track f) {
+        <li class="upgrade__feature-item">
+          <span class="upgrade__feature-check">✓</span>
+          {{ f }}
+        </li>
+      }
+    </ul>
+
+    <a routerLink="/pricing" class="upgrade__cta-btn">
+      🚀 Upgrade to Creator
+    </a>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+// strength-weakness-grid.scss
+.sw-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.sw-card {
+  border-radius: 16px;
+  padding: 20px 22px;
+}
+
+.sw-card--green {
+  background: rgba(34, 197, 94, 0.04);
+  border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+.sw-card--red {
+  background: rgba(239, 68, 68, 0.04);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.sw-card__heading {
+  font-family: 'Syne', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sw-card__heading--green { color: var(--green); }
+.sw-card__heading--red   { color: var(--red);   }
+
+.sw-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sw-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 13px;
+  color: var(--muted2);
+  line-height: 1.55;
+  // Stagger via inline animation-delay, CSS handles the rest
+  animation: swItemIn 320ms ease-out both;
+}
+
+@keyframes swItemIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sw-item__icon {
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 3px;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sw-item__icon--green {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--green);
+}
+
+.sw-item__icon--red {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--red);
+}
+
+@media (max-width: 640px) {
+  .sw-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sw-item { animation: none; }
+}

@@ -1,0 +1,183 @@
+<div class="cr">
+
+  <!-- ── Recurring pattern coaching banner ─────────────────────────────── -->
+  @if (result().recurringPattern; as pattern) {
+  <div class="cr-pattern">
+    <lucide-angular [img]="icons.history" size="18" class="cr-pattern__icon" />
+    <div>
+      <span class="cr-pattern__label">Pattern across your comparisons</span>
+      <p class="cr-pattern__msg">{{ pattern.message }}</p>
+    </div>
+  </div>
+  }
+
+  <!-- ── Headline / verdict banner ─────────────────────────────────────── -->
+  <div class="cr-headline" [class.cr-headline--tie]="verdict().overallWinner === 'tie'">
+    <div class="cr-headline__top">
+      <span class="cr-confidence-tag" [attr.data-tier]="verdict().confidenceTier">
+        <lucide-angular [img]="icons.target" size="12" />
+        {{ confidenceLabel() }} · {{ verdict().confidence }}% confidence
+      </span>
+      <span class="cr-niche-tag">
+        <lucide-angular [img]="icons.sparkles" size="12" />
+        {{ verdict().nicheUsed | titlecase }} weighting applied
+      </span>
+    </div>
+    <h2 class="cr-headline__text">
+      @if (verdict().overallWinner !== 'tie') {
+      <lucide-angular [img]="icons.trophy" size="22" class="cr-headline__trophy" />
+      }
+      {{ verdict().headline }}
+    </h2>
+  </div>
+
+  <!-- ── Composite score battle ────────────────────────────────────────── -->
+  <div class="cr-composite">
+    @for (label of verdict().contenders; track label) {
+    <div class="cr-composite__row" [class.cr-composite__row--winner]="isOverallWinner(label)">
+      <div class="cr-composite__meta">
+        <img [src]="thumbFor(label)?.image_url" [alt]="'Thumbnail ' + label" class="cr-composite__thumb" />
+        <span class="cr-composite__label" [style.color]="labelColors[label]">{{ label }}</span>
+        @if (isOverallWinner(label)) {
+        <lucide-angular [img]="icons.trophy" size="14" class="cr-composite__crown" />
+        }
+      </div>
+      <div class="cr-composite__bar-track">
+        <div
+          class="cr-composite__bar-fill"
+          [style.width]="barWidth(scoreFor(label))"
+          [style.background]="labelColors[label]"
+        ></div>
+      </div>
+      <span class="cr-composite__score">{{ scoreFor(label) }}</span>
+    </div>
+    }
+  </div>
+
+  <!-- ── Factor-by-factor battle ───────────────────────────────────────── -->
+  <div class="cr-section">
+    <div class="cr-section__title">
+      <lucide-angular [img]="icons.swords" size="16" />
+      Factor-by-factor breakdown
+    </div>
+    <div class="cr-factors">
+      @for (fb of verdict().factorBattles; track fb.factor) {
+      <div class="cr-factor">
+        <div class="cr-factor__head">
+          <span class="cr-factor__name">{{ fb.label }}</span>
+          @if (fb.advantage !== 'tie') {
+          <span class="cr-factor__advantage" [style.color]="labelColors[fb.advantage]">
+            {{ fb.advantage }} leads
+          </span>
+          } @else {
+          <span class="cr-factor__advantage cr-factor__advantage--tie">Tied</span>
+          }
+        </div>
+        <div class="cr-factor__bars">
+          @for (label of verdict().contenders; track label) {
+          <div class="cr-factor__bar-row">
+            <span class="cr-factor__bar-label" [style.color]="labelColors[label]">{{ label }}</span>
+            <div class="cr-factor__bar-track">
+              <div
+                class="cr-factor__bar-fill"
+                [style.width]="barWidth(fb.blendedScores[label] ?? 0)"
+                [style.background]="labelColors[label]"
+              ></div>
+            </div>
+            <span class="cr-factor__bar-score">{{ fb.blendedScores[label] ?? 0 }}</span>
+          </div>
+          }
+        </div>
+        <p class="cr-factor__insight">{{ fb.insight }}</p>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- ── Placement verdicts ────────────────────────────────────────────── -->
+  <div class="cr-section">
+    <div class="cr-section__title">
+      <lucide-angular [img]="icons.flame" size="16" />
+      Which wins where
+    </div>
+    <p class="cr-section__sub">
+      The same thumbnails can have different winners depending on where the video is watched.
+    </p>
+    <div class="cr-placements">
+      @for (p of verdict().placementVerdicts; track p.context) {
+      <div class="cr-placement-card">
+        <div class="cr-placement-card__head">
+          <lucide-angular [img]="placementIcon(p.context)" size="18" class="cr-placement-card__icon" />
+          <span class="cr-placement-card__label">{{ p.label }}</span>
+        </div>
+        <span class="cr-placement-card__blurb">{{ p.blurb }}</span>
+        <div class="cr-placement-card__winner">
+          @if (p.winner !== 'tie') {
+          <span class="cr-placement-card__winner-tag" [style.color]="labelColors[p.winner]" [style.borderColor]="labelColors[p.winner]">
+            Winner: {{ p.winner }}
+          </span>
+          } @else {
+          <span class="cr-placement-card__winner-tag cr-placement-card__winner-tag--tie">Even match</span>
+          }
+        </div>
+        <p class="cr-placement-card__reason">{{ p.reason }}</p>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- ── Swap suggestion ────────────────────────────────────────────────── -->
+  @if (verdict().swapSuggestion) {
+  <div class="cr-swap">
+    <lucide-angular [img]="icons.swap" size="18" class="cr-swap__icon" />
+    <div>
+      <span class="cr-swap__label">Frankenthumbnail idea</span>
+      <p class="cr-swap__text">{{ verdict().swapSuggestion }}</p>
+    </div>
+  </div>
+  }
+
+  <!-- ── Improvement roadmap ───────────────────────────────────────────── -->
+  @if (verdict().improvementRoadmap.length) {
+  <div class="cr-section">
+    <div class="cr-section__title">
+      <lucide-angular [img]="icons.lightbulb" size="16" />
+      Improvement roadmap
+    </div>
+    <div class="cr-roadmap">
+      @for (step of verdict().improvementRoadmap; track step.for) {
+      <div class="cr-roadmap-card">
+        <div class="cr-roadmap-card__head">
+          <span class="cr-roadmap-card__label" [style.color]="labelColors[step.for]">Thumbnail {{ step.for }}</span>
+          <span class="cr-roadmap-card__title">{{ step.title }}</span>
+        </div>
+        <ul class="cr-roadmap-card__steps">
+          @for (s of step.steps; track s) {
+          <li>
+            <lucide-angular [img]="icons.check" size="13" />
+            {{ s }}
+          </li>
+          }
+        </ul>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- ── Discrepancy notes (transparency) ──────────────────────────────── -->
+  @if (verdict().discrepancyNotes.length) {
+  <details class="cr-discrepancy">
+    <summary>
+      <lucide-angular [img]="icons.info" size="14" />
+      Why this might differ slightly from the original reports
+    </summary>
+    <ul>
+      @for (note of verdict().discrepancyNotes; track note) {
+      <li>{{ note }}</li>
+      }
+    </ul>
+  </details>
+  }
+
+</div>

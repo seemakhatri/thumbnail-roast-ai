@@ -1,0 +1,29 @@
+<div class="loading-screen">
+  <div class="loading-glow"></div>
+
+  <!-- Scanning thumbnail -->
+  @if (imageUrl()) {
+  <div class="thumb-scanning">
+    <img [src]="imageUrl()" alt="Analyzing thumbnail" class="thumb-scan-img-real" />
+    <div class="scan-line"></div>
+    <div class="scan-corners"></div>
+  </div>
+  } @else {
+  <div class="loading-icon">🔥</div>
+  }
+
+  <!-- Status messages -->
+  <div class="loading-status-list">
+    @for (item of statusItems; track item.label; let i = $index) {
+    <div class="status-item" [class.done]="i < activeIndex()" [class.active]="i === activeIndex()">
+      <div class="status-dot"></div>
+      <span>{{ item.label }}</span>
+    </div>
+    }
+  </div>
+
+  <!-- Progress bar -->
+  <div class="loading-bar-bg">
+    <div class="loading-bar-fill" [style.width.%]="progress()"></div>
+  </div>
+</div>

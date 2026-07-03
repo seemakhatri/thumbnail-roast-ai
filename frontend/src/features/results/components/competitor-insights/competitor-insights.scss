@@ -1,0 +1,62 @@
+// competitor-insights.scss
+.competitor {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 22px;
+}
+
+.competitor__eyebrow {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.competitor__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.competitor__card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(168, 85, 247, 0.16);
+  background: rgba(168, 85, 247, 0.05);
+  transition: border-color 0.2s, background 0.2s;
+  animation: compIn 320ms ease-out both;
+
+  &:hover {
+    border-color: rgba(168, 85, 247, 0.3);
+    background: rgba(168, 85, 247, 0.09);
+    box-shadow: 0 0 18px rgba(168, 85, 247, 0.07);
+  }
+}
+
+@keyframes compIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.competitor__arrow {
+  color: var(--purple);
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.competitor__text {
+  font-size: 13.5px;
+  color: var(--muted2);
+  line-height: 1.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .competitor__card { animation: none; }
+}

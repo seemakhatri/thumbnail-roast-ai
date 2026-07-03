@@ -1,0 +1,24 @@
+<div class="callback-page">
+    <div class="callback-card">
+
+      @if (state() === 'loading') {
+        <div class="callback-spinner"></div>
+        <p class="callback-title">Signing you in…</p>
+        <p class="callback-sub">Just a moment while we set up your account.</p>
+      }
+
+      @if (state() === 'success') {
+        <div class="callback-check">✓</div>
+        <p class="callback-title">You're in! 🎉</p>
+        <p class="callback-sub">Redirecting to your dashboard…</p>
+      }
+
+      @if (state() === 'error') {
+        <div class="callback-error-icon">⚠️</div>
+        <p class="callback-title">Something went wrong</p>
+        <p class="callback-sub">{{ errorMessage() }}</p>
+        <a href="/login" class="callback-retry">Try again →</a>
+      }
+
+    </div>
+  </div>

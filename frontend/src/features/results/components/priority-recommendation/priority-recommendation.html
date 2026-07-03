@@ -1,0 +1,15 @@
+<!-- priority-recommendation.html -->
+@if (topRec()) {
+  <div class="priority-rec" [@slideUp]>
+    <div class="priority-rec__label">
+      <span class="priority-rec__label-dot">⚡</span>
+      Highest Impact Fix
+    </div>
+    <h3 class="priority-rec__title">{{ topRec()!.title }}</h3>
+    <p class="priority-rec__body">{{ topRec()!.description }}</p>
+    <div class="priority-rec__impact">
+      <span class="priority-rec__impact-dot">↑</span>
+      {{ topRec()!.impact }}
+    </div>
+  </div>
+}

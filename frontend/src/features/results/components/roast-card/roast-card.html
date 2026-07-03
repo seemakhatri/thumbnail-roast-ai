@@ -1,0 +1,20 @@
+<!-- roast-card.html -->
+<div class="roast-card" [@slideUp]>
+  <div class="roast-card__header">
+    <div class="roast-card__icon">🔥</div>
+    <div>
+      <div class="roast-card__title">The Roast</div>
+      <div class="roast-card__sub">Honest AI feedback — no sugar-coating</div>
+    </div>
+  </div>
+
+  <blockquote class="roast-card__quote">"{{ report().roast }}"</blockquote>
+
+  @if (report().weaknesses.length) {
+    <div class="roast-card__tags">
+      @for (w of report().weaknesses; track w) {
+        <span class="roast-card__tag">{{ w }}</span>
+      }
+    </div>
+  }
+</div>

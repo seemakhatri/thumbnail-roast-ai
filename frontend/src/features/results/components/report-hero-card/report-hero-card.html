@@ -1,0 +1,48 @@
+<!-- report-hero-card.html -->
+<div class="hero-card" [@heroEnter]>
+
+  <!-- Radial glow -->
+  <div class="hero-card__glow" aria-hidden="true"></div>
+
+  <!-- Thumbnail preview -->
+  <div class="hero-card__thumb-wrap">
+    @if (report().image_url) {
+      <img [src]="report().image_url" [alt]="report().roast_title" class="hero-card__thumb" />
+    } @else {
+      <div class="hero-card__thumb-placeholder">🖼️</div>
+    }
+    <div class="hero-card__analyzed-badge">
+      <span class="hero-card__analyzed-dot"></span>
+      Analyzed
+    </div>
+  </div>
+
+  <!-- Score ring — centered, large -->
+  <div class="hero-card__ring-wrap">
+    <div class="hero-card__ring-glow" [style.background]="ringGlow()"></div>
+    <app-score-ring [score]="report().overall_score" [size]="160" [radius]="68" />
+    <div class="hero-card__score-out-of">out of 100</div>
+  </div>
+
+  <!-- Verdict badge -->
+  <div class="hero-card__verdict" [ngClass]="verdictData().css">
+    {{ verdictData().emoji }} {{ verdictData().label }}
+  </div>
+
+  <!-- Roast headline -->
+  <h2 class="hero-card__headline">"{{ report().roast_title }}"</h2>
+
+  <!-- Quick summary sentence -->
+  <p class="hero-card__summary">{{ summary() }}</p>
+
+  <!-- Action row -->
+  <div class="hero-card__actions">
+    <a routerLink="/analyze" class="hero-card__btn-primary">
+      🔥 Roast Another
+    </a>
+    <button type="button" class="hero-card__btn-ghost" (click)="copyShareLink()">
+      {{ copied() ? '✓ Copied!' : '🔗 Share Report' }}
+    </button>
+  </div>
+
+</div>
