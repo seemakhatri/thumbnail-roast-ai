@@ -1,11 +1,11 @@
-// roast-card.ts
 import { Component, input } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ThumbnailReport } from '../../../../core/models/report.model';
+import { LucideAngularModule, Flame } from 'lucide-angular';
 
 @Component({
   selector: 'app-roast-card',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './roast-card.html',
   styleUrl: './roast-card.scss',
   animations: [
@@ -19,4 +19,8 @@ import { ThumbnailReport } from '../../../../core/models/report.model';
 })
 export class RoastCard {
   readonly report = input.required<ThumbnailReport>();
+
+  readonly icons = {
+    flame: Flame,
+  };
 }

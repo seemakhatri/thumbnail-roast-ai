@@ -2,12 +2,13 @@ import { Component, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ThumbnailReport } from '../../../../core/models/report.model';
 import { Toast } from '../../../../core/services/toast';
+import { LucideAngularModule, Share2, Twitter, Flame } from 'lucide-angular';
 
 export type ResultsTab = 'overview' | 'recommendations' | 'competitor';
 
 @Component({
   selector: 'app-share-actions',
-  imports: [RouterLink],
+  imports: [RouterLink, LucideAngularModule],
   templateUrl: './share-actions.html',
   styleUrl: './share-actions.scss',
 })
@@ -20,17 +21,23 @@ export class ShareActions {
 
   readonly activeTab = signal<ResultsTab>('overview');
 
-  setTab(tab: ResultsTab): void {
-    this.activeTab.set(tab);
-    const sectionId =
-      tab === 'recommendations'
-        ? 'recommendations-section'
-        : tab === 'competitor'
-          ? 'competitor-section'
-          : 'overview-section';
+  readonly icons = {
+    share: Share2,
+    twitter: Twitter,
+    flame: Flame,
+  };
 
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+setTab(tab: ResultsTab): void {
+  this.activeTab.set(tab);
+  const sectionId =
+    tab === 'recommendations'
+      ? 'recommendations-section'
+      : tab === 'competitor'
+        ? 'competitor-section'
+        : 'overview-section';
+
+  document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
   async copyShareLink(): Promise<void> {
     const slug = this.report()?.share_slug;

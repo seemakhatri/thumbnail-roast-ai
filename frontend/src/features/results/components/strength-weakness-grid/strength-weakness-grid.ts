@@ -1,11 +1,11 @@
-// strength-weakness-grid.ts
 import { Component, input } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ThumbnailReport } from '../../../../core/models/report.model';
+import { LucideAngularModule, CheckCircle, AlertCircle, Check, X } from 'lucide-angular';
 
 @Component({
   selector: 'app-strength-weakness-grid',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './strength-weakness-grid.html',
   styleUrl: './strength-weakness-grid.scss',
   animations: [
@@ -25,4 +25,11 @@ import { ThumbnailReport } from '../../../../core/models/report.model';
 })
 export class StrengthWeaknessGrid {
   readonly report = input.required<ThumbnailReport>();
+
+  readonly icons = {
+    checkCircle: CheckCircle,
+    alertCircle: AlertCircle,
+    check: Check,
+    x: X,
+  };
 }

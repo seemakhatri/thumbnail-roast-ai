@@ -1,60 +1,80 @@
-// features-section.scss
-// MetaLumna approach: left-aligned section header, cards are just border boxes,
-// no glows inside the section, steps feel editorial not decorative.
+.features{
 
-// ─── SHELL ───────────────────────────────────────────────────────────────────
-.features {
-  padding: 140px 24px 140px;
-  max-width: 1120px;
-  margin: 0 auto;
-  position: relative;
+    padding:140px 32px;
+
+    max-width:1120px;
+
+    margin:auto;
+
+    position:relative;
 }
 
-// No bg effects inside features — the overall page bg handles atmosphere
-.features__bg { display: none; }
-.features__glow-left { display: none; }
-.features__glow-right { display: none; }
-
-// ─── HEADER — left-aligned, MetaLumna editorial feel ─────────────────────────
 .features__header {
   position: relative;
   z-index: 1;
-  margin-bottom: 72px;
-  max-width: 640px; // Constrain for readability
+
+  max-width: 620px;
+
+  margin-bottom: 80px;
+
+  text-align: left;
 }
 
-// Centered eyebrow for this section (consistent with MetaLumna's centered labels)
-.features__eyebrow {
-  display: block;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 3.5px;
+.features__badge {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 20px;
+  color: var(--accent);
+  margin-bottom: 18px;
+  backdrop-filter: blur(8px);
 }
 
-.features__eyebrow-line { display: none; } // Removed — MetaLumna doesn't use these
 
 .features__title {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(30px, 4.2vw, 50px);
-  font-weight: 800;
-  letter-spacing: -1.8px;
-  line-height: 1.06;
-  margin-bottom: 16px;
+
+  font-family: var(--font-display);
+
+  font-size: clamp(2rem, 3.5vw, 2.9rem);
+
+  font-weight: 600;
+
+  letter-spacing: -0.03em;
+
+  line-height: 1.08;
+
+  color: var(--text);
+
+  margin-bottom: 22px;
+
+  max-width: 620px;
 }
 
 .features__sub {
-  font-size: 15px;
-  color: var(--muted2);
-  max-width: 440px;
-  line-height: 1.75;
-  font-weight: 300;
-}
 
+  font-family: var(--font-body);
+
+  font-size: clamp(.9rem,1.2vw,1.05rem);
+
+  font-weight: 400;
+
+  color: var(--muted);
+
+  line-height: 1.7;
+
+  max-width: 520px;
+
+  margin: 0;
+}
 // ─── HOW IT WORKS STEPS ──────────────────────────────────────────────────────
-// MetaLumna-style: cards just have a border, minimal inner decoration
 .features__steps {
   position: relative;
   z-index: 1;
@@ -63,7 +83,7 @@
   gap: 0;
   margin-bottom: 80px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
@@ -71,121 +91,134 @@
   padding: 32px 28px;
   display: flex;
   flex-direction: column;
-  gap: 0;
   position: relative;
+  transition: background 0.2s;
 
-  &:not(:last-child) {
-    border-right: 1px solid var(--border);
-  }
-
-  // Hover: barely-there background shift
-  &:hover {
-    background: rgba(255, 255, 255, 0.015);
-  }
+  &:not(:last-child) { border-right: 1px solid var(--border); }
+  &:hover { background: rgba(255, 255, 255, 0.02); }
 }
 
-// Step number: tiny, muted, just a counter
+.features__step-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
 .features__step-num {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   color: var(--muted);
   letter-spacing: 1px;
-  margin-bottom: 16px;
-  // Just the number, no circle decoration
 }
 
+.features__step-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 77, 0, 0.1);
+  border: 1px solid rgba(255, 77, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.features__step-icon { color: var(--accent2); }
+
 .features__step-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
   margin-bottom: 10px;
   letter-spacing: -0.3px;
-  color: var(--text);
+  color: var(--accent);
 }
 
 .features__step-desc {
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--muted2);
   line-height: 1.65;
   font-weight: 300;
 }
 
-// Arrow removed — MetaLumna doesn't use decorative arrows
-.features__step-arrow { display: none; }
 .features__step-body { flex: 1; }
 
-// ─── FEATURE GRID — MetaLumna card style: just border, bg is surface ──────────
+// ─── FEATURE GRID ────────────────────────────────────────────────────────────
 .features__grid {
   position: relative;
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   margin-bottom: 56px;
-  // Grid gaps replaced by inner borders for MetaLumna look
-  background: var(--border); // Shows through as grid lines
+  background: var(--border);
 }
 
 .features__cell {
-  background: var(--bg); // Match page bg — cards emerge from bg, not surface
+  background: var(--bg);
   padding: 36px 32px;
-  transition: background 0.2s;
+    border: 1px solid var(--border);
+  transition: background 0.2s, transform 0.2s, box-shadow 0.25s;
   position: relative;
 
   &:hover {
     background: var(--surface);
+    transform: translateY(-2px);
   }
 }
 
-// Icon: simple emoji container, minimal styling
 .features__icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
   margin-bottom: 18px;
-  // Use the dynamic background from component, keep border subtle
+  transition: transform 0.25s var(--ease);
 }
 
+.features__cell {
+  background: var(--bg);
+  padding: 36px 32px;
+  position: relative;
+   border: 0.6px solid var(--border);
+
+  transition:
+    background .2s ease,
+    border-color .2s ease;
+
+  &:hover {
+    background: var(--surface2);
+  }
+}
+
+.features__icon-svg { color: var(--text); }
+
 .features__name {
-  font-family: 'Syne', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
   margin-bottom: 10px;
   letter-spacing: -0.3px;
-  color: var(--text);
+  color: var(--accent);
 }
 
 .features__desc {
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--muted2);
   line-height: 1.7;
   font-weight: 300;
 }
 
-.features__badge {
-  display: inline-flex;
-  margin-top: 12px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--purple);
-  background: rgba(168, 85, 247, 0.08);
-  border: 1px solid rgba(168, 85, 247, 0.18);
-  padding: 3px 8px;
-  border-radius: 4px;
-}
-
 // ─── METRICS STRIP ───────────────────────────────────────────────────────────
-// MetaLumna uses simple horizontal strips with label + chips
 .features__metrics {
   position: relative;
   z-index: 1;
@@ -193,13 +226,14 @@
   align-items: center;
   gap: 20px;
   padding: 22px 28px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border);
-  background: transparent; // Just a border, no fill
+  background: transparent;
   flex-wrap: wrap;
 }
 
 .features__metrics-label {
+  font-family: var(--font-mono);
   font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 2px;
@@ -221,6 +255,7 @@
   border-radius: 6px;
   background: transparent;
   border: 1px solid var(--border);
+  font-family: var(--font-body);
   font-size: 11.5px;
   color: var(--muted2);
   font-weight: 400;
@@ -236,30 +271,19 @@
 
 // ─── RESPONSIVE ──────────────────────────────────────────────────────────────
 @media (max-width: 900px) {
-  .features__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .features__steps {
-    grid-template-columns: 1fr;
-  }
+  .features__grid { grid-template-columns: repeat(2, 1fr); }
+  .features__steps { grid-template-columns: 1fr; }
 
   .features__step {
     border-right: none !important;
     border-bottom: 1px solid var(--border);
-
     &:last-child { border-bottom: none; }
   }
 }
 
 @media (max-width: 580px) {
-  .features {
-    padding: 80px 16px;
-  }
-
-  .features__grid {
-    grid-template-columns: 1fr;
-  }
+  .features { padding: 80px 16px; }
+  .features__grid { grid-template-columns: 1fr; }
 
   .features__metrics {
     flex-direction: column;
@@ -273,72 +297,5 @@
     padding-bottom: 14px;
     border-bottom: 1px solid var(--border);
     width: 100%;
-  }
-}
-
-
-// ─── STEP NUMBER WITH ICON ────────────────────────────────────────────────────
-.features__step-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  width: 100%;
-}
-
-.features__step-num {
-  font-family: 'Syne', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--muted);
-  letter-spacing: 1px;
-}
-
-.features__step-icon-wrapper {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 77, 0, 0.08);
-  border: 1px solid rgba(255, 77, 0, 0.15);
-  flex-shrink: 0;
-}
-
-.features__step-icon {
-  color: #ff4d00;
-}
-
-// ─── FEATURE ICONS ──────────────────────────────────────────────────────────────
-.features__icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 18px;
-}
-
-.features__icon-svg {
-  color: var(--text);
-}
-
-// ─── RESPONSIVE UPDATES ──────────────────────────────────────────────────────
-@media (max-width: 900px) {
-  // ... existing styles ...
-  
-  .features__step-top {
-    flex-direction: row;
-    align-items: center;
-  }
-}
-
-@media (max-width: 580px) {
-  // ... existing styles ...
-  
-  .features__step-top {
-    margin-bottom: 12px;
   }
 }

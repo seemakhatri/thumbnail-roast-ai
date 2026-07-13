@@ -1,14 +1,13 @@
-<!-- priority-recommendation.html -->
 @if (topRec()) {
   <div class="priority-rec" [@slideUp]>
     <div class="priority-rec__label">
-      <span class="priority-rec__label-dot">⚡</span>
+      <lucide-angular [img]="icons.zap" size="14" class="priority-rec__label-icon" />
       Highest Impact Fix
     </div>
     <h3 class="priority-rec__title">{{ topRec()!.title }}</h3>
     <p class="priority-rec__body">{{ topRec()!.description }}</p>
     <div class="priority-rec__impact">
-      <span class="priority-rec__impact-dot">↑</span>
+      <lucide-angular [img]="icons.trendingUp" size="16" class="priority-rec__impact-icon" />
       {{ topRec()!.impact }}
     </div>
   </div>

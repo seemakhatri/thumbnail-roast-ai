@@ -231,12 +231,16 @@ Deno.serve(async (req: Request) => {
       ...(reportC ? [{ ...reportC, label: "C" as const }] : []),
     ];
 
-    return jsonResponse({
-      thumbnails,
-      winner: winnerId,
-      verdict,
-      recurringPattern,
-    });
+return jsonResponse(
+  {
+    thumbnails,
+    winner: winnerId,
+    verdict,
+    recurringPattern,
+  },
+  200,
+  req,
+);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Internal server error";
     console.error("Unhandled error in compare-thumbnails:", message);

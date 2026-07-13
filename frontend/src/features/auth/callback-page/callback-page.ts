@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { Supabase } from '../../../core/services/supabase';
@@ -9,63 +9,75 @@ import { Supabase } from '../../../core/services/supabase';
   templateUrl: './callback-page.html',
   styleUrl: './callback-page.scss',
 })
-export class CallbackPage {
+export class CallbackPage implements OnInit {
   private readonly supabase = inject(Supabase);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
- 
+
   readonly state = signal<'loading' | 'success' | 'error'>('loading');
   readonly errorMessage = signal<string>('');
- 
-async ngOnInit() {
-  const code = this.route.snapshot.queryParamMap.get('code');
 
-  if (code) {
-    const { error } =
-      await this.supabase.client.auth.exchangeCodeForSession(code);
+  async ngOnInit() {
+    const queryError = this.route.snapshot.queryParamMap.get('error');
+    const queryErrorDesc = this.route.snapshot.queryParamMap.get('error_description');
+
+    const hash = window.location.hash?.startsWith('#')
+      ? window.location.hash.slice(1)
+      : window.location.hash;
+
+    const hashParams = new URLSearchParams(hash);
+
+    const hashError = hashParams.get('error');
+    const hashErrorDesc = hashParams.get('error_description');
+
+    const error = queryError ?? hashError;
+    const errorDescription = queryErrorDesc ?? hashErrorDesc;
 
     if (error) {
+      console.error('[CallbackPage] OAuth error:', error, errorDescription);
+
       this.state.set('error');
-      this.errorMessage.set(error.message);
+
+      this.errorMessage.set(
+        errorDescription
+          ? decodeURIComponent(errorDescription.replace(/\+/g, ' '))
+          : `Sign-in failed (${error}). Please try again.`,
+      );
+
       return;
     }
-  }
 
-  this.watchAuth();
-}
+    // 👇 ADD THIS ENTIRE BLOCK HERE
 
+    try {
+      await this.supabase.waitForAuthReady();
 
-  private watchAuth(): void {
-    // Poll every 300ms until authLoading is false (max 10s)
-    let attempts = 0;
-    const MAX = 33;
- 
-    const check = () => {
-      attempts++;
- 
-      if (this.supabase.authLoading()) {
-        if (attempts < MAX) {
-          setTimeout(check, 300);
-        } else {
-          this.state.set('error');
-          this.errorMessage.set('Authentication timed out. Please try again.');
-        }
+      const {
+        data: { session },
+      } = await this.supabase.client.auth.getSession();
+
+      if (session) {
+        this.state.set('success');
+
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/dashboard';
+
+        setTimeout(() => {
+          this.router.navigateByUrl(returnUrl);
+        }, 800);
+
         return;
       }
- 
-      if (this.supabase.isLoggedIn()) {
-        this.state.set('success');
-        const returnUrl =
-          this.route.snapshot.queryParamMap.get('returnUrl') ?? '/dashboard';
-        setTimeout(() => this.router.navigateByUrl(returnUrl), 900);
-      } else {
-        this.state.set('error');
-        this.errorMessage.set(
-          this.supabase.authError() ?? 'Sign-in was cancelled or failed.'
-        );
-      }
-    };
- 
-    setTimeout(check, 300);
+
+      this.state.set('error');
+      this.errorMessage.set('Unable to restore login session.');
+    } catch (err) {
+      console.error(err);
+
+      this.state.set('error');
+
+      this.errorMessage.set(
+        err instanceof Error ? err.message : 'Unexpected authentication error.',
+      );
+    }
   }
 }

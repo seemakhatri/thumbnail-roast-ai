@@ -1,4 +1,3 @@
-// pricing-section.scss
 // ─── SHELL ───────────────────────────────────────────────────────────────────
 .pricing {
   padding: 140px 24px 140px;
@@ -14,30 +13,55 @@
 }
 
 .pricing__eyebrow {
-  display: block;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 3.5px;
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 20px;
+  color: var(--accent);
+  margin-bottom: 18px;
+  backdrop-filter: blur(8px);
 }
 
 .pricing__title {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(30px, 4.2vw, 50px);
-  font-weight: 800;
-  letter-spacing: -1.8px;
-  line-height: 1.06;
-  margin-bottom: 16px;
+  font-family: var(--font-display);
+
+  font-size: clamp(2rem, 3.5vw, 2.9rem);
+
+  font-weight: 600;
+
+  letter-spacing: -0.03em;
+
+  line-height: 1.08;
+
+  color: var(--text);
+
+  margin-bottom: 22px;
+
+  max-width: 620px;
 }
 
 .pricing__sub {
-  font-size: 15px;
-  color: var(--muted2);
-  max-width: 440px;
-  line-height: 1.75;
-  font-weight: 300;
+  font-family: var(--font-body);
+
+  font-size: clamp(.9rem,1.2vw,1.05rem);
+
+  font-weight: 400;
+
+  color: var(--muted);
+
+  line-height: 1.7;
+
+  max-width: 520px;
+
+  margin: 0;
 }
 
 // ─── CAROUSEL WRAPPER ──────────────────────────────────────────────────────
@@ -48,7 +72,7 @@
 
 .pricing__carousel-track {
   display: flex;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s var(--ease);
 }
 
 // ─── GRID ────────────────────────────────────────────────────────────────────
@@ -57,8 +81,6 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 1px;
   background: var(--border);
-  border-radius: 16px;
-  overflow: hidden;
   border: 1px solid var(--border);
   margin-bottom: 28px;
   align-items: stretch;
@@ -71,15 +93,16 @@
   position: relative;
   padding: 36px 28px;
   background: var(--bg);
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.2s;
   min-width: 0;
 
   &:hover {
     background: var(--surface);
+    transform: translateY(-2px);
   }
 
   &--featured {
-    background: rgba(255, 77, 0, 0.03);
+    background: rgba(255, 77, 0, 0.035);
     position: relative;
 
     &::before {
@@ -93,20 +116,18 @@
     }
 
     &:hover {
-      background: rgba(255, 77, 0, 0.05);
+      background: rgba(255, 77, 0, 0.06);
     }
   }
 
-  &--current {
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--green);
-    }
+  &--current::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--green);
   }
 }
 
@@ -116,27 +137,28 @@
   top: 16px;
   right: 16px;
   padding: 3px 10px;
-  border-radius: 6px;
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
 
   &--popular {
-    background: rgba(255, 77, 0, 0.1);
+    background: rgba(255, 77, 0, 0.12);
     color: var(--accent2);
-    border: 1px solid rgba(255, 77, 0, 0.2);
+    border: 1px solid rgba(255, 77, 0, 0.24);
   }
 
   &--current {
-    background: rgba(34, 197, 94, 0.08);
+    background: rgba(34, 197, 94, 0.1);
     color: var(--green);
-    border: 1px solid rgba(34, 197, 94, 0.2);
+    border: 1px solid rgba(34, 197, 94, 0.24);
   }
 }
 
 // ─── PLAN NAME ───────────────────────────────────────────────────────────────
 .pricing__plan-name {
+  font-family: var(--font-mono);
   font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 2.5px;
@@ -154,16 +176,16 @@
 }
 
 .pricing__dollar {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 18px;
   color: var(--muted2);
   padding-bottom: 10px;
 }
 
 .pricing__amount {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 48px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1;
   letter-spacing: -2px;
   color: var(--text);
@@ -177,6 +199,7 @@
 }
 
 .pricing__period {
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--muted);
   padding-bottom: 12px;
@@ -184,6 +207,7 @@
 
 // ─── TAGLINE ─────────────────────────────────────────────────────────────────
 .pricing__tagline {
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--muted2);
   margin-bottom: 24px;
@@ -212,26 +236,24 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--muted2);
   font-weight: 300;
   line-height: 1.5;
 
   &--off {
-    opacity: 0.38;
+    opacity: 0.4;
   }
 }
 
 .pricing__feature-icon {
   color: var(--green);
-  font-size: 12px;
   flex-shrink: 0;
-  font-weight: 600;
   margin-top: 1px;
 
   .pricing__feature--off & {
     color: var(--muted);
-    font-weight: 400;
   }
 }
 
@@ -243,13 +265,13 @@
 .pricing__btn {
   width: 100%;
   padding: 12px;
-  border-radius: 9px;
+  font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
   transition: all 0.2s;
   letter-spacing: -0.1px;
+  border: none;
 
   &:disabled {
     cursor: not-allowed;
@@ -262,31 +284,31 @@
     color: var(--muted2);
 
     &:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.04);
+      background: var(--surface2);
       color: var(--text);
-      border-color: rgba(255, 255, 255, 0.2);
+      border-color: var(--border2);
     }
   }
 
   &--current {
-    background: rgba(34, 197, 94, 0.08);
-    border: 1px solid rgba(34, 197, 94, 0.2);
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.24);
     color: var(--green);
     cursor: default;
 
     &:hover {
-      background: rgba(34, 197, 94, 0.12);
+      background: rgba(34, 197, 94, 0.14);
     }
   }
 
   &--included {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--surface2);
     border: 1px solid var(--border);
     color: var(--muted);
     cursor: default;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--surface2);
     }
   }
 
@@ -297,9 +319,10 @@
     font-weight: 700;
 
     &:hover:not(:disabled) {
-      background: #fff;
+      background: var(--accent);
+      color: #fff;
       transform: translateY(-1px);
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+      box-shadow: var(--shadow-lift);
     }
 
     &:active:not(:disabled) {
@@ -320,7 +343,6 @@
 .pricing__arrow {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
   border: 1px solid var(--border2);
   background: var(--surface);
   color: var(--muted2);
@@ -333,7 +355,7 @@
 
   &:hover:not(:disabled) {
     background: var(--surface2);
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--border2);
     color: var(--text);
   }
 
@@ -352,7 +374,6 @@
 .pricing__dot {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
   background: var(--border2);
   border: none;
   cursor: pointer;
@@ -362,7 +383,6 @@
   &--active {
     background: var(--accent);
     width: 24px;
-    border-radius: 4px;
   }
 
   &:hover:not(.pricing__dot--active) {
@@ -373,18 +393,19 @@
 // ─── ERROR ───────────────────────────────────────────────────────────────────
 .pricing__error {
   text-align: center;
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--red);
   margin-top: 12px;
   padding: 10px 16px;
-  border-radius: 8px;
-  background: rgba(239, 68, 68, 0.06);
-  border: 1px solid rgba(239, 68, 68, 0.16);
+  background: rgba(239, 68, 68, 0.07);
+  border: 1px solid rgba(239, 68, 68, 0.18);
 }
 
 // ─── TRUST NOTE ──────────────────────────────────────────────────────────────
 .pricing__trust {
   text-align: center;
+  font-family: var(--font-body);
   font-size: 12px;
   color: var(--muted);
   margin-top: 24px;
@@ -392,14 +413,11 @@
 }
 
 // ─── RESPONSIVE ──────────────────────────────────────────────────────────────
-
-// Tablet: Show 2 cards at a time with arrows
 @media (max-width: 1024px) {
   .pricing__grid {
     grid-template-columns: repeat(4, 1fr);
     width: 400%;
     flex-shrink: 0;
-    border-radius: 0;
     border: none;
     margin-bottom: 0;
   }
@@ -407,7 +425,6 @@
   .pricing__card {
     border-right: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
-    border-radius: 0 !important;
 
     &:last-child {
       border-right: none;
@@ -416,7 +433,6 @@
 
   .pricing__carousel-wrapper {
     border: 1px solid var(--border);
-    border-radius: 16px;
     overflow: hidden;
     background: var(--bg);
   }
@@ -430,7 +446,6 @@
   }
 }
 
-// Mobile: Show 1 card at a time
 @media (max-width: 640px) {
   .pricing {
     padding: 80px 16px;
@@ -470,7 +485,6 @@
   }
 }
 
-// Desktop: Show all 4 cards with arrows hidden (no need for arrows)
 @media (min-width: 1025px) {
   .pricing__grid {
     grid-template-columns: repeat(4, 1fr);
@@ -481,7 +495,6 @@
     width: 100%;
   }
 
-  // Hide controls on desktop since all plans are visible
   .pricing__controls {
     display: none;
   }

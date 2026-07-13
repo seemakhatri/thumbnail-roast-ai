@@ -11,69 +11,82 @@
 
 .loading-glow {
   position: absolute;
-  top: -60px; left: 50%; transform: translateX(-50%);
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(255,77,0,0.08), transparent 65%);
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 77, 0, 0.08), transparent 65%);
   border-radius: 50%;
   animation: loadingGlow 3s ease-in-out infinite;
   pointer-events: none;
 }
 
 @keyframes loadingGlow {
-  0%,100% { opacity:0.6; transform:translateX(-50%) scale(1); }
-  50%      { opacity:1;   transform:translateX(-50%) scale(1.2); }
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
 }
 
 .thumb-scanning {
   width: min(100%, 520px);
   aspect-ratio: 16 / 9;
-
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   position: relative;
-
-  border: 1px solid rgba(255,77,0,0.35);
-
-  box-shadow:
-    0 0 40px rgba(255,77,0,0.2),
-    0 20px 60px rgba(0,0,0,0.4);
-
+  border: 1px solid rgba(255, 77, 0, 0.35);
+  box-shadow: 0 0 40px rgba(255, 77, 0, 0.2), 0 20px 60px rgba(0, 0, 0, 0.4);
   transition: all 0.3s ease;
 }
 
 .thumb-scan-img-real {
-  width: 100%; height: 100%; object-fit: cover; display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .scan-line {
-  position: absolute; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255,77,0,0.9), transparent);
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 77, 0, 0.9), transparent);
   animation: scanDown 2s linear infinite;
-  box-shadow: 0 0 8px rgba(255,77,0,0.6);
+  box-shadow: 0 0 8px rgba(255, 77, 0, 0.6);
 }
 
 @keyframes scanDown {
-  0%   { top: 0;    opacity: 0; }
-  5%   { opacity: 1; }
-  95%  { opacity: 1; }
+  0% { top: 0; opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
   100% { top: 100%; opacity: 0; }
 }
 
 .scan-corners {
-  position: absolute; inset: 0;
+  position: absolute;
+  inset: 0;
+
   &::before, &::after {
     content: '';
     position: absolute;
-    width: 12px; height: 12px;
-    border-color: rgba(255,77,0,0.75);
+    width: 12px;
+    height: 12px;
+    border-color: rgba(255, 77, 0, 0.75);
     border-style: solid;
   }
   &::before { top: 4px; left: 4px; border-width: 2px 0 0 2px; }
-  &::after  { bottom: 4px; right: 4px; border-width: 0 2px 2px 0; }
+  &::after { bottom: 4px; right: 4px; border-width: 0 2px 2px 0; }
 }
 
-.loading-icon { font-size: 40px; animation: flicker 1.5s ease-in-out infinite; }
-@keyframes flicker { 0%,100% { transform:scale(1); } 50% { transform:scale(1.1); } }
+.loading-icon {
+  font-size: 40px;
+  animation: flicker 1.5s ease-in-out infinite;
+}
+
+@keyframes flicker {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
 
 // Status list
 .loading-status-list {
@@ -88,22 +101,24 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--muted);
   padding: 7px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   transition: all 0.3s;
 
   &.active {
     color: var(--text);
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
   &.done { color: var(--green); }
 }
 
 .status-dot {
-  width: 7px; height: 7px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--border2);
   flex-shrink: 0;
@@ -111,7 +126,7 @@
 
   .status-item.active & {
     background: var(--accent);
-    box-shadow: 0 0 6px rgba(255,77,0,0.5);
+    box-shadow: 0 0 6px rgba(255, 77, 0, 0.5);
     animation: pulse 1s infinite;
   }
   .status-item.done & {
@@ -121,12 +136,17 @@
   }
 }
 
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 // Progress bar
 .loading-bar-bg {
   width: 100%;
   max-width: 280px;
   height: 4px;
-  background: rgba(255,255,255,0.07);
+  background: rgba(255, 255, 255, 0.07);
   border-radius: 100px;
   overflow: hidden;
 }

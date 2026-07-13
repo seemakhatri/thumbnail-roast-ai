@@ -1,15 +1,7 @@
+# supabase/config.toml
+
 [edge_runtime]
 enabled = true
-
-[functions.create-checkout]
-enabled = true
-verify_jwt = false
-entrypoint = "./functions/create-checkout/index.ts"
-
-[functions.stripe-webhook]
-enabled = true
-verify_jwt = false
-entrypoint = "./functions/stripe-webhook/index.ts"
 
 [functions.analyze-thumbnail]
 enabled = true
@@ -20,6 +12,11 @@ entrypoint = "./functions/analyze-thumbnail/index.ts"
 enabled = true
 verify_jwt = true
 entrypoint = "./functions/compare-thumbnails/index.ts"
+
+[functions.create-checkout]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/create-checkout/index.ts"
 
 [functions.dashboard]
 enabled = true
@@ -36,7 +33,32 @@ enabled = true
 verify_jwt = false
 entrypoint = "./functions/get-report/index.ts"
 
+[functions.stripe-webhook]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/stripe-webhook/index.ts"
+
+[functions.youtube-connect]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/youtube-connect/index.ts"
+
 [functions.youtube-sync]
 enabled = true
 verify_jwt = true
 entrypoint = "./functions/youtube-sync/index.ts"
+
+[functions.content]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/content/index.ts"
+
+[functions.llms-txt]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/llms-txt/index.ts"
+
+[functions.sitemap]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/sitemap/index.ts"

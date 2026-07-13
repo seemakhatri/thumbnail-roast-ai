@@ -37,7 +37,14 @@ export class Supabase {
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
-      this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
+this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey, {
+  auth: {
+    detectSessionInUrl: true,
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});
+
       this.initAuthListener();
     } else {
       this.authLoading.set(false);
@@ -130,17 +137,29 @@ export class Supabase {
     this.currentUser.set(data as AppUser);
   }
 
-  // ── OAuth ───────────────────────────────────────────────────────────────
   async signInWithGoogle(): Promise<void> {
     this.authError.set(null);
-    const { error } = await this.client.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: { access_type: 'offline', prompt: 'consent' },
-      },
-    });
-    if (error) this.authError.set(error.message);
+
+    try {
+      const { error } = await this.client.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+
+      if (error) {
+        this.authError.set(error.message);
+        throw error;
+      }
+    } catch (err) {
+      console.error('[Supabase] Google Sign-In Error:', err);
+      throw err;
+    }
   }
 
   async signOut(): Promise<void> {
@@ -207,60 +226,42 @@ export class Supabase {
 
     return (await response.json()) as ThumbnailReport[];
   }
-  async syncYouTube(accessToken: string): Promise<{ videos_synced: number; total_videos: number }> {
-    const {
-      data: { session },
-    } = await this.client.auth.getSession();
-    const jwt = session?.access_token;
-    if (!jwt) throw new Error('Not signed in');
-
-    const response = await fetch(`${environment.supabaseUrl}/functions/v1/youtube-sync`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        apikey: environment.supabaseAnonKey,
-        Authorization: `Bearer ${jwt}`,
-      },
-      body: JSON.stringify({ accessToken }),
-    });
-
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error((err as any).error ?? 'YouTube sync failed');
-    }
-
-    return response.json();
-  }
 
   async connectYouTube(): Promise<void> {
     this.authError.set(null);
 
+    // FIX: additional OAuth scopes belong in `options.scopes` (a
+    // dedicated field Supabase merges into the authorize URL), NOT inside
+    // `queryParams.scope`. GoTrue builds its own `scope` query param from
+    // options.scopes + the provider's default scopes; a `scope` key
+    // stuffed into queryParams competes with that and can get dropped —
+    // which is exactly why provider_token / provider_refresh_token were
+    // coming back without YouTube access. access_type/prompt ARE plain
+    // Google query params (not OAuth scopes), so those correctly stay in
+    // queryParams.
     const { data, error } = await this.client.auth.signInWithOAuth({
       provider: 'google',
       options: {
         skipBrowserRedirect: true,
         redirectTo: `${window.location.origin}/auth/youtube-callback`,
+        scopes: [
+          'https://www.googleapis.com/auth/youtube.readonly',
+          'https://www.googleapis.com/auth/yt-analytics.readonly',
+        ].join(' '),
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
-          scope: [
-            'openid',
-            'email',
-            'profile',
-            'https://www.googleapis.com/auth/youtube.readonly',
-            'https://www.googleapis.com/auth/yt-analytics.readonly',
-          ].join(' '),
         },
       },
     });
 
-    console.log(data);
-    console.log(data.url);
-
-    window.location.href = data.url!;
-
     if (error) {
       this.authError.set(error.message);
+      return;
+    }
+
+    if (data?.url) {
+      window.location.href = data.url;
     }
   }
 }

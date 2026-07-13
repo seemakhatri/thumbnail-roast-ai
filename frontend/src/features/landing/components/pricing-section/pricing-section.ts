@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { Check, X, LucideAngularModule } from 'lucide-angular';
 import { Checkout, PricingPlan } from '../../../../core/services/checkout';
 import { Supabase } from '../../../../core/services/supabase';
 
@@ -23,7 +24,7 @@ const PLAN_RANK: Record<PricingPlan, number> = {
 @Component({
   selector: 'app-pricing-section',
   standalone: true,
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './pricing-section.html',
   styleUrl: './pricing-section.scss',
 })
@@ -32,10 +33,11 @@ export class PricingSection {
   private readonly supabase = inject(Supabase);
   private readonly router = inject(Router);
 
+  readonly icons = { check: Check, x: X };
+
   readonly currentPlan = computed(() => this.supabase.userPlan() as PricingPlan);
   readonly isLoggedIn = computed(() => this.supabase.isLoggedIn());
 
-  // Carousel state
   readonly currentSlide = signal(0);
 
   getButtonLabel(planId: PricingPlan): string {
@@ -53,9 +55,7 @@ export class PricingSection {
       case 'free':
         return 'Get Started Free';
       case 'creator':
-        return 'Upgrade →';
       case 'business':
-        return 'Upgrade →';
       case 'agency':
         return 'Upgrade →';
       default:
@@ -104,17 +104,12 @@ export class PricingSection {
     void this.checkout.startCheckout(planId);
   }
 
-  // Carousel methods
   nextSlide(): void {
-    if (this.currentSlide() < 3) {
-      this.currentSlide.update(v => v + 1);
-    }
+    if (this.currentSlide() < 3) this.currentSlide.update(v => v + 1);
   }
 
   prevSlide(): void {
-    if (this.currentSlide() > 0) {
-      this.currentSlide.update(v => v - 1);
-    }
+    if (this.currentSlide() > 0) this.currentSlide.update(v => v - 1);
   }
 
   goToSlide(index: number): void {

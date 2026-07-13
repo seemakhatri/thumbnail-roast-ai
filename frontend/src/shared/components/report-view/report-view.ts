@@ -43,13 +43,12 @@ export class ReportView {
 
   private readonly supabase = inject(Supabase);
 
-  /**
-   * Only show the upgrade banner for free-plan users.
-   * Creator and Agency users have already paid — showing it to them
-   * is confusing and makes the product feel broken.
-   */
   readonly showUpgradeBanner = computed(() => {
     const plan = this.supabase.userPlan();
     return plan === 'free';
   });
+
+  
+
+  
 }

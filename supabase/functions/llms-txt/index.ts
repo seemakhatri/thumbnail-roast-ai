@@ -4,7 +4,7 @@ const BASE = "https://localhost:4200";
 
 Deno.serve(async (req: Request) => {
   const url = new URL(req.url);
-  const type = url.searchParams.get("type"); // "full" or null
+  const type = url.searchParams.get("type");
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -12,7 +12,6 @@ Deno.serve(async (req: Request) => {
     { auth: { persistSession: false } },
   );
 
-  // ── llms.txt (short, site summary) ─────────────────────────────────────
   if (type !== "full") {
     const txt = `# Thumbnail Roast — llms.txt
 # AI-readable site summary for citation optimization

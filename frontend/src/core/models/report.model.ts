@@ -16,12 +16,21 @@ export class ThumbnailReport {
   curiosity_score!: number;
   mobile_score!: number;
   contrast_score!: number;
+  composition_score!: number;
   face_score!: number;
   brand_score!: number;
+  color_score!: number;
+  visual_appeal_score!: number;
   strengths!: string[];
   weaknesses!: string[];
   recommendations!: ThumbnailAnalysis['recommendations'];
   competitor_insights!: string[];
+  thumbnail_style?: string;
+  face_present?: boolean;
+  text_present?: boolean;
+  text_count?: number;
+  has_arrow?: boolean;
+  has_circle?: boolean;
   created_at!: string;
   
   // Alias for template convenience

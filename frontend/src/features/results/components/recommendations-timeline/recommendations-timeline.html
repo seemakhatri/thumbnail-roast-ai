@@ -1,4 +1,3 @@
-<!-- recommendations-timeline.html -->
 <div class="rec-timeline">
   <div class="rec-timeline__eyebrow">Roadmap to a Better Thumbnail</div>
 
@@ -8,7 +7,9 @@
 
         <!-- Vertical line + node -->
         <div class="rec-timeline__track">
-          <div class="rec-timeline__node" [class]="nodeCss(rec.priority)"></div>
+          <div class="rec-timeline__node" [class]="nodeCss(rec.priority)">
+            <lucide-angular [img]="icons.circle" size="8" class="rec-timeline__node-icon" />
+          </div>
           @if (!last) {
             <div class="rec-timeline__line"></div>
           }
@@ -25,7 +26,7 @@
           <h4 class="rec-timeline__title">{{ rec.title }}</h4>
           <p class="rec-timeline__desc">{{ rec.description }}</p>
           <div class="rec-timeline__impact">
-            <span class="rec-timeline__impact-icon">↑</span>
+            <lucide-angular [img]="icons.trendingUp" size="14" class="rec-timeline__impact-icon" />
             {{ rec.impact }}
           </div>
         </div>

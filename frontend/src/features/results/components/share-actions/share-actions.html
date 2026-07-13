@@ -14,10 +14,19 @@
   </div>
   <div class="share-actions">
     @if (report()) {
-    <button type="button" class="btn-sm" (click)="copyShareLink()">🔗 Share Report</button>
-    <button type="button" class="btn-sm" (click)="tweetScore()">𝕏 Tweet Score</button>
+    <button type="button" class="btn-sm" (click)="copyShareLink()">
+      <lucide-angular [img]="icons.share" size="14" />
+      Share Report
+    </button>
+    <button type="button" class="btn-sm" (click)="tweetScore()">
+      <lucide-angular [img]="icons.twitter" size="14" />
+      Tweet Score
+    </button>
     }
-    <a routerLink="/analyze" class="btn-sm orange">🔥 New Analysis</a>
+    <a routerLink="/analyze" class="btn-sm orange">
+      <lucide-angular [img]="icons.flame" size="14" />
+      New Analysis
+    </a>
   </div>
 </div>
 } @else {
@@ -25,9 +34,15 @@
   <div></div>
   <div class="share-actions">
     @if (report()) {
-    <button type="button" class="btn-sm" (click)="copyShareLink()">🔗 Copy Share Link</button>
+    <button type="button" class="btn-sm" (click)="copyShareLink()">
+      <lucide-angular [img]="icons.share" size="14" />
+      Copy Share Link
+    </button>
     }
-    <a routerLink="/analyze" class="btn-sm orange">🔥 New Analysis</a>
+    <a routerLink="/analyze" class="btn-sm orange">
+      <lucide-angular [img]="icons.flame" size="14" />
+      New Analysis
+    </a>
   </div>
 </div>
 }

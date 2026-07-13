@@ -1,11 +1,11 @@
-// recommendations-timeline.ts
 import { Component, input } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ThumbnailReport } from '../../../../core/models/report.model';
+import { LucideAngularModule, Circle, TrendingUp } from 'lucide-angular';
 
 @Component({
   selector: 'app-recommendations-timeline',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './recommendations-timeline.html',
   styleUrl: './recommendations-timeline.scss',
   animations: [
@@ -20,8 +20,13 @@ import { ThumbnailReport } from '../../../../core/models/report.model';
 export class RecommendationsTimeline {
   readonly report = input.required<ThumbnailReport>();
 
+  readonly icons = {
+    circle: Circle,
+    trendingUp: TrendingUp,
+  };
+
   priorityLabel(p: string): string {
-    const map: Record<string, string> = { high: '🔴 High', medium: '🟡 Medium', low: '🔵 Low' };
+    const map: Record<string, string> = { high: 'High', medium: 'Medium', low: 'Low' };
     return map[p] ?? p;
   }
 

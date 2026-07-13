@@ -1,32 +1,26 @@
 <div class="report-view" [@pageEnter]>
-
-  <!-- Share actions bar -->
   <app-share-actions [report]="report()" [showTabs]="showTabs()" />
 
-  <!-- Hero card — score ring + thumbnail + verdict -->
-  <app-report-hero-card [report]="report()" />
+  <!-- Overview Section -->
+  <div id="overview-section" class="report-section">
+    <app-report-hero-card [report]="report()" />
+    <app-priority-recommendation [report]="report()" />
+    <app-metrics-grid [report]="report()" />
+    <app-roast-card [report]="report()" />
+    <app-strength-weakness-grid [report]="report()" />
+  </div>
 
-  <!-- ⚡ Highest impact fix -->
-  <app-priority-recommendation [report]="report()" />
+  <!-- Recommendations Section -->
+  <div id="recommendations-section" class="report-section">
+    <app-recommendations-timeline [report]="report()" />
+  </div>
 
-  <!-- 8-metric breakdown grid -->
-  <app-metrics-grid [report]="report()" />
+  <!-- Competitor Section -->
+  <div id="competitor-section" class="report-section">
+    <app-competitor-insights [report]="report()" />
+  </div>
 
-  <!-- 🔥 Roast -->
-  <app-roast-card [report]="report()" />
-
-  <!-- ✅ / ⚠️ Strengths + Weaknesses -->
-  <app-strength-weakness-grid [report]="report()" />
-
-  <!-- Prioritised recommendations -->
-  <app-recommendations-timeline [report]="report()" />
-
-  <!-- 🎯 Competitor insights -->
-  <app-competitor-insights [report]="report()" />
-
-  <!-- 🔒 Upgrade banner — only for free users -->
   @if (showUpgradeBanner()) {
     <app-upgrade-banner />
   }
-
 </div>

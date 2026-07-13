@@ -1,87 +1,203 @@
-import { Stripe } from "../_shared/deps.ts";
+import { createClient } from "../_shared/deps.ts";
+import { handleCors, jsonResponse, errorResponse } from "../_shared/cors.ts";
+import { createLogger } from "../_shared/logger.ts";
 
-// CORS Headers
-const corsHeaders = {
-    'Access-Control-Allow-Origin': Deno.env.get('ALLOWED_ORIGIN') ?? '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-};
-
-// Helper functions
-function jsonResponse(data: unknown, status = 200): Response {
-    return new Response(JSON.stringify(data), {
-        status,
-        headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-        },
-    });
-}
-
-function errorResponse(message: string, status = 500): Response {
-    return jsonResponse({ error: message }, status);
-}
-
-// Initialize Stripe
-const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!);
+const logger = createLogger("get-dashboard");
 
 Deno.serve(async (req: Request) => {
-    // Handle CORS preflight
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
+  const corsResponse = handleCors(req);
+  if (corsResponse) return corsResponse;
+
+  if (req.method !== "GET") {
+    return errorResponse("Method not allowed", 405, req);
+  }
+
+  try {
+    const authHeader = req.headers.get("Authorization");
+
+    if (!authHeader?.startsWith("Bearer ")) {
+      return errorResponse("Authorization header missing", 401, req);
     }
 
-    if (req.method !== "POST") {
-        return errorResponse("Method not allowed", 405);
+    const jwt = authHeader.substring(7);
+
+    const authClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      {
+        auth: {
+          persistSession: false,
+        },
+      },
+    );
+
+    const {
+      data: { user },
+      error: authError,
+    } = await authClient.auth.getUser(jwt);
+
+    if (authError || !user) {
+      logger.warn("Invalid token", { error: authError?.message });
+      return errorResponse("Invalid token", 401, req);
     }
 
-    try {
-        const body = await req.json();
-        const { plan, userId } = body;
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      {
+        auth: {
+          persistSession: false,
+        },
+      },
+    );
 
-        console.log("Create Checkout Request:", { plan, userId });
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("plan, analyses_used, analyses_limit")
+      .eq("id", user.id)
+      .single();
 
-        if (!plan || !userId) {
-            return errorResponse("plan and userId are required", 400);
-        }
-
-        const priceId = plan === "agency"
-            ? Deno.env.get("STRIPE_AGENCY_PRICE_ID")
-            : Deno.env.get("STRIPE_CREATOR_PRICE_ID");
-
-        console.log("Selected Price ID:", priceId);
-
-        if (!priceId) {
-            return errorResponse("Stripe price ID not configured", 500);
-        }
-
-        const origin = Deno.env.get("FRONTEND_ORIGIN") ?? "http://localhost:4200";
-
-        const session = await stripe.checkout.sessions.create({
-            mode: "subscription",
-            client_reference_id: userId,
-            metadata: {
-                userId: userId,
-                plan: plan,
-            },
-            line_items: [
-                {
-                    price: priceId,
-                    quantity: 1,
-                },
-            ],
-            success_url: `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${origin}/pricing`,
-        });
-
-        console.log("Checkout session created:", session.id);
-
-        return jsonResponse({ url: session.url });
-    } catch (error: unknown) {
-        console.error("CREATE CHECKOUT ERROR:", error);
-        return errorResponse(
-            error instanceof Error ? error.message : String(error),
-            500,
-        );
+    if (profileError) {
+      logger.error("Profile error", {
+        error: profileError.message,
+        code: profileError.code,
+        details: profileError.details,
+      });
+      return errorResponse("Failed to load profile", 500, req);
     }
+
+    const { data: reports, error: reportsError } = await supabase
+      .from("reports")
+      .select("overall_score, created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (reportsError) {
+      logger.error("Reports error", {
+        error: reportsError.message,
+        code: reportsError.code,
+        details: reportsError.details,
+      });
+      return errorResponse("Failed to load reports", 500, req);
+    }
+
+    const totalAnalyses = reports?.length || 0;
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const recentReports =
+      reports?.filter((r) => new Date(r.created_at) >= thirtyDaysAgo) || [];
+
+    const avgScore30d =
+      recentReports.length > 0
+        ? Math.round(
+            recentReports.reduce((sum, r) => sum + r.overall_score, 0) /
+              recentReports.length,
+          )
+        : 0;
+
+    // Previous 30 days for delta
+    const sixtyDaysAgo = new Date();
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+    const thirtyDaysAgoPrev = new Date();
+    thirtyDaysAgoPrev.setDate(thirtyDaysAgoPrev.getDate() - 30);
+
+    const prevReports =
+      reports?.filter(
+        (r) =>
+          new Date(r.created_at) >= sixtyDaysAgo &&
+          new Date(r.created_at) < thirtyDaysAgo,
+      ) || [];
+
+    const avgScorePrev =
+      prevReports.length > 0
+        ? Math.round(
+            prevReports.reduce((sum, r) => sum + r.overall_score, 0) /
+              prevReports.length,
+          )
+        : 0;
+
+    // Best score
+    const bestScore =
+      reports?.length > 0
+        ? Math.max(...reports.map((r) => r.overall_score))
+        : 0;
+
+    const weakestMetric = null;
+
+    const stats = {
+      avg_score_30d: avgScore30d,
+      avg_score_prev: avgScorePrev,
+      best_score: bestScore,
+      total_analyses: totalAnalyses,
+      plan: profile?.plan || "free",
+      analyses_used: profile?.analyses_used || 0,
+      analyses_limit: profile?.analyses_limit || 3,
+      weakest_metric: weakestMetric,
+    };
+
+    // ── Recent reports ──────────────────────────────────────────────────
+    const { data: recent, error: recentError } = await supabase
+      .from("reports")
+      .select(
+        `
+        id,
+        image_url,
+        overall_score,
+        verdict,
+        roast_title,
+        share_slug,
+        created_at,
+        niche
+      `,
+      )
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    if (recentError) {
+      logger.error("Recent reports error", {
+        error: recentError.message,
+        code: recentError.code,
+        details: recentError.details,
+      });
+      return errorResponse("Failed to load recent reports", 500, req);
+    }
+
+    const { data: benchmarks, error: benchmarksError } = await supabase
+      .from("niche_benchmarks")
+      .select("*")
+      .limit(20);
+
+    if (benchmarksError) {
+      logger.warn("Benchmarks error", {
+        error: benchmarksError.message,
+        code: benchmarksError.code,
+      });
+    }
+
+    return jsonResponse(
+      {
+        stats,
+        recent: recent || [],
+        benchmarks: benchmarks || [],
+      },
+      200,
+      req,
+    );
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Unexpected server error";
+    logger.error("Unhandled error", {
+      error: message,
+      ...(err instanceof Error ? { stack: err.stack } : {}),
+    });
+    return errorResponse(
+      Deno.env.get("ENV") === "production"
+        ? "An internal error occurred"
+        : message,
+      500,
+      req,
+    );
+  }
 });

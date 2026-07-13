@@ -1,8 +1,3 @@
-// hero-section.scss
-// ─── Inspiration: MetaLumna — vast vertical space, centered small eyebrow,
-//     typography does the work, one restrained glow, no decorative clutter. ──
-
-// ─── SHELL ───────────────────────────────────────────────────────────────────
 .hero {
   min-height: 100vh;
   display: flex;
@@ -10,14 +5,13 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 160px 24px 120px;
+  padding-top: 140px;
   position: relative;
   overflow: hidden;
-  // Full-width section separator at bottom
   border-bottom: 1px solid var(--border);
 }
 
-// ─── BACKGROUND — single centered glow, restrained ───────────────────────────
+// ─── BACKGROUND ──────────────────────────────────────────────────────────
 .hero__bg {
   position: absolute;
   inset: 0;
@@ -25,18 +19,17 @@
   pointer-events: none;
 }
 
-// Very subtle grid — MetaLumna uses near-invisible structure
 .hero__grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
   background-size: 72px 72px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 0%, transparent 75%);
 }
 
-// ONE glow. That's it.
 .hero__glow-primary {
   position: absolute;
   top: -320px;
@@ -44,79 +37,72 @@
   transform: translateX(-50%);
   width: 800px;
   height: 800px;
-  background: radial-gradient(ellipse at center,
-    rgba(255, 77, 0, 0.08) 0%,
-    rgba(255, 77, 0, 0.02) 45%,
-    transparent 70%
-  );
+  background: radial-gradient(ellipse at center, var(--glow) 0%, transparent 70%);
   border-radius: 50%;
+  animation: heroGlowBreathe 6s ease-in-out infinite;
 }
 
-// No secondary glow — removed the clutter
-.hero__glow-secondary { display: none; }
+@keyframes heroGlowBreathe {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.05);
+  }
+}
 
-// ─── BADGE — pill with live dot ──────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .hero__glow-primary {
+    animation: none;
+  }
+}
+
 .hero__badge {
   position: relative;
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
+  gap: 10px;
+  padding: 0;
   border-radius: 100px;
-  border: 1px solid var(--border2);
-  background: rgba(255, 255, 255, 0.03);
-  font-size: 12px;
-  color: var(--muted2);
-  font-weight: 400;
-  margin-bottom: 40px;
-  letter-spacing: 0.1px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
   backdrop-filter: blur(8px);
 }
 
-.hero__badge-dot {
-  width: 6px;
-  height: 6px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--green);
-  animation: badgePulse 2.4s ease-in-out infinite;
-}
-
 @keyframes badgePulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
-// ─── EYEBROW — MetaLumna's signature: spaced uppercase, centered ──────────────
-.hero__eyebrow {
-  position: relative;
-  z-index: 1;
-  display: block;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 3.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 28px;
-}
-
-// ─── HEADLINE — the giant thing. Type carries the personality ─────────────────
 .hero__headline {
   position: relative;
   z-index: 1;
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(44px, 7.5vw, 88px);
-  font-weight: 800;
-  line-height: 1.02;
-  letter-spacing: -3px;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.6vw, 2.9rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
   max-width: 900px;
-  margin-bottom: 28px;
+  margin: 0 auto 22px;
+  color: var(--text);
   font-style: normal;
 
   &--fire {
     font-style: italic;
-    // Gradient text on just the accent word — restrained, not the whole headline
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -124,209 +110,112 @@
   }
 }
 
-// ─── SUB COPY ────────────────────────────────────────────────────────────────
+// ─── SUB COPY ─────────────────────────────────────────────────────────────
 .hero__sub {
   position: relative;
   z-index: 1;
-  font-size: clamp(15px, 1.8vw, 18px);
-  color: var(--muted2);
-  max-width: 460px;
-  line-height: 1.75;
-  font-weight: 300;
-  margin-bottom: 48px;
+  font-family: var(--font-body);
+  font-size: clamp(0.6rem, 1.3vw, 1.15rem);
+  color: var(--muted);
+  font-style: bold;
+  max-width: 540px;
+  line-height: 1.7;
+  font-weight: 400;
+  margin: 0 auto 44px;
 }
 
 .hero__sub-br {
   display: none;
-
-  @media (min-width: 600px) { display: block; }
+  @media (min-width: 600px) {
+    display: block;
+  }
 }
 
-// ─── ACTIONS ─────────────────────────────────────────────────────────────────
+// ─── ACTIONS ──────────────────────────────────────────────────────────────
 .hero__actions {
   position: relative;
   z-index: 1;
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 72px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
-// Primary CTA — filled, bold
 .hero__cta {
   display: inline-flex;
   align-items: center;
   gap: 9px;
   padding: 14px 32px;
-  border-radius: 10px;
   border: none;
-  background: var(--text);   // White button on dark — MetaLumna style
+  background: var(--accent);
   color: var(--bg);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   letter-spacing: -0.1px;
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.22s var(--ease);
 
   &:hover {
-    background: #fff;
+    background: var(--accent);
+    color: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow-lift);
   }
 
-  &:active { transform: translateY(0); }
+  &:active {
+    transform: translateY(0);
+  }
 }
 
-.hero__cta-fire {
-  font-size: 15px;
-  line-height: 1;
+.hero__cta-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.hero__cta:hover .hero__cta-icon {
+  color: #fff;
 }
 
-// Ghost — text link style, MetaLumna uses "Learn more →"
 .hero__cta-ghost {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 14px 20px;
-  border-radius: 10px;
   border: 1px solid var(--border);
   background: transparent;
   color: var(--muted2);
   font-size: 14px;
   font-weight: 400;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   transition: all 0.2s;
 
-  ng-icon {
-    font-size: 14px;
+  .hero__cta-ghost-icon {
     transition: transform 0.3s;
   }
 
   &:hover {
     color: var(--text);
     border-color: var(--border2);
-
-    ng-icon { transform: translateY(3px); }
+    .hero__cta-ghost-icon {
+      transform: translateY(3px);
+    }
   }
 }
 
-// ─── PROOF STRIP ─────────────────────────────────────────────────────────────
-// MetaLumna keeps stats very clean — horizontal, no decorative elements
-.hero__proof {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 0;
-  // Contained pill — like MetaLumna's stat bars
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface);
-  padding: 0;
-  overflow: hidden;
-  margin-bottom: 56px;
-  flex-wrap: wrap;
-
-  @media (max-width: 600px) {
-    gap: 0;
-    border-radius: 10px;
-  }
-}
-
-.hero__proof-avatars {
-  display: flex;
-  padding: 14px 18px;
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 480px) { display: none; }
-}
-
-.hero__avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid var(--surface);
-  margin-left: -7px;
-  font-size: 10px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--accent), var(--purple));
-  color: #fff;
-
-  &:first-child { margin-left: 0; }
-}
-
-.hero__proof-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 14px 24px;
-  border-right: 1px solid var(--border);
-
-  &:last-child { border-right: none; }
-}
-
-.hero__proof-num {
-  font-family: 'Syne', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.2;
-}
-
-.hero__proof-label {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 2px;
-}
-
-.hero__proof-sep { display: none; } // Replaced by border-right on items
-
-.hero__proof-icon {
-  display: none; // Clean, no icons in the stat bar
-}
-
-// ─── SCROLL HINT ─────────────────────────────────────────────────────────────
-.hero__scroll-hint {
-  position: relative;
-  z-index: 1;
-}
-
-.hero__scroll-line {
-  width: 1px;
-  height: 44px;
-  background: linear-gradient(180deg, var(--border2) 0%, transparent 100%);
-  margin: 0 auto;
-  animation: scrollPulse 2.6s ease-in-out infinite;
-}
-
-@keyframes scrollPulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.9; }
-}
-
-// ─── RESPONSIVE ──────────────────────────────────────────────────────────────
+// ─── RESPONSIVE ────────────────────────────────────────────────────────────
 @media (max-width: 600px) {
   .hero {
-    padding: 120px 20px 80px;
+    padding: 120px 20px 72px;
   }
-
   .hero__headline {
-    letter-spacing: -2px;
+    letter-spacing: -0.02em;
   }
+}
 
-  .hero__proof {
-    width: 100%;
-  }
-
-  .hero__proof-item {
-    flex: 1;
-    padding: 12px 16px;
-  }
+.logo {
+  height: 64px;
+  width: 64px;
+  margin-bottom: 32px;
 }

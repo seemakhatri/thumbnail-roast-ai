@@ -1,11 +1,8 @@
 <section class="testimonials" id="testimonials" aria-label="Creator testimonials">
 
   <!-- Header -->
-  <div class="testimonials__header">
-    <div class="testimonials__eyebrow">
-      <span class="testimonials__eyebrow-line" aria-hidden="true"></span>
-      Creator Stories
-    </div>
+  <div class="testimonials__header fade-up d1">
+    <div class="testimonials__eyebrow">Creator Stories</div>
     <h2 class="testimonials__title">Creators who stopped guessing.</h2>
     <p class="testimonials__sub">
       From 2K to 2M subscribers — here's what happened after their first roast.
@@ -13,48 +10,41 @@
   </div>
 
   <!-- Stat pills row -->
-  <div class="testimonials__stats" role="list" aria-label="Key statistics">
+  <div class="testimonials__stats fade-up d2" role="list" aria-label="Key statistics">
     @for (stat of stats; track stat.label) {
       <div class="testimonials__stat" role="listitem">
         <span class="testimonials__stat-num">{{ stat.num }}</span>
         <span class="testimonials__stat-label">{{ stat.label }}</span>
       </div>
-      @if (!$last) {
-        <div class="testimonials__stat-sep" aria-hidden="true"></div>
-      }
     }
   </div>
 
+  <!-- Live community feed — reverse direction from the hero's marquee so
+       the two never feel like the same repeated element -->
+  <div class="testimonials__marquee fade-up d3">
+    <app-marquee [items]="communityFeed" direction="right" [speed]="46" />
+  </div>
+
   <!-- Cards -->
-  <div class="testimonials__grid" role="list">
+  <div class="testimonials__grid fade-up d4" role="list">
     @for (t of testimonials; track t.name) {
       <article class="testimonials__card" role="listitem" [attr.aria-label]="t.name + ' testimonial'">
 
-        <!-- Stars -->
         <div class="testimonials__stars" aria-label="5 out of 5 stars">
           @for (s of [1,2,3,4,5]; track s) {
-            <span aria-hidden="true">★</span>
+            <lucide-angular [img]="icons.star" size="12" aria-hidden="true" />
           }
         </div>
 
-        <!-- Result callout -->
         <div class="testimonials__result">
           <span class="testimonials__result-label">CTR change</span>
           <span class="testimonials__result-value">{{ t.ctrChange }}</span>
         </div>
 
-        <!-- Quote -->
-        <blockquote class="testimonials__quote">
-          "{{ t.quote }}"
-        </blockquote>
+        <blockquote class="testimonials__quote">"{{ t.quote }}"</blockquote>
 
-        <!-- Author -->
         <div class="testimonials__author">
-          <div
-            class="testimonials__avatar"
-            [style.background]="t.avatarGradient"
-            aria-hidden="true"
-          >{{ t.emoji }}</div>
+          <div class="testimonials__avatar" [style.background]="t.avatarGradient" aria-hidden="true">{{ t.emoji }}</div>
           <div class="testimonials__author-info">
             <div class="testimonials__name">{{ t.name }}</div>
             <div class="testimonials__handle">{{ t.handle }}</div>

@@ -1,13 +1,11 @@
-// recommendations-timeline.scss
 .rec-timeline {
   border: 1px solid var(--border);
-  border-radius: 16px;
   background: var(--surface);
   padding: 22px;
 }
 
 .rec-timeline__eyebrow {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 1.8px;
@@ -23,7 +21,6 @@
     width: 18px;
     height: 1.5px;
     background: var(--accent);
-    border-radius: 1px;
   }
 }
 
@@ -51,11 +48,17 @@
 .rec-timeline__node {
   width: 12px;
   height: 12px;
-  border-radius: 50%;
   border: 2px solid;
   flex-shrink: 0;
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rec-timeline__node-icon {
+  color: inherit;
 }
 
 .node--red    { border-color: var(--red);    background: rgba(239,68,68,0.2);  box-shadow: 0 0 8px rgba(239,68,68,0.4);  }
@@ -76,7 +79,6 @@
   padding: 14px 18px;
   margin-bottom: 14px;
   border: 1px solid var(--border);
-  border-radius: 12px;
   background: rgba(255,255,255,0.018);
   transition: border-color 0.2s, background 0.2s;
 
@@ -94,10 +96,10 @@
 }
 
 .rec-timeline__priority {
+  font-family: var(--font-body);
   font-size: 10.5px;
   font-weight: 700;
   padding: 2px 8px;
-  border-radius: 5px;
   letter-spacing: 0.3px;
 }
 
@@ -106,7 +108,7 @@
 .p--blue   { background: rgba(59,130,246,0.14); color: var(--blue);   }
 
 .rec-timeline__category {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9px;
   color: var(--muted);
   text-transform: uppercase;
@@ -114,7 +116,7 @@
 }
 
 .rec-timeline__title {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 700;
   color: var(--text);
@@ -123,6 +125,7 @@
 }
 
 .rec-timeline__desc {
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--muted2);
   line-height: 1.65;
@@ -133,12 +136,12 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  font-family: var(--font-body);
   font-size: 12px;
   color: var(--green);
   font-weight: 500;
 }
 
 .rec-timeline__impact-icon {
-  font-size: 13px;
-  font-weight: 700;
+  flex-shrink: 0;
 }

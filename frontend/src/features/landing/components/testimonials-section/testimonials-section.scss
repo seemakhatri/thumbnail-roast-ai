@@ -1,7 +1,3 @@
-// testimonials-section.scss
-// MetaLumna: stats in a clean row, cards as simple bordered containers,
-// generous whitespace, no decorative additions.
-
 // ─── SHELL ───────────────────────────────────────────────────────────────────
 .testimonials {
   padding: 140px 24px 140px;
@@ -11,48 +7,68 @@
 }
 
 // ─── HEADER ──────────────────────────────────────────────────────────────────
-.testimonials__header {
-  margin-bottom: 56px;
-}
+.testimonials__header { margin-bottom: 56px; }
 
 .testimonials__eyebrow {
-  display: block;
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 3.5px;
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 20px;
+  color: var(--accent);
+  margin-bottom: 18px;
+  backdrop-filter: blur(8px);
 }
 
-.testimonials__eyebrow-line { display: none; }
-
 .testimonials__title {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(30px, 4.2vw, 50px);
-  font-weight: 800;
-  letter-spacing: -1.8px;
-  line-height: 1.06;
-  margin-bottom: 16px;
+  font-family: var(--font-display);
+
+  font-size: clamp(2rem, 3.5vw, 2.9rem);
+
+  font-weight: 600;
+
+  letter-spacing: -0.03em;
+
+  line-height: 1.08;
+
+  color: var(--text);
+
+  margin-bottom: 22px;
+
+  max-width: 620px;
 }
 
 .testimonials__sub {
-  font-size: 15px;
-  color: var(--muted2);
-  max-width: 400px;
-  line-height: 1.75;
-  font-weight: 300;
+  font-family: var(--font-body);
+
+  font-size: clamp(.9rem,1.2vw,1.05rem);
+
+  font-weight: 400;
+
+  color: var(--muted);
+
+  line-height: 1.7;
+
+  max-width: 520px;
+
+  margin: 0;
 }
 
-// ─── STATS ROW — MetaLumna horizontal stat pill ───────────────────────────────
-// Stats sit in a single bordered container, divided by 1px lines
+// ─── STATS ROW ─────────────────────────────────────────────────────────────
 .testimonials__stats {
   display: flex;
   align-items: stretch;
   gap: 0;
-  margin-bottom: 64px;
+  margin-bottom: 40px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   width: fit-content;
   flex-wrap: wrap;
@@ -64,26 +80,27 @@
   align-items: flex-start;
   padding: 20px 28px;
   border-right: 1px solid var(--border);
-
   &:last-child { border-right: none; }
 }
 
 .testimonials__stat-num {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.5px;
-  color: var(--text); // Plain white, no gradient — MetaLumna restraint
+  color: var(--text);
   margin-bottom: 3px;
 }
 
 .testimonials__stat-label {
+  font-family: var(--font-body);
   font-size: 11.5px;
   color: var(--muted);
   font-weight: 400;
 }
 
-.testimonials__stat-sep { display: none; } // Replaced by border-right
+// ─── COMMUNITY MARQUEE ───────────────────────────────────────────────────────
+.testimonials__marquee { margin-bottom: 56px; }
 
 // ─── GRID ────────────────────────────────────────────────────────────────────
 .testimonials__grid {
@@ -91,73 +108,69 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  background: var(--border); // Shows as grid line between cards
+  background: var(--border);
 }
 
-// ─── CARD — MetaLumna: flat bg, border only ───────────────────────────────────
 .testimonials__card {
   background: var(--bg);
   padding: 32px 28px;
   display: flex;
   flex-direction: column;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.2s;
 
   &:hover {
     background: var(--surface);
+    transform: translateY(-2px);
   }
 }
 
-// ─── STARS ───────────────────────────────────────────────────────────────────
 .testimonials__stars {
+  display: flex;
+  gap: 3px;
   color: #f59e0b;
-  font-size: 11px;
-  letter-spacing: 3px;
   margin-bottom: 16px;
 }
 
-// ─── RESULT CALLOUT — keep green pill ────────────────────────────────────────
 .testimonials__result {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 4px 10px;
   border-radius: 6px;
-  background: rgba(34, 197, 94, 0.06);
-  border: 1px solid rgba(34, 197, 94, 0.14);
+  background: rgba(34, 197, 94, 0.07);
+  border: 1px solid rgba(34, 197, 94, 0.16);
   margin-bottom: 18px;
   width: fit-content;
 }
 
 .testimonials__result-label {
+  font-family: var(--font-mono);
   font-size: 10.5px;
   color: var(--muted);
   font-weight: 500;
   letter-spacing: 0.3px;
 }
-
 .testimonials__result-value {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12.5px;
   font-weight: 700;
   color: var(--green);
 }
 
-// ─── QUOTE ───────────────────────────────────────────────────────────────────
 .testimonials__quote {
+  font-family: var(--font-body);
   font-size: 13.5px;
   color: var(--muted2);
   line-height: 1.75;
-  font-style: normal; // Not italic — MetaLumna keeps body text upright
+  font-style: normal;
   flex: 1;
   margin-bottom: 22px;
-  padding: 0;
   quotes: none;
   font-weight: 300;
 }
 
-// ─── AUTHOR ──────────────────────────────────────────────────────────────────
 .testimonials__author {
   display: flex;
   align-items: center;
@@ -178,41 +191,17 @@
   flex-shrink: 0;
 }
 
-.testimonials__name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 2px;
-}
-
-.testimonials__handle {
-  font-size: 11.5px;
-  color: var(--muted);
-  font-weight: 300;
-}
+.testimonials__name { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.testimonials__handle { font-family: var(--font-body); font-size: 11.5px; color: var(--muted); font-weight: 300; }
 
 // ─── RESPONSIVE ──────────────────────────────────────────────────────────────
 @media (max-width: 900px) {
-  .testimonials__grid {
-    grid-template-columns: 1fr 1fr;
-  }
+  .testimonials__grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 580px) {
-  .testimonials {
-    padding: 80px 16px;
-  }
-
-  .testimonials__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .testimonials__stats {
-    width: 100%;
-  }
-
-  .testimonials__stat {
-    flex: 1;
-    padding: 16px 18px;
-  }
+  .testimonials { padding: 80px 16px; }
+  .testimonials__grid { grid-template-columns: 1fr; }
+  .testimonials__stats { width: 100%; }
+  .testimonials__stat { flex: 1; padding: 16px 18px; }
 }

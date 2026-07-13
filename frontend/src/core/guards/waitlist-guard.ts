@@ -1,14 +1,14 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
+
 
 export const waitlistGuard = () => {
   const router = inject(Router);
-  
-  const WAITLIST_MODE = true;
-  
-  if (WAITLIST_MODE) {
+
+  if (environment.waitlistMode) {
     return router.parseUrl('/waitlist');
   }
-  
+
   return true;
 };

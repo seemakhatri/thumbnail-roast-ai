@@ -1,263 +1,316 @@
-<section class="dashboard-page">
-  <div class="dashboard-page__header">
-    <lucide-angular [img]="icons.dashboard" size="24" class="dashboard-page__icon" />
-    <div>
-      <div class="section-label">Your Account</div>
-      <h1 class="section-title">Dashboard</h1>
-      <p class="section-sub">Track your usage and revisit past thumbnail roasts.</p>
-    </div>
-  </div>
+<div class="dash-shell">
 
-  @if (user(); as profile) {
-  <div class="dashboard-grid">
-    <div class="card card-inner dashboard-profile">
-      <div class="dashboard-profile__top">
+  <!-- ══════════════════════════ SIDEBAR ══════════════════════════ -->
+  <aside class="dash-sidebar">
+
+    @if (user(); as profile) {
+    <!-- Profile -->
+    <div class="ds-profile">
+      <div class="ds-avatar-wrap">
         @if (profile.avatar_url) {
-        <img [src]="profile.avatar_url" [alt]="profile.full_name ?? 'User'" class="dashboard-profile__avatar"
+        <img [src]="profile.avatar_url" [alt]="profile.full_name ?? 'User'" class="ds-avatar"
           referrerpolicy="no-referrer" />
         } @else {
-        <span class="dashboard-profile__avatar dashboard-profile__avatar--fallback">{{ initials() }}</span>
+        <span class="ds-avatar ds-avatar--fallback">{{ initials() }}</span>
         }
-        <div>
-          <h2 class="dashboard-profile__name">{{ profile.full_name ?? 'Creator' }}</h2>
-          <p class="dashboard-profile__email">{{ profile.email }}</p>
-        </div>
       </div>
-      <div class="dashboard-profile__meta">
-        <div class="dashboard-meta-item">
-          <span class="dashboard-meta-label">
-            <lucide-angular [img]="icons.sparkles" size="12" />
-            Plan
-          </span>
-          <span class="dashboard-plan-tag">{{ getPlanDisplayName(profile.plan) }}</span>
-        </div>
-        <div class="dashboard-meta-item">
-          <span class="dashboard-meta-label">
-            <lucide-angular [img]="icons.calendar" size="12" />
-            Member since
-          </span>
-          <span>{{ profile.created_at | date:'MMM yyyy' }}</span>
-        </div>
+      <div class="ds-profile__info">
+        <span class="ds-profile__name">{{ profile.full_name ?? 'Creator' }}</span>
+        <span class="ds-profile__email">{{ profile.email }}</span>
       </div>
+    </div>
 
-      <!-- Usage Progress Bar - Cleaner Design -->
-      <div class="dashboard-usage">
-        <div class="dashboard-usage__header">
-          <span class="dashboard-usage__label">
-            <lucide-angular [img]="icons.barChart" size="14" />
-            {{ getPlanDisplayName(profile.plan) }} Plan Usage
-          </span>
-          <span class="dashboard-usage__count">
-            {{ profile.analyses_used }} / {{ getPlanLimit(profile.plan) }} analyses
-          </span>
-        </div>
-        <div class="dashboard-usage__bar">
-          <div class="dashboard-usage__fill" [style.width.%]="getUsagePercentage()"
-            [class.dashboard-usage__fill--warning]="getUsagePercentage() > 80"
-            [class.dashboard-usage__fill--danger]="getUsagePercentage() > 95"></div>
-        </div>
-        <div class="dashboard-usage__footer">
-          <span class="dashboard-usage__remaining">
-            {{ getRemainingAnalyses() }} analyses remaining
-          </span>
-          @if (getUsagePercentage() > 80) {
-          <a routerLink="/pricing" class="dashboard-usage__upgrade">
-            <lucide-angular [img]="icons.zap" size="12" />
-            Upgrade plan
-          </a>
+    <!-- Plan -->
+    <div class="ds-plan">
+      <span class="ds-plan__tag" [class.ds-plan__tag--top]="isUnlimited()">
+        @if (isUnlimited()) {
+        <lucide-angular [img]="icons.crown" size="12" />
+        } @else {
+        <lucide-angular [img]="icons.sparkles" size="12" />
+        }
+        {{ getPlanDisplayName(profile.plan) }}
+      </span>
+      <span class="ds-plan__since">
+        <lucide-angular [img]="icons.calendar" size="11" />
+        {{ profile.created_at | date:'MMM yyyy' }}
+      </span>
+    </div>
+
+    @if (isPaidPlan()) {
+  <button class="ds-manage-btn" (click)="openManageSubscription()">
+    <lucide-angular [img]="icons.settings" size="14" />
+    Manage Subscription
+  </button>
+}
+
+    <!-- Usage -->
+    <div class="ds-usage">
+      <div class="ds-usage__ring">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="5" />
+          <circle cx="40" cy="40" r="34" fill="none" stroke-width="5" stroke-linecap="round"
+            [class.ds-usage__ring--unlimited]="isUnlimited()"
+            [attr.stroke-dasharray]="ringCircumference"
+            [attr.stroke-dashoffset]="ringOffset()"
+            transform="rotate(-90 40 40)" />
+        </svg>
+        <div class="ds-usage__center">
+          @if (isUnlimited()) {
+          <lucide-angular [img]="icons.infinity" size="18" class="ds-usage__infinity" />
+          } @else {
+          <span class="ds-usage__num">{{ profile.analyses_used }}</span>
+          <span class="ds-usage__den">{{ profile.analyses_limit }}</span>
           }
         </div>
       </div>
-
-      <a routerLink="/analyze" class="btn-primary dashboard-profile__cta">
-        <lucide-angular [img]="icons.flame" size="16" />
-        New Analysis
-      </a>
-    </div>
-
-    <app-usage-overview [used]="profile.analyses_used" [limit]="profile.analyses_limit" [plan]="profile.plan" />
-  </div>
-  }
-
-  <!-- Score trend banner -->
-  @if (stats()) {
-  <div class="dashboard-trend">
-    <div class="trend-stat">
-      <span class="trend-label">Avg score this month</span>
-      <span class="trend-value">{{ stats()!.avg_score_30d }}</span>
-    </div>
-
-    @if (scoreDelta() !== null) {
-    <div class="trend-delta" [class.trend-delta--up]="scoreDelta()! > 0" [class.trend-delta--down]="scoreDelta()! < 0">
-      <lucide-angular [img]="scoreDelta()! > 0 ? icons.trendingUp : icons.barChart" size="14" />
-      {{ scoreDelta()! > 0 ? '+' : '' }}{{ scoreDelta() }} vs last month
-    </div>
-    }
-
-    <div class="trend-stat">
-      <span class="trend-label">Best ever</span>
-      <span class="trend-value">{{ stats()!.best_score }}</span>
-    </div>
-
-    <div class="trend-stat">
-      <span class="trend-label">Total roasts</span>
-      <span class="trend-value">{{ stats()!.total_analyses }}</span>
-    </div>
-  </div>
-  }
-
-  <!-- Weakest metric callout -->
-  @if (stats()?.weakest_metric) {
-  <div class="dashboard-weakest">
-    <lucide-angular [img]="icons.target" size="20" class="weakest-icon" />
-    <div>
-      <span class="weakest-label">Your weakest signal</span>
-      <span class="weakest-metric">{{ stats()!.weakest_metric | titlecase }}</span>
-    </div>
-    <p class="weakest-tip">Focus your next thumbnail on improving this dimension.</p>
-  </div>
-  }
-
-  <!-- Niche benchmark -->
-  @if (nicheBenchmark()) {
-  <div class="dashboard-niche">
-    <span class="niche-label">
-      <lucide-angular [img]="icons.trophy" size="16" />
-      Your niche · {{ nicheBenchmark()!.niche }}
-    </span>
-    <div class="niche-stats">
-      <div class="niche-stat">
-        <span>Niche avg</span>
-        <strong>{{ nicheBenchmark()!.avg_score }}</strong>
-      </div>
-      <div class="niche-stat">
-        <span>Top 10%</span>
-        <strong>{{ nicheBenchmark()!.p90_score }}+</strong>
-      </div>
-      <div class="niche-stat">
-        <span>Your avg</span>
-        <strong [class.niche-above]="stats()!.avg_score_30d >= nicheBenchmark()!.avg_score"
-          [class.niche-below]="stats()!.avg_score_30d < nicheBenchmark()!.avg_score">
-          {{ stats()!.avg_score_30d }}
-        </strong>
-      </div>
-    </div>
-  </div>
-  }
-
-  @if (loading()) {
-  <div class="dashboard-history">
-    <div class="skeleton skeleton--bar"></div>
-    <div class="skeleton skeleton--card"></div>
-    <div class="skeleton skeleton--card"></div>
-  </div>
-  } @else if (error()) {
-  <div class="state-card state-card--error">
-    <lucide-angular [img]="icons.alertCircle" size="32" class="state-icon" />
-    <h3>Something went wrong</h3>
-    <p>{{ error() }}</p>
-  </div>
-  } @else {
-  <app-report-history [reports]="reports()" />
-
-  <!-- YouTube Sync Section -->
-  <div class="yt-section">
-
-    @if (!youtube.connected()) {
-    <!-- Not connected -->
-    <div class="yt-connect-card">
-      <div class="yt-connect-left">
-        <div class="yt-icon-wrapper">
-          <lucide-angular [img]="icons.youtube" size="28" class="yt-icon" />
-        </div>
-        <div>
-          <h3 class="yt-connect-title">Connect YouTube</h3>
-          <p class="yt-connect-sub">
-            See your predicted score next to your real CTR.
-            After 5+ videos, we show you which score threshold
-            drives clicks for your channel specifically.
-          </p>
-        </div>
-      </div>
-      <button class="btn-primary yt-connect-btn" [disabled]="youtube.syncing()" (click)="connectYouTube()">
-        @if (youtube.syncing()) {
-        <span class="yt-spinner"></span> Connecting…
+      <div class="ds-usage__label">
+        @if (isUnlimited()) {
+        Unlimited
         } @else {
-        <lucide-angular [img]="icons.youtube" size="16" />
-        Connect YouTube →
+        {{ remainingAnalyses() }} left
         }
-      </button>
-    </div>
-
-    } @else {
-    <!-- Connected -->
-    <div class="yt-connected-header">
-      <lucide-angular [img]="icons.youtube" size="24" class="yt-icon" />
-      <h3 class="yt-connected-title">YouTube Analytics</h3>
-      <button class="btn-sm" [disabled]="youtube.syncing()" (click)="resync()">
-        <lucide-angular [img]="icons.refresh" size="14" />
-        {{ youtube.syncing() ? 'Syncing…' : 'Sync now' }}
-      </button>
-    </div>
-
-    <!-- CTR Insight -->
-    @if (youtube.insight()) {
-    <div class="yt-insight">
-      <lucide-angular [img]="icons.sparkles" size="18" class="yt-insight-icon" />
-      <p>{{ youtube.insight()!.message }}</p>
-      @if (youtube.insight()!.avg_score_high_ctr && youtube.insight()!.avg_score_low_ctr) {
-      <div class="yt-ctr-split">
-        <div class="yt-ctr-item yt-ctr-item--high">
-          <span>5%+ CTR thumbnails avg score</span>
-          <strong>{{ youtube.insight()!.avg_score_high_ctr }}</strong>
-        </div>
-        <div class="yt-ctr-item yt-ctr-item--low">
-          <span>Under 5% CTR thumbnails avg score</span>
-          <strong>{{ youtube.insight()!.avg_score_low_ctr }}</strong>
-        </div>
       </div>
+      @if (!isUnlimited() && usagePercentage() > 80) {
+      <a routerLink="/pricing" class="ds-usage__upgrade">Upgrade</a>
       }
     </div>
-    } @else {
-    <p class="yt-waiting">
-      Analyzing {{ youtube.videos().length }} videos —
-      need 5+ with reports to show your CTR correlation.
-    </p>
+
+    <!-- CTA -->
+    <a routerLink="/analyze" class="btn-primary ds-cta">
+      <lucide-angular [img]="icons.flame" size="15" />
+      New Analysis
+    </a>
+
+    <!-- Nav -->
+    <nav class="ds-nav">
+      <button class="ds-nav__item" [class.ds-nav__item--active]="activeSection() === 'overview'"
+        (click)="scrollTo('overview')">
+        <lucide-angular [img]="icons.dashboard" size="15" />
+        Overview
+        @if (stats()?.total_analyses) {
+        <span class="ds-nav__count">{{ stats()!.total_analyses }}</span>
+        }
+      </button>
+      <button class="ds-nav__item" [class.ds-nav__item--active]="activeSection() === 'reports'"
+        (click)="scrollTo('reports')">
+        <lucide-angular [img]="icons.reports" size="15" />
+        Reports
+        @if (reports().length) {
+        <span class="ds-nav__count">{{ reports().length }}</span>
+        }
+      </button>
+      <button class="ds-nav__item" [class.ds-nav__item--active]="activeSection() === 'youtube'"
+        (click)="scrollTo('youtube')">
+        <lucide-angular [img]="icons.youtube" size="15" />
+        YouTube
+        <span class="ds-nav__dot" [class.ds-nav__dot--connected]="youtube.connected()"></span>
+      </button>
+    </nav>
     }
 
-    <!-- Video list -->
-    <div class="yt-videos">
-      @for (video of youtube.videos().slice(0, 8); track video.id) {
-      <div class="yt-video-row">
-        <img [src]="video.thumbnail_url" [alt]="video.title" class="yt-video-thumb" />
-        <div class="yt-video-info">
-          <span class="yt-video-title">{{ video.title }}</span>
-          <span class="yt-video-views">
-            {{ video.views | number }} views
+  </aside>
+
+  <!-- ══════════════════════════ MAIN ══════════════════════════════ -->
+  <main class="dash-main">
+
+    <!-- Header - REMOVED "Dashboard" heading, kept only subtitle -->
+    <header class="dash-header">
+      <p class="dash-header__sub">Track your thumbnail performance</p>
+      <div class="dash-header__actions">
+        <button class="btn-ghost" (click)="refreshDashboard()">
+          <lucide-angular [img]="icons.refresh" size="14" />
+          Refresh
+        </button>
+        <span class="dash-header__range">30 days</span>
+      </div>
+    </header>
+
+    <!-- Loading / Error -->
+    @if (loading()) {
+    <div class="dash-loading">
+      <div class="dash-loading__bar"></div>
+      <div class="dash-loading__grid">
+        <div class="dash-loading__card"></div>
+        <div class="dash-loading__card"></div>
+        <div class="dash-loading__card"></div>
+        <div class="dash-loading__card"></div>
+      </div>
+    </div>
+    } @else if (error()) {
+    <div class="dash-error">
+      <lucide-angular [img]="icons.alertCircle" size="28" />
+      <h3>Error</h3>
+      <p>{{ error() }}</p>
+    </div>
+    } @else {
+
+    <!-- Stats -->
+    @if (stats(); as s) {
+    <div class="dash-stats">
+      <div class="dash-stat">
+        <span class="dash-stat__label">Average Score</span>
+        <span class="dash-stat__value">{{ s.avg_score_30d }}</span>
+        @if (scoreDelta() !== null) {
+        <span class="dash-stat__change" [class.dash-stat__change--up]="scoreDelta()! > 0"
+          [class.dash-stat__change--down]="scoreDelta()! < 0">
+          {{ scoreDelta()! > 0 ? '↑' : '↓' }} {{ Math.abs(scoreDelta()!) }}%
+        </span>
+        }
+      </div>
+
+      <div class="dash-stat">
+        <span class="dash-stat__label">Best Score</span>
+        <span class="dash-stat__value dash-stat__value--best">{{ s.best_score }}</span>
+      </div>
+
+      <div class="dash-stat">
+        <span class="dash-stat__label">Total Roasts</span>
+        <span class="dash-stat__value">{{ s.total_analyses }}</span>
+      </div>
+
+      <div class="dash-stat dash-stat--weak">
+        <span class="dash-stat__label">Weakest</span>
+        <span class="dash-stat__value dash-stat__value--sm">
+          {{ s.weakest_metric ? (s.weakest_metric | titlecase) : '—' }}
+        </span>
+      </div>
+    </div>
+    }
+
+    <!-- Niche -->
+    @if (nicheBenchmark(); as nb) {
+    @if (stats(); as s) {
+    <div class="dash-niche">
+      <div class="dash-niche__head">
+        <span class="dash-niche__label">{{ nb.niche }}</span>
+        <span class="dash-niche__sub">vs competitors</span>
+      </div>
+      <div class="dash-niche__bars">
+        <div class="dash-niche__row">
+          <span>Niche avg</span>
+          <div class="dash-niche__track">
+            <div class="dash-niche__fill" [style.width]="(nb.avg_score / 100 * 100) + '%'"></div>
+          </div>
+          <span>{{ nb.avg_score }}</span>
+        </div>
+        <div class="dash-niche__row">
+          <span>Top 10%</span>
+          <div class="dash-niche__track">
+            <div class="dash-niche__fill dash-niche__fill--top" [style.width]="(nb.p90_score / 100 * 100) + '%'"></div>
+          </div>
+          <span>{{ nb.p90_score }}</span>
+        </div>
+        <div class="dash-niche__row dash-niche__row--you">
+          <span>You</span>
+          <div class="dash-niche__track">
+            <div class="dash-niche__fill" [style.width]="(s.avg_score_30d / 100 * 100) + '%'"
+              [class.dash-niche__fill--above]="s.avg_score_30d >= nb.avg_score"
+              [class.dash-niche__fill--below]="s.avg_score_30d < nb.avg_score">
+            </div>
+          </div>
+          <span class="dash-niche__you">
+            {{ s.avg_score_30d }}
+            <span class="dash-niche__diff" [class.dash-niche__diff--above]="s.avg_score_30d >= nb.avg_score"
+              [class.dash-niche__diff--below]="s.avg_score_30d < nb.avg_score">
+              {{ s.avg_score_30d >= nb.avg_score ? '↑' : '↓' }}
+              {{ getPercentageDifference(s.avg_score_30d, nb.avg_score) }}%
+            </span>
           </span>
         </div>
-        @if (video.report) {
-        <div class="yt-video-score" [style.color]="scoreColor(video.report.overall_score)">
-          {{ video.report.overall_score }}
-        </div>
-        } @else {
-        <a [routerLink]="['/analyze']" class="yt-video-analyze">
-          <lucide-angular [img]="icons.flame" size="14" />
-          Roast
-        </a>
-        }
-        @if (video.actual_ctr !== null) {
-        <div class="yt-video-ctr">
-          {{ video.actual_ctr }}% CTR
-        </div>
-        }
       </div>
-      }
     </div>
-
+    }
     }
 
-  </div>
-  }
+    <!-- Reports - REMOVED the "Recent Reports" heading since app-report-history shows its own -->
+    <section class="dash-section" id="reports">
+      <app-report-history [reports]="reports()" />
+    </section>
 
-</section>
+    <!-- YouTube -->
+    <section class="dash-section" id="youtube">
+      <div class="dash-section__head">
+        <h2 class="dash-section__title">YouTube</h2>
+        @if (youtube.connected()) {
+        <button class="btn-ghost" [disabled]="youtube.syncing()" (click)="resync()">
+          <lucide-angular [img]="icons.refresh" size="13" [class.yt-spin]="youtube.syncing()" />
+          {{ youtube.syncing() ? 'Syncing' : 'Sync' }}
+        </button>
+        }
+      </div>
+
+      @if (!youtube.connected()) {
+      <div class="yt-connect">
+        <div class="yt-connect__icon">
+          <lucide-angular [img]="icons.youtube" size="28" />
+        </div>
+        <div class="yt-connect__text">
+          <h4>Connect YouTube</h4>
+          <p>See how your thumbnail scores relate to real CTR</p>
+        </div>
+        <button class="btn-primary" [disabled]="youtube.syncing()" (click)="connectYouTube()">
+          @if (youtube.syncing()) {
+          <span class="yt-spinner"></span>
+          } @else {
+          Connect →
+          }
+        </button>
+      </div>
+      } @else {
+      <div class="yt-state">
+        <div class="yt-state__status">
+          <span class="yt-state__dot"></span>
+          <span>Connected</span>
+          <span class="yt-state__count">{{ youtube.videos().length }} videos</span>
+        </div>
+
+        @if (youtube.insight(); as insight) {
+        <div class="yt-insight">
+          <p class="yt-insight__msg">{{ insight.message }}</p>
+          @if (insight.avg_score_high_ctr && insight.avg_score_low_ctr) {
+          <div class="yt-insight__split">
+            <div class="yt-insight__card yt-insight__card--high">
+              <span>High CTR</span>
+              <strong>{{ insight.avg_score_high_ctr }}</strong>
+            </div>
+            <div class="yt-insight__card yt-insight__card--low">
+              <span>Low CTR</span>
+              <strong>{{ insight.avg_score_low_ctr }}</strong>
+            </div>
+          </div>
+          }
+        </div>
+        } @else {
+        <div class="yt-wait">
+          <span>Analyzing {{ youtube.videos().length }}/5 videos...</span>
+        </div>
+        }
+
+        <div class="yt-list">
+          @for (video of youtube.videos().slice(0, 5); track video.id) {
+          <div class="yt-item">
+            <img [src]="video.thumbnail_url" [alt]="video.title" class="yt-item__thumb" />
+            <div class="yt-item__info">
+              <span class="yt-item__title">{{ video.title }}</span>
+              <span class="yt-item__views">{{ video.views | number }} views</span>
+            </div>
+            @if (video.report) {
+            <span class="yt-item__score" [style.color]="scoreColor(video.report.overall_score)">
+              {{ video.report.overall_score }}
+            </span>
+            } @else {
+            <a [routerLink]="['/analyze']" class="yt-item__roast">Roast</a>
+            }
+            @if (video.actual_ctr !== null) {
+            <span class="yt-item__ctr">{{ video.actual_ctr }}%</span>
+            }
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </section>
+
+    }
+  </main>
+</div>

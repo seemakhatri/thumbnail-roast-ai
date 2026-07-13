@@ -1,4 +1,5 @@
-<section class="blog-hero">
+<section class="blog-hero bg-signature">
+  <div class="bg-signature__glow"></div>
   <div class="blog-hero__inner">
     <p class="blog-hero__eyebrow">Thumbnail Roast Blog</p>
     <h1 class="blog-hero__title">CTR knowledge,<br>no fluff</h1>
@@ -6,6 +7,20 @@
       Original research, teardowns, and guides on what actually
       drives clicks on YouTube thumbnails.
     </p>
+
+    @if (categories().length > 0) {
+      <div class="hero-marquee marquee">
+        <div class="marquee__track">
+          @for (cat of categories(); track cat.id) {
+            <button class="hero-marquee__tag" (click)="filterByCategory(cat.slug)">{{ cat.name }}</button>
+          }
+          <!-- duplicated for seamless marquee loop, hidden from a11y tree -->
+          @for (cat of categories(); track cat.id) {
+            <button class="hero-marquee__tag" aria-hidden="true" tabindex="-1">{{ cat.name }}</button>
+          }
+        </div>
+      </div>
+    }
   </div>
 </section>
 
@@ -15,27 +30,52 @@
     <div class="section-inner">
       <p class="section-label">Featured</p>
       <div class="featured-grid">
-        @for (post of featured(); track post.slug) {
-          <a [routerLink]="['/blog', post.slug]" class="featured-card">
-            @if (post.cover_image_url) {
-              <img [src]="post.cover_image_url" [alt]="post.title" class="featured-card__img" loading="lazy" />
-            } @else {
-              <div class="featured-card__img featured-card__img--placeholder"></div>
-            }
-            <div class="featured-card__body">
-              @if (post.category_name) {
-                <span class="post-tag">{{ post.category_name }}</span>
+        @for (post of featured(); track post.slug; let i = $index) {
+          <a
+            [routerLink]="['/blog', post.slug]"
+            class="featured-card"
+            [class.featured-card--cover]="i === 0">
+            <div class="featured-card__media">
+              @if (post.cover_image_url) {
+                <img [src]="post.cover_image_url" [alt]="post.title" class="featured-card__img" loading="lazy" />
+              } @else {
+                <div class="featured-card__img featured-card__img--placeholder"></div>
               }
-              <h2 class="featured-card__title">{{ post.title }}</h2>
-              <p class="featured-card__excerpt">{{ post.excerpt }}</p>
-              <div class="post-meta">
-                <span>{{ post.published_at | date:'mediumDate' }}</span>
-                @if (post.read_time_minutes) {
-                  <span>·</span>
-                  <span>{{ post.read_time_minutes }} min read</span>
-                }
-              </div>
+              @if (i === 0) {
+                <div class="featured-card__scrim"></div>
+                <div class="featured-card__overlay">
+                  @if (post.category_name) {
+                    <span class="post-tag post-tag--light">{{ post.category_name }}</span>
+                  }
+                  <h2 class="featured-card__title">{{ post.title }}</h2>
+                  <p class="featured-card__excerpt featured-card__excerpt--light">{{ post.excerpt }}</p>
+                  <div class="post-meta post-meta--light">
+                    <span>{{ post.published_at | date:'mediumDate' }}</span>
+                    @if (post.read_time_minutes) {
+                      <span>·</span>
+                      <span>{{ post.read_time_minutes }} min read</span>
+                    }
+                  </div>
+                </div>
+              }
             </div>
+
+            @if (i !== 0) {
+              <div class="featured-card__body">
+                @if (post.category_name) {
+                  <span class="post-tag">{{ post.category_name }}</span>
+                }
+                <h3 class="featured-card__title">{{ post.title }}</h3>
+                <p class="featured-card__excerpt">{{ post.excerpt }}</p>
+                <div class="post-meta">
+                  <span>{{ post.published_at | date:'mediumDate' }}</span>
+                  @if (post.read_time_minutes) {
+                    <span>·</span>
+                    <span>{{ post.read_time_minutes }} min read</span>
+                  }
+                </div>
+              </div>
+            }
           </a>
         }
       </div>
@@ -43,7 +83,7 @@
   </section>
 }
 
-<!-- Category filter -->
+<!-- Category filter + grid -->
 <section class="posts-section">
   <div class="section-inner">
     <div class="category-pills">
@@ -78,15 +118,17 @@
       <div class="posts-grid">
         @for (post of posts(); track post.slug) {
           <a [routerLink]="['/blog', post.slug]" class="post-card">
-            @if (post.cover_image_url) {
-              <img [src]="post.cover_image_url" [alt]="post.title" class="post-card__img" loading="lazy" />
-            } @else {
-              <div class="post-card__img post-card__img--placeholder"></div>
-            }
-            <div class="post-card__body">
-              @if (post.category_name) {
-                <span class="post-tag">{{ post.category_name }}</span>
+            <div class="post-card__media">
+              @if (post.cover_image_url) {
+                <img [src]="post.cover_image_url" [alt]="post.title" class="post-card__img" loading="lazy" />
+              } @else {
+                <div class="post-card__img post-card__img--placeholder"></div>
               }
+              @if (post.category_name) {
+                <span class="post-card__chip">{{ post.category_name }}</span>
+              }
+            </div>
+            <div class="post-card__body">
               <h3 class="post-card__title">{{ post.title }}</h3>
               <p class="post-card__excerpt">{{ post.excerpt }}</p>
               <div class="post-meta">
@@ -108,6 +150,7 @@
 <section class="blog-cta">
   <div class="section-inner">
     <div class="blog-cta__card">
+      <span class="section-label">Free tool</span>
       <h2 class="blog-cta__title">Stop guessing, start measuring</h2>
       <p class="blog-cta__sub">
         Upload a thumbnail and get an instant AI score, roast, and

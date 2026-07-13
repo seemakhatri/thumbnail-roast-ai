@@ -15,7 +15,8 @@ frontend/dist/
 # ==========================================
 # Environment Files (DO NOT COMMIT)
 # ==========================================
-
+frontend/environments/environment.ts
+frontend/environments/environment.prod.ts
 
 .env
 .env.local

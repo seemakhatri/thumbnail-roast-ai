@@ -1,5 +1,3 @@
-// upload-dropzone.scss
-
 .upload-dropzone__input {
   display: none;
 }
@@ -8,12 +6,14 @@
 .upload-zone {
   width: 100%;
   border: 1.5px dashed rgba(255, 77, 0, 0.32);
-  border-radius: 18px;
   padding: 40px 28px;
   text-align: center;
   background: radial-gradient(ellipse at center top, rgba(255, 77, 0, 0.055) 0%, transparent 62%);
   cursor: pointer;
-  transition: border-color 0.28s, background 0.28s, transform 0.25s;
+  transition:
+    border-color 0.28s,
+    background 0.28s,
+    transform 0.25s;
   position: relative;
   overflow: hidden;
 
@@ -37,7 +37,9 @@
     border-width: 2px;
     transform: translateY(-3px);
     background: radial-gradient(ellipse at center top, rgba(255, 77, 0, 0.12) 0%, transparent 60%);
-    box-shadow: 0 0 0 4px rgba(255, 77, 0, 0.08), 0 8px 40px rgba(255, 77, 0, 0.14);
+    box-shadow:
+      0 0 0 4px rgba(255, 77, 0, 0.08),
+      0 8px 40px rgba(255, 77, 0, 0.14);
   }
 }
 
@@ -46,7 +48,6 @@
   position: absolute;
   inset: 0;
   border: 2px solid var(--accent);
-  border-radius: 17px;
   box-shadow:
     inset 0 0 28px rgba(255, 77, 0, 0.07),
     0 0 28px rgba(255, 77, 0, 0.12);
@@ -55,8 +56,13 @@
 }
 
 @keyframes dragBorderPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.55; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
 }
 
 // ─── IDLE STATE ───────────────────────────────────────────
@@ -70,7 +76,6 @@
 .zone-idle__icon {
   width: 60px;
   height: 60px;
-  border-radius: 16px;
   background: rgba(255, 77, 0, 0.09);
   border: 1px solid rgba(255, 77, 0, 0.2);
   display: flex;
@@ -78,7 +83,9 @@
   justify-content: center;
   color: var(--accent2);
   margin-bottom: 16px;
-  transition: background 0.2s, border-color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
 
   .upload-zone:hover & {
     background: rgba(255, 77, 0, 0.16);
@@ -87,14 +94,16 @@
 }
 
 .zone-idle__title {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.4px;
   margin-bottom: 6px;
+  color: var(--text);
 }
 
 .zone-idle__sub {
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--muted2);
   margin-bottom: 18px;
@@ -109,13 +118,12 @@
 
 .fmt-tag {
   padding: 3px 9px;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
   font-size: 10.5px;
   color: var(--muted);
   font-weight: 500;
-  font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.5px;
 }
 
@@ -133,7 +141,6 @@
   font-size: 36px;
   width: 64px;
   height: 64px;
-  border-radius: 16px;
   background: rgba(255, 77, 0, 0.14);
   border: 1.5px solid rgba(255, 77, 0, 0.45);
   display: flex;
@@ -143,18 +150,24 @@
 }
 
 @keyframes dragIconBreath {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.07); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.07);
+  }
 }
 
 .zone-drag__title {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 700;
   color: var(--accent2);
 }
 
 .zone-drag__sub {
+  font-family: var(--font-body);
   font-size: 12px;
   color: rgba(255, 112, 64, 0.7);
 }
@@ -171,11 +184,10 @@
   width: 100%;
   max-width: 420px;
   aspect-ratio: 16 / 9;
-  border-radius: 10px;
   overflow: hidden;
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border2);
+  box-shadow: var(--shadow-lift);
 }
 
 .zone-preview__img {
@@ -191,7 +203,6 @@
   right: 8px;
   width: 22px;
   height: 22px;
-  border-radius: 50%;
   background: var(--green);
   display: flex;
   align-items: center;
@@ -203,7 +214,7 @@
 }
 
 .zone-preview__name {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--muted2);
   max-width: 260px;
@@ -217,19 +228,18 @@
   align-items: center;
   gap: 5px;
   padding: 6px 14px;
-  border-radius: 7px;
   border: 1px solid var(--border2);
   background: transparent;
   color: var(--muted2);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   transition: all 0.2s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--surface2);
     color: var(--text);
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--border2);
   }
 }

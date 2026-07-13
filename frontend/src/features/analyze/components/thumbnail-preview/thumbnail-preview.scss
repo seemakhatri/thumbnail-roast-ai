@@ -3,6 +3,21 @@
   max-width: 420px;
 }
 
-.thumbnail-preview-wrap .thumbnail-preview {
+.thumbnail-preview-wrap .section-label {
+  margin-bottom: 10px;
+}
+
+.thumbnail-preview {
   width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.thumb-img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
 }

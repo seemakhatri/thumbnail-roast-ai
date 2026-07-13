@@ -1,4 +1,3 @@
-<!-- report-hero-card.html -->
 <div class="hero-card" [@heroEnter]>
 
   <!-- Radial glow -->
@@ -38,10 +37,12 @@
   <!-- Action row -->
   <div class="hero-card__actions">
     <a routerLink="/analyze" class="hero-card__btn-primary">
-      🔥 Roast Another
+      <lucide-angular [img]="icons.flame" size="16" />
+      Roast Another
     </a>
     <button type="button" class="hero-card__btn-ghost" (click)="copyShareLink()">
-      {{ copied() ? '✓ Copied!' : '🔗 Share Report' }}
+      <lucide-angular [img]="icons.share" size="16" />
+      {{ copied() ? 'Copied!' : 'Share Report' }}
     </button>
   </div>
 

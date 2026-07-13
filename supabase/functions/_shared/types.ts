@@ -219,6 +219,9 @@ export interface YouTubeConnectRequest {
 }
 
 export interface YouTubeSyncResponse {
-  videos_synced: number;
-  total_videos: number;
+  processed: number;      // Total videos processed
+  inserted: number;       // New videos added
+  updated: number;        // Existing videos updated
+  videos_synced: number;  // Legacy: same as inserted
+  total_videos: number;   // Total videos fetched from YouTube
 }

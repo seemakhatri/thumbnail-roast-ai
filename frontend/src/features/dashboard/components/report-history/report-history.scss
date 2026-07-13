@@ -1,9 +1,7 @@
-.report-history__header {
-  margin-bottom: 16px;
-}
+.report-history__header { margin-bottom: 16px; }
 
 .report-history__title {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 18px;
   font-weight: 700;
 }
@@ -38,16 +36,9 @@
   background: var(--surface2);
 }
 
-.report-history__thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.report-history__thumb img { width: 100%; height: 100%; object-fit: cover; }
 
-.report-history__content {
-  flex: 1;
-  min-width: 0;
-}
+.report-history__content { flex: 1; min-width: 0; }
 
 .report-history__top {
   display: flex;
@@ -58,19 +49,21 @@
 }
 
 .report-history__score {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
   color: var(--accent2);
 }
 
 .report-history__badge {
+  font-family: var(--font-body);
   font-size: 11px;
   padding: 2px 8px;
   margin-bottom: 0;
 }
 
 .report-history__name {
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 4px;
@@ -80,6 +73,7 @@
 }
 
 .report-history__date {
+  font-family: var(--font-body);
   font-size: 12px;
   color: var(--muted);
 }
@@ -87,14 +81,15 @@
 .report-history__arrow {
   color: var(--muted);
   flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.report-history__item:hover .report-history__arrow {
+  transform: translateX(3px);
+  color: var(--accent2);
 }
 
 @media (max-width: 768px) {
-  .report-history__item {
-    flex-wrap: wrap;
-  }
-
-  .report-history__arrow {
-    display: none;
-  }
+  .report-history__item { flex-wrap: wrap; }
+  .report-history__arrow { display: none; }
 }

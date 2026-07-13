@@ -1,15 +1,17 @@
-<!-- strength-weakness-grid.html -->
 <div class="sw-grid">
 
   <!-- Strengths -->
   <div class="sw-card sw-card--green" [@fadeLeft]>
     <div class="sw-card__heading sw-card__heading--green">
-      <span>✅</span> Strengths
+      <lucide-angular [img]="icons.checkCircle" size="16" />
+      Strengths
     </div>
     <ul class="sw-list">
       @for (item of report().strengths; track item; let i = $index) {
         <li class="sw-item" [style.animation-delay]="(i * 80) + 'ms'">
-          <span class="sw-item__icon sw-item__icon--green">✓</span>
+          <span class="sw-item__icon sw-item__icon--green">
+            <lucide-angular [img]="icons.check" size="10" />
+          </span>
           <span>{{ item }}</span>
         </li>
       }
@@ -19,12 +21,15 @@
   <!-- Weaknesses -->
   <div class="sw-card sw-card--red" [@fadeRight]>
     <div class="sw-card__heading sw-card__heading--red">
-      <span>⚠️</span> Weaknesses
+      <lucide-angular [img]="icons.alertCircle" size="16" />
+      Weaknesses
     </div>
     <ul class="sw-list">
       @for (item of report().weaknesses; track item; let i = $index) {
         <li class="sw-item" [style.animation-delay]="(i * 80) + 'ms'">
-          <span class="sw-item__icon sw-item__icon--red">✗</span>
+          <span class="sw-item__icon sw-item__icon--red">
+            <lucide-angular [img]="icons.x" size="10" />
+          </span>
           <span>{{ item }}</span>
         </li>
       }

@@ -1,4 +1,3 @@
-<!-- metrics-grid.html -->
 <div class="metrics-grid-wrap">
   <div class="metrics-grid-header">
     <span class="metrics-grid-eyebrow">Performance Breakdown</span>
@@ -7,7 +6,7 @@
     @for (m of metrics; track m.key; let i = $index) {
       <div class="metric-card" [@stagger]="i">
         <div class="metric-card__top">
-          <span class="metric-card__icon">{{ m.icon }}</span>
+          <lucide-angular [img]="m.icon" size="16" class="metric-card__icon" />
           <span class="metric-card__name">{{ m.label }}</span>
         </div>
         <div class="metric-card__score-row">

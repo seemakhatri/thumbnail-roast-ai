@@ -1,10 +1,10 @@
-// report-hero-card.ts
 import { Component, computed, inject, input, signal, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser, NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { ThumbnailReport } from '../../../../core/models/report.model';
 import { ScoreRing } from '../../../../shared/components/score-ring/score-ring';
+import { LucideAngularModule, Flame, Share2 } from 'lucide-angular';
 
 const VERDICT_MAP: Record<string, { label: string; emoji: string; css: string }> = {
   needs_work: { label: 'Needs Work',  emoji: '⚠️',  css: 'verdict--red'    },
@@ -16,7 +16,7 @@ const VERDICT_MAP: Record<string, { label: string; emoji: string; css: string }>
 
 @Component({
   selector: 'app-report-hero-card',
-  imports: [ScoreRing, NgClass, RouterLink],
+  imports: [ScoreRing, NgClass, RouterLink, LucideAngularModule],
   templateUrl: './report-hero-card.html',
   styleUrl: './report-hero-card.scss',
   animations: [
@@ -36,6 +36,11 @@ export class ReportHeroCard {
   private readonly platformId = inject(PLATFORM_ID);
 
   readonly copied = signal(false);
+
+  readonly icons = {
+    flame: Flame,
+    share: Share2,
+  };
 
   readonly verdictData = computed(() => {
     const v = this.report().verdict ?? 'decent';

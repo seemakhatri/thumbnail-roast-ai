@@ -1,11 +1,11 @@
-// competitor-insights.ts
 import { Component, input } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ThumbnailReport } from '../../../../core/models/report.model';
+import { LucideAngularModule, Target, ArrowRight } from 'lucide-angular';
 
 @Component({
   selector: 'app-competitor-insights',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './competitor-insights.html',
   styleUrl: './competitor-insights.scss',
   animations: [
@@ -19,4 +19,9 @@ import { ThumbnailReport } from '../../../../core/models/report.model';
 })
 export class CompetitorInsights {
   readonly report = input.required<ThumbnailReport>();
+
+  readonly icons = {
+    target: Target,
+    arrowRight: ArrowRight,
+  };
 }

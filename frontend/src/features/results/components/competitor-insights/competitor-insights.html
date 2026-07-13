@@ -1,10 +1,12 @@
-<!-- competitor-insights.html -->
 <div class="competitor">
-  <div class="competitor__eyebrow">🎯 Competitor Intel</div>
+  <div class="competitor__eyebrow">
+    <lucide-angular [img]="icons.target" size="16" class="competitor__eyebrow-icon" />
+    Competitor Intel
+  </div>
   <div class="competitor__list">
     @for (insight of report().competitor_insights; track insight; let i = $index) {
       <div class="competitor__card" [@stagger] [style.animation-delay]="(i * 100) + 'ms'">
-        <div class="competitor__arrow">→</div>
+        <lucide-angular [img]="icons.arrowRight" size="14" class="competitor__arrow" />
         <p class="competitor__text">{{ insight }}</p>
       </div>
     }

@@ -1,11 +1,11 @@
-// priority-recommendation.ts
 import { Component, computed, input } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ThumbnailReport } from '../../../../core/models/report.model';
+import { LucideAngularModule, Zap, TrendingUp } from 'lucide-angular';
 
 @Component({
   selector: 'app-priority-recommendation',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './priority-recommendation.html',
   styleUrl: './priority-recommendation.scss',
   animations: [
@@ -19,6 +19,11 @@ import { ThumbnailReport } from '../../../../core/models/report.model';
 })
 export class PriorityRecommendation {
   readonly report = input.required<ThumbnailReport>();
+
+  readonly icons = {
+    zap: Zap,
+    trendingUp: TrendingUp,
+  };
 
   readonly topRec = computed(() => {
     const recs = this.report().recommendations ?? [];

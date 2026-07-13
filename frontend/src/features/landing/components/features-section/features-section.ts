@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { 
-  Upload, 
-  Zap, 
+import {
+  Upload,
+  Zap,
   CheckCircle,
   Target,
   Brain,
@@ -10,7 +10,6 @@ import {
   BarChart3,
   Flame,
   LucideAngularModule,
-  LucideIconData
 } from 'lucide-angular';
 
 @Component({
@@ -21,7 +20,6 @@ import {
   styleUrl: './features-section.scss',
 })
 export class FeaturesSection {
-
   readonly steps = [
     {
       num: '1',
@@ -43,57 +41,44 @@ export class FeaturesSection {
     },
   ];
 
-
-  readonly features = [
-    {
-      icon: Target,
-      name: 'CTR Prediction Engine',
-      desc: 'Trained on 50K+ thumbnail / performance pairs. Predicts click-through rate before the video goes live.',
-      iconBg: 'rgba(255,77,0,0.1)',
-      iconBorder: 'rgba(255,77,0,0.2)',
-      badge: '',
-    },
-    {
-      icon: Brain,
-      name: '8-Dimension Scoring',
-      desc: 'CTR potential, emotion, curiosity, readability, contrast, mobile visibility, face impact, brand consistency.',
-      iconBg: 'rgba(168,85,247,0.1)',
-      iconBorder: 'rgba(168,85,247,0.2)',
-      badge: '',
-    },
-    {
-      icon: Lightbulb,
-      name: 'Instant Recommendations',
-      desc: 'Specific fixes, not generic advice. Each recommendation references the exact visual element to change.',
-      iconBg: 'rgba(34,197,94,0.1)',
-      iconBorder: 'rgba(34,197,94,0.2)',
-      badge: '',
-    },
-    {
-      icon: Trophy,
-      name: 'Competitor Intelligence',
-      desc: 'See what top creators in your niche do differently — faces, colors, text patterns, emotional hooks.',
-      iconBg: 'rgba(59,130,246,0.1)',
-      iconBorder: 'rgba(59,130,246,0.2)',
-      badge: '',
-    },
-    {
-      icon: BarChart3,
-      name: 'Historical Tracking',
-      desc: 'Compare every thumbnail you\'ve made. See your improvement trend over time.',
-      iconBg: 'rgba(234,179,8,0.1)',
-      iconBorder: 'rgba(234,179,8,0.2)',
-      badge: 'Creator+',
-    },
-    {
-      icon: Flame,
-      name: 'Shareable Roast Reports',
-      desc: 'Every analysis generates a public share card. Post your score, tag us, grow the product.',
-      iconBg: 'rgba(239,68,68,0.1)',
-      iconBorder: 'rgba(239,68,68,0.2)',
-      badge: '',
-    },
-  ];
+readonly features = [
+  {
+    icon: Target,
+    name: 'CTR Prediction Engine',
+    desc: 'Trained on 50K+ thumbnail / performance pairs. Predicts click-through rate before the video goes live.',
+    badge: '',
+  },
+  {
+    icon: Brain,
+    name: '8-Dimension Scoring',
+    desc: 'CTR potential, emotion, curiosity, readability, contrast, mobile visibility, face impact, brand consistency.',
+    badge: '',
+  },
+  {
+    icon: Lightbulb,
+    name: 'Instant Recommendations',
+    desc: 'Specific fixes, not generic advice. Each recommendation references the exact visual element to change.',
+    badge: '',
+  },
+  {
+    icon: Trophy,
+    name: 'Competitor Intelligence',
+    desc: 'See what top creators in your niche do differently — faces, colors, text patterns, emotional hooks.',
+    badge: '',
+  },
+  {
+    icon: BarChart3,
+    name: 'Historical Tracking',
+    desc: "Compare every thumbnail you've made. See your improvement trend over time.",
+    badge: 'Creator+',
+  },
+  {
+    icon: Flame,
+    name: 'Shareable Roast Reports',
+    desc: 'Every analysis generates a public share card. Post your score, tag us, grow the product.',
+    badge: '',
+  },
+];
 
   readonly metrics = [
     'CTR Potential',

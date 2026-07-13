@@ -13,16 +13,39 @@
   <a routerLink="/blog" class="btn-primary">← Back to blog</a>
 </div>
 } @else if (post(); as p) {
-<!-- Hero image -->
+
+<!-- Cover-image posts: title + byline overlay directly on the hero image -->
 @if (p.cover_image_url) {
 <div class="post-hero">
   <img [src]="p.cover_image_url" [alt]="p.title" class="post-hero__img" />
+  <div class="post-hero__scrim"></div>
+  <div class="post-hero__content">
+    <div class="post-hero__inner">
+      @if (p.category_name) {
+      <span class="post-tag post-tag--light">{{ p.category_name }}</span>
+      }
+      <h1 class="post-title post-title--light">{{ p.title }}</h1>
+      <div class="post-byline post-byline--light">
+        @if (p.author_name) {
+        <span class="post-avatar">{{ p.author_name.charAt(0) }}</span>
+        <span>{{ p.author_name }}</span>
+        <span class="divider">·</span>
+        }
+        <time [dateTime]="p.published_at">{{ p.published_at | date:'mediumDate' }}</time>
+        @if (p.read_time_minutes) {
+        <span class="divider">·</span>
+        <span>{{ p.read_time_minutes }} min read</span>
+        }
+      </div>
+    </div>
+  </div>
 </div>
 }
 
 <div class="post-layout">
 
-  <!-- Header -->
+  @if (!p.cover_image_url) {
+  <!-- No cover image: fall back to the plain in-flow header -->
   <header class="post-header">
     @if (p.category_name) {
     <span class="post-tag">{{ p.category_name }}</span>
@@ -31,7 +54,8 @@
     <p class="post-excerpt">{{ p.excerpt }}</p>
     <div class="post-byline">
       @if (p.author_name) {
-      <span>By {{ p.author_name }}</span>
+      <span class="post-avatar">{{ p.author_name.charAt(0) }}</span>
+      <span>{{ p.author_name }}</span>
       <span class="divider">·</span>
       }
       <time [dateTime]="p.published_at">{{ p.published_at | date:'mediumDate' }}</time>
@@ -41,9 +65,12 @@
       }
     </div>
   </header>
+  } @else {
+  <p class="post-excerpt post-excerpt--below-hero">{{ p.excerpt }}</p>
+  }
 
   <!-- Body content -->
-  <article class="post-body prose" [innerHTML]="renderContent(p.content)">
+  <article class="post-body prose"  [innerHTML]="renderedContent()">
   </article>
 
   <!-- FAQ section (if exists) -->

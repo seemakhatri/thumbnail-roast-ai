@@ -25,6 +25,24 @@ export class YoutubeCallback {
     console.log('URL:', window.location.href);
 
     try {
+      // ── NEW: check for an `error` param FIRST, before assuming a `code`
+      // means success. Same class of bug as callback-page.ts — a failed
+      // external token exchange comes back as error/error_description,
+      // not as `code`, and the old code had no check for this at all
+      // here either, so it would silently continue on to
+      // waitForAuthReady() and eventually just throw a vague
+      // "No authenticated session found."
+      const params = new URLSearchParams(window.location.search);
+      const error = params.get('error');
+      const errorDescription = params.get('error_description');
+      if (error) {
+        throw new Error(
+          errorDescription
+            ? decodeURIComponent(errorDescription.replace(/\+/g, ' '))
+            : `YouTube connection failed (${error}).`,
+        );
+      }
+
       // Wait for Supabase auth initialization
       await this.supabase.waitForAuthReady();
       let {
@@ -35,17 +53,17 @@ export class YoutubeCallback {
 
       // If no session yet but we have a PKCE code, exchange it
       if (!session) {
-        const code = new URLSearchParams(window.location.search).get('code');
+        const code = params.get('code');
 
         console.log('OAuth code:', code);
 
         if (code) {
-          const { error } =
+          const { error: exchangeError } =
             await this.supabase.client.auth.exchangeCodeForSession(code);
 
-          if (error) {
-            console.error('Exchange failed:', error);
-            throw error;
+          if (exchangeError) {
+            console.error('Exchange failed:', exchangeError);
+            throw exchangeError;
           }
 
           const result = await this.supabase.client.auth.getSession();
@@ -59,19 +77,36 @@ export class YoutubeCallback {
         throw new Error('No authenticated session found.');
       }
 
-      const providerToken = session.provider_token;
+      // ── use provider_refresh_token, not provider_token ─────────
+      // provider_token is a short-lived (~1hr) Google access token — fine
+      // for a one-off call right now, useless for syncing again next week.
+      // provider_refresh_token is the long-lived credential that actually
+      // needs to be stored server-side (in youtube_connections) so future
+      // syncs don't require the user to reconnect every time.
+      const providerRefreshToken = session.provider_refresh_token;
 
-      console.log('Provider token:', providerToken);
+      console.log('Provider refresh token present:', !!providerRefreshToken);
 
-      if (!providerToken) {
+      if (!providerRefreshToken) {
+        // If this fires, the most common cause is that YouTube scopes
+        // weren't actually requested from Google — see the
+        // options.scopes fix in Supabase.connectYouTube(). Passing scope
+        // via queryParams instead of options.scopes can silently drop it.
         throw new Error(
-          'Google returned no provider token. Check Google OAuth scopes.'
+          'Google returned no refresh token. Check that access_type=offline, ' +
+          'prompt=consent, and scopes are set via options.scopes in connectYouTube().'
         );
       }
 
-      this.message = 'Syncing your YouTube videos…';
+      // STEP 1 — store the refresh token server-side BEFORE syncing.
+      // sync() depends on youtube_connections already having a row; if
+      // connect() fails, we must not attempt sync() at all.
+      this.message = 'Saving your YouTube connection…';
+      await this.youtubeSync.connect(providerRefreshToken);
 
-      const result = await this.youtubeSync.sync(providerToken);
+      // STEP 2 — now sync can actually find something to sync from.
+      this.message = 'Syncing your YouTube videos…';
+      const result = await this.youtubeSync.sync();
 
       this.toast.success(
         `YouTube connected! Found ${result.total_videos} videos.`

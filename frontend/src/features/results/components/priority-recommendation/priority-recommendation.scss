@@ -1,7 +1,5 @@
-// priority-recommendation.scss
 .priority-rec {
   padding: 20px 22px;
-  border-radius: 16px;
   border: 1px solid rgba(255, 77, 0, 0.22);
   background: linear-gradient(135deg, rgba(255, 77, 0, 0.07), rgba(168, 85, 247, 0.04));
   position: relative;
@@ -23,7 +21,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9.5px;
   font-weight: 600;
   letter-spacing: 1.5px;
@@ -32,12 +30,13 @@
   margin-bottom: 10px;
 }
 
-.priority-rec__label-dot {
-  font-size: 13px;
+.priority-rec__label-icon {
+  color: var(--accent2);
+  flex-shrink: 0;
 }
 
 .priority-rec__title {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.4px;
@@ -46,6 +45,7 @@
 }
 
 .priority-rec__body {
+  font-family: var(--font-body);
   font-size: 13.5px;
   color: var(--muted2);
   line-height: 1.68;
@@ -56,16 +56,15 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  font-family: var(--font-body);
   font-size: 12.5px;
   color: var(--green);
   font-weight: 500;
   background: rgba(34, 197, 94, 0.08);
   border: 1px solid rgba(34, 197, 94, 0.2);
   padding: 5px 12px;
-  border-radius: 999px;
 }
 
-.priority-rec__impact-dot {
-  font-size: 14px;
-  font-weight: 700;
+.priority-rec__impact-icon {
+  flex-shrink: 0;
 }

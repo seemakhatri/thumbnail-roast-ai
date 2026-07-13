@@ -1,73 +1,43 @@
-<!-- hero-section.html -->
 <section class="hero" id="top" aria-label="Hero">
 
   <!-- Background -->
   <div class="hero__bg" aria-hidden="true">
     <div class="hero__grid"></div>
     <div class="hero__glow-primary"></div>
-    <div class="hero__glow-secondary"></div>
   </div>
 
-  <!-- Eyebrow — MetaLumna style: spaced caps, centered, muted -->
-  <span class="hero__eyebrow fade-up d1">AI Thumbnail Intelligence</span>
 
-  <!-- Live counter badge -->
-  <div class="hero__badge fade-up d2" aria-label="Social proof">
-    <span class="hero__badge-dot" aria-hidden="true"></span>
-    12,400+ thumbnails roasted &nbsp;·&nbsp; Avg +31% CTR
+
+  <div class="logo"> 
+       <img src="assets/FINAL.svg" alt="ThumbnailRoast" class="nb__logo-icon" />
   </div>
+  <!-- Badge / Eyebrow (like "OPEN SOURCE · RUNS ON YOUR MACHINE") -->
+  <span class="hero__badge fade-up d1">
+    AI Thumbnail Intelligence | Stop Losing Views
+  </span>
 
-  <!-- Headline -->
-  <h1 class="hero__headline fade-up d3">
-    Roast your thumbnail<br>
-    before it costs you <em class="hero__headline--fire">views.</em>
+  <!-- Headline (uses Switzer / clean sans) -->
+  <h1 class="hero__headline fade-up d2">
+    AI CTR Intelligence For Creators<br>
   </h1>
 
+  
+
   <!-- Sub copy -->
-  <p class="hero__sub fade-up d4">
-    Upload once. Get an AI score, a brutal critique,<br class="hero__sub-br">
-    and three specific fixes that move your CTR&nbsp;— in 15 seconds.
+  <p class="hero__sub fade-up d3">
+    Upload your thumbnail, discover what's holding it back,
+    and get clear fixes before you hit publish.
   </p>
 
-  <!-- CTA -->
-  <div class="hero__actions fade-up d5">
+  <!-- CTA Buttons -->
+  <div class="hero__actions fade-up d4">
     <button class="hero__cta" type="button" (click)="scrollToAnalyze()">
-      <span class="hero__cta-fire" aria-hidden="true">🔥</span>
-      Roast My Thumbnail — Free
+      Get Started
     </button>
     <button class="hero__cta-ghost" type="button" (click)="scrollToHowItWorks()">
       See how it works
-      <ng-icon name="heroArrowDown" aria-hidden="true" />
+      <lucide-angular [img]="icons.arrowDown" size="14" class="hero__cta-ghost-icon" aria-hidden="true" />
     </button>
-  </div>
-
-  <!-- Proof strip — contained pill, MetaLumna stat style -->
-  <div class="hero__proof fade-up d5" role="list" aria-label="Statistics">
-    <div class="hero__proof-avatars" aria-hidden="true">
-      @for (initial of avatarInitials; track initial) {
-        <div class="hero__avatar">{{ initial }}</div>
-      }
-    </div>
-
-    <div class="hero__proof-item" role="listitem">
-      <span class="hero__proof-num">12,400+</span>
-      <span class="hero__proof-label">thumbnails roasted</span>
-    </div>
-
-    <div class="hero__proof-item" role="listitem">
-      <span class="hero__proof-num">+31%</span>
-      <span class="hero__proof-label">avg CTR lift</span>
-    </div>
-
-    <div class="hero__proof-item" role="listitem">
-      <span class="hero__proof-num">4.9/5</span>
-      <span class="hero__proof-label">from creators</span>
-    </div>
-  </div>
-
-  <!-- Scroll hint -->
-  <div class="hero__scroll-hint fade-up d5" aria-hidden="true">
-    <div class="hero__scroll-line"></div>
   </div>
 
 </section>

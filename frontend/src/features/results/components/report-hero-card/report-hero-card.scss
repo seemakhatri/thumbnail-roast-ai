@@ -1,4 +1,3 @@
-// report-hero-card.scss
 .hero-card {
   position: relative;
   display: flex;
@@ -7,14 +6,12 @@
   text-align: center;
   gap: 18px;
   padding: 48px 32px 40px;
-  border-radius: 20px;
   border: 1px solid var(--border2);
   background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
   background-color: var(--surface);
   overflow: hidden;
 }
 
-// Radial orange glow at top
 .hero-card__glow {
   position: absolute;
   top: -120px;
@@ -31,7 +28,6 @@
   position: relative;
   width: min(340px, 100%);
   aspect-ratio: 16/9;
-  border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--border2);
   box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
@@ -62,10 +58,10 @@
   align-items: center;
   gap: 5px;
   padding: 5px 10px;
-  border-radius: 999px;
   background: rgba(15,15,25,0.9);
   border: 1px solid rgba(34,197,94,0.28);
   color: var(--green);
+  font-family: var(--font-body);
   font-size: 10.5px;
   font-weight: 600;
   backdrop-filter: blur(10px);
@@ -74,7 +70,6 @@
 .hero-card__analyzed-dot {
   width: 6px;
   height: 6px;
-  border-radius: 50%;
   background: var(--green);
   animation: analyzedPulse 2s ease-in-out infinite;
 }
@@ -100,12 +95,11 @@
   transform: translate(-50%, -50%);
   width: 200px;
   height: 200px;
-  border-radius: 50%;
   pointer-events: none;
 }
 
 .hero-card__score-out-of {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--muted);
   letter-spacing: 0.5px;
@@ -117,7 +111,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 16px;
-  border-radius: 999px;
+  font-family: var(--font-body);
   font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.2px;
@@ -131,7 +125,7 @@
 
 // ── Headline ──
 .hero-card__headline {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(18px, 3vw, 26px);
   font-weight: 800;
   letter-spacing: -0.8px;
@@ -142,6 +136,7 @@
 
 // ── Summary ──
 .hero-card__summary {
+  font-family: var(--font-body);
   font-size: 14.5px;
   color: var(--muted2);
   max-width: 540px;
@@ -163,12 +158,11 @@
   align-items: center;
   gap: 7px;
   padding: 11px 24px;
-  border-radius: 10px;
   background: var(--accent);
   color: #fff;
+  font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
   text-decoration: none;
   border: none;
   cursor: pointer;
@@ -187,20 +181,19 @@
   align-items: center;
   gap: 7px;
   padding: 11px 20px;
-  border-radius: 10px;
   border: 1px solid var(--border2);
   background: transparent;
   color: var(--muted2);
+  font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 500;
-  font-family: 'DM Sans', sans-serif;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    background: rgba(255,255,255,0.05);
+    background: var(--surface2);
     color: var(--text);
-    border-color: rgba(255,255,255,0.2);
+    border-color: var(--border2);
   }
 }
 

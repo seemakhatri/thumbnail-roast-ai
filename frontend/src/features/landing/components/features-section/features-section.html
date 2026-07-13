@@ -1,23 +1,27 @@
-<!-- features-section.html -->
 <section class="features" id="how-it-works" aria-label="Features">
 
-  <div class="features__bg" aria-hidden="true">
-    <div class="features__glow-left"></div>
-    <div class="features__glow-right"></div>
-  </div>
+  <!-- Header -->
+<div class="features__header fade-up d1">
 
-  <!-- Header — eyebrow then headline, left-aligned editorial feel -->
-  <div class="features__header">
-    <span class="features__eyebrow">What we analyze</span>
-    <h2 class="features__title">Not a generator.<br>An intelligence layer.</h2>
-    <p class="features__sub">
-      Every tool can make a thumbnail. Nobody tells you exactly
-      why yours isn't clicking&nbsp;— until now.
-    </p>
-  </div>
+  <span class="features__badge">
+    What we analyze
+  </span>
 
-  <!-- How it works — 3 steps in a bordered grid -->
-  <div class="features__steps" aria-label="How it works">
+  <h2 class="features__title">
+    Not a generator.<br>
+    An intelligence layer.
+  </h2>
+
+  <p class="features__sub">
+    Every tool can make a thumbnail.
+    Nobody tells you exactly why yours isn't clicking—
+    until now.
+  </p>
+
+</div>
+
+  <!-- How it works — 3 steps -->
+  <div class="features__steps fade-up d2" aria-label="How it works">
     @for (step of steps; track step.num) {
       <div class="features__step">
         <div class="features__step-top">
@@ -30,21 +34,18 @@
           <h3 class="features__step-title">{{ step.title }}</h3>
           <p class="features__step-desc">{{ step.desc }}</p>
         </div>
-        @if (!$last) {
-          <div class="features__step-arrow" aria-hidden="true">→</div>
-        }
       </div>
     }
   </div>
 
-  <!-- Feature grid -->
+  <!-- Feature grid — each cell gets a subtle colored accent on hover -->
   <div class="features__grid" role="list">
-    @for (feat of features; track feat.name) {
-      <article class="features__cell" role="listitem">
+    @for (feat of features; track feat.name; let i = $index) {
+      <article
+        class="features__cell fade-up"
+      >
         <div
           class="features__icon"
-          [style.background]="feat.iconBg"
-          [style.border]="'1px solid ' + feat.iconBorder"
           aria-hidden="true"
         >
           <lucide-angular [img]="feat.icon" size="20" class="features__icon-svg" />
@@ -59,7 +60,7 @@
   </div>
 
   <!-- Metrics callout strip -->
-  <div class="features__metrics" aria-label="Scoring dimensions">
+  <div class="features__metrics fade-up d5" aria-label="Scoring dimensions">
     <div class="features__metrics-label">8 scored dimensions</div>
     <div class="features__metrics-list">
       @for (m of metrics; track m) {

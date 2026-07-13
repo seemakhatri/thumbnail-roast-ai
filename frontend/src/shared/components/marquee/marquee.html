@@ -1,0 +1,33 @@
+<div
+  class="marquee"
+  [class.marquee--reverse]="direction === 'right'"
+  aria-hidden="true"
+>
+  <div class="marquee__track" [style.animationDuration.s]="speed">
+    @for (item of loopItems; track $index) {
+      <article class="marquee-card">
+        <div
+          class="marquee-card__avatar"
+          [style.background]="item.avatarGradient ?? 'linear-gradient(135deg, var(--accent), var(--purple))'"
+        >
+          {{ item.emoji ?? item.author.charAt(0) }}
+        </div>
+        <div class="marquee-card__body">
+          <div class="marquee-card__top">
+            <span class="marquee-card__author">{{ item.author }}</span>
+            @if (item.handle) {
+              <span class="marquee-card__handle">{{ item.handle }}</span>
+            }
+          </div>
+          <p class="marquee-card__message">{{ item.message }}</p>
+        </div>
+        @if (item.reaction) {
+          <div class="marquee-card__reaction">
+            <lucide-angular [img]="icons.flame" size="12" />
+            {{ item.reaction }}
+          </div>
+        }
+      </article>
+    }
+  </div>
+</div>

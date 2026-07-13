@@ -1,24 +1,31 @@
-// metrics-grid.ts
 import { Component, input } from '@angular/core';
-import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { ThumbnailReport } from '../../../../core/models/report.model';
+import { LucideAngularModule, TrendingUp, Eye, Smile, HelpCircle, Smartphone, Palette, Star, LayoutGrid, Sparkles, PaintBucket } from 'lucide-angular';
 
-interface MetricDef { key: keyof ThumbnailReport; label: string; icon: string; }
+interface MetricDef { 
+  key: keyof ThumbnailReport; 
+  label: string; 
+  icon: any; // Lucide icon component reference
+}
 
 const METRICS: MetricDef[] = [
-  { key: 'ctr_score',          label: 'CTR Potential',  icon: '📈' },
-  { key: 'readability_score',  label: 'Readability',    icon: '👁️' },
-  { key: 'emotion_score',      label: 'Emotion',        icon: '😮' },
-  { key: 'curiosity_score',    label: 'Curiosity',      icon: '🤔' },
-  { key: 'mobile_score',       label: 'Mobile',         icon: '📱' },
-  { key: 'contrast_score',     label: 'Contrast',       icon: '🎨' },
-  { key: 'face_score',         label: 'Face Quality',   icon: '😄' },
-  { key: 'brand_score',        label: 'Branding',       icon: '⭐' },
+  { key: 'ctr_score',            label: 'CTR Potential',   icon: TrendingUp },
+  { key: 'readability_score',    label: 'Readability',     icon: Eye },
+  { key: 'emotion_score',        label: 'Emotion',         icon: Smile },
+  { key: 'curiosity_score',      label: 'Curiosity',       icon: HelpCircle },
+  { key: 'mobile_score',         label: 'Mobile',          icon: Smartphone },
+  { key: 'contrast_score',       label: 'Contrast',        icon: Palette },
+  { key: 'composition_score',    label: 'Composition',     icon: LayoutGrid },
+  { key: 'color_score',          label: 'Color',           icon: PaintBucket },
+  { key: 'visual_appeal_score',  label: 'Visual Appeal',   icon: Sparkles },
+  { key: 'face_score',           label: 'Face Quality',    icon: Smile }, 
+  { key: 'brand_score',          label: 'Branding',        icon: Star },
 ];
 
 @Component({
   selector: 'app-metrics-grid',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './metrics-grid.html',
   styleUrl: './metrics-grid.scss',
   animations: [
@@ -39,15 +46,15 @@ export class MetricsGrid {
   }
 
   scoreColor(s: number): string {
-    if (s >= 70) return '#22c55e';
-    if (s >= 50) return '#eab308';
-    return '#ef4444';
+    if (s >= 70) return 'var(--green)';
+    if (s >= 50) return 'var(--yellow)';
+    return 'var(--red)';
   }
 
   barGradient(s: number): string {
-    if (s >= 70) return 'linear-gradient(90deg, #22c55e, #4ade80)';
-    if (s >= 50) return 'linear-gradient(90deg, #eab308, #facc15)';
-    return 'linear-gradient(90deg, #ef4444, #f87171)';
+    if (s >= 70) return `linear-gradient(90deg, var(--green), #4ade80)`;
+    if (s >= 50) return `linear-gradient(90deg, var(--yellow), #facc15)`;
+    return `linear-gradient(90deg, var(--red), #f87171)`;
   }
 
   statusLabel(s: number): string {

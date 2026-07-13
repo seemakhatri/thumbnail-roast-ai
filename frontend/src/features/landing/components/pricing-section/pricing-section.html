@@ -2,7 +2,7 @@
 <section class="pricing" id="pricing" aria-label="Pricing">
 
   <!-- Header -->
-  <div class="pricing__header">
+  <div class="pricing__header fade-up d1">
     <span class="pricing__eyebrow">Pricing</span>
     <h2 class="pricing__title">Simple, creator-first pricing.</h2>
     <p class="pricing__sub">
@@ -13,15 +13,15 @@
 
   <!-- Carousel -->
   <div class="pricing__carousel-wrapper">
-    <div 
-      class="pricing__carousel-track" 
+    <div
+      class="pricing__carousel-track"
       [style.transform]="'translateX(-' + currentSlide() * 100 + '%)'"
     >
       <div class="pricing__grid" role="list">
 
         <!-- FREE -->
         <article
-          class="pricing__card"
+          class="pricing__card fade-up d2"
           role="listitem"
           [class.pricing__card--current]="currentPlan() === 'free'"
           aria-label="Free plan"
@@ -40,7 +40,12 @@
           <ul class="pricing__features" aria-label="Free plan features">
             @for (f of plans[0].features; track f.text) {
               <li class="pricing__feature" [class.pricing__feature--off]="!f.included">
-                <span class="pricing__feature-icon" aria-hidden="true">{{ f.included ? '✓' : '✕' }}</span>
+                <lucide-angular
+                  [img]="f.included ? icons.check : icons.x"
+                  size="14"
+                  class="pricing__feature-icon"
+                  aria-hidden="true"
+                />
                 <span [class.pricing__feature-dim]="!f.included">{{ f.text }}</span>
               </li>
             }
@@ -61,7 +66,7 @@
 
         <!-- CREATOR (featured) -->
         <article
-          class="pricing__card pricing__card--featured"
+          class="pricing__card pricing__card--featured fade-up d3"
           role="listitem"
           [class.pricing__card--current]="currentPlan() === 'creator'"
           aria-label="Creator plan"
@@ -83,7 +88,7 @@
           <ul class="pricing__features" aria-label="Creator plan features">
             @for (f of plans[1].features; track f.text) {
               <li class="pricing__feature">
-                <span class="pricing__feature-icon" aria-hidden="true">✓</span>
+                <lucide-angular [img]="icons.check" size="14" class="pricing__feature-icon" aria-hidden="true" />
                 <span>{{ f.text }}</span>
               </li>
             }
@@ -104,7 +109,7 @@
 
         <!-- BUSINESS -->
         <article
-          class="pricing__card"
+          class="pricing__card fade-up d4"
           role="listitem"
           [class.pricing__card--current]="currentPlan() === 'business'"
           aria-label="Business plan"
@@ -126,7 +131,7 @@
           <ul class="pricing__features" aria-label="Business plan features">
             @for (f of plans[2].features; track f.text) {
               <li class="pricing__feature">
-                <span class="pricing__feature-icon" aria-hidden="true">✓</span>
+                <lucide-angular [img]="icons.check" size="14" class="pricing__feature-icon" aria-hidden="true" />
                 <span>{{ f.text }}</span>
               </li>
             }
@@ -147,7 +152,7 @@
 
         <!-- AGENCY -->
         <article
-          class="pricing__card"
+          class="pricing__card fade-up d5"
           role="listitem"
           [class.pricing__card--current]="currentPlan() === 'agency'"
           aria-label="Agency plan"
@@ -166,7 +171,7 @@
           <ul class="pricing__features" aria-label="Agency plan features">
             @for (f of plans[3].features; track f.text) {
               <li class="pricing__feature">
-                <span class="pricing__feature-icon" aria-hidden="true">✓</span>
+                <lucide-angular [img]="icons.check" size="14" class="pricing__feature-icon" aria-hidden="true" />
                 <span>{{ f.text }}</span>
               </li>
             }
@@ -191,34 +196,30 @@
 
   <!-- Carousel Controls -->
   <div class="pricing__controls">
-    <button 
-      class="pricing__arrow" 
-      (click)="prevSlide()" 
+    <button
+      class="pricing__arrow"
+      (click)="prevSlide()"
       [disabled]="currentSlide() === 0"
       aria-label="Previous plans"
-    >
-      ←
-    </button>
-    
+    >←</button>
+
     <div class="pricing__dots">
       @for (dot of [0, 1, 2, 3]; track dot) {
-        <button 
-          class="pricing__dot" 
+        <button
+          class="pricing__dot"
           [class.pricing__dot--active]="currentSlide() === dot"
           (click)="goToSlide(dot)"
           [attr.aria-label]="'Go to slide ' + (dot + 1)"
         ></button>
       }
     </div>
-    
-    <button 
-      class="pricing__arrow" 
-      (click)="nextSlide()" 
+
+    <button
+      class="pricing__arrow"
+      (click)="nextSlide()"
       [disabled]="currentSlide() === 3"
       aria-label="Next plans"
-    >
-      →
-    </button>
+    >→</button>
   </div>
 
   @if (checkout.error()) {

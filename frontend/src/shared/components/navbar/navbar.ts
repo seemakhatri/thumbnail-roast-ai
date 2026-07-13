@@ -1,13 +1,16 @@
 import { Component, HostListener, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Supabase } from '../../../core/services/supabase';
-import { 
-  LayoutDashboard, 
-  Flame, 
-  SquareChartGantt, 
+import {
+  LayoutDashboard,
+  Flame,
+  SquareChartGantt,
   LogOut,
-  LucideAngularModule 
+  LucideAngularModule,
+  Sun,
+  Moon,
 } from 'lucide-angular';
+import { ThemeService } from '../../../core/services/theme';
 
 @Component({
   selector: 'app-navbar',
@@ -23,14 +26,16 @@ export class Navbar {
   readonly scrolled = signal(false);
   readonly mobileOpen = signal(false);
   readonly userMenuOpen = signal(false);
+  readonly theme = inject(ThemeService);
 
-    readonly icons = {
+  readonly icons = {
     dashboard: LayoutDashboard,
     flame: Flame,
     compare: SquareChartGantt,
-    logout: LogOut
+    logout: LogOut,
+    sun: Sun,
+    moon: Moon,
   };
-
 
   @HostListener('window:scroll')
   onScroll(): void {
@@ -97,4 +102,8 @@ export class Navbar {
     this.closeMobile();
     await this.supabase.signOut();
   }
+
+  toggleTheme(): void {
+  this.theme.toggle();
+}
 }
