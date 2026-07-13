@@ -8,7 +8,9 @@
   backdrop-filter: blur(18px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   transition: 0.35s;
-  body.dark-theme .nb {
+
+  // Dark mode applied via .dark class on the header itself
+  &.dark {
     background: rgba(12, 15, 24, 0.78);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   }
@@ -18,10 +20,10 @@
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(24px);
   box-shadow: none;
-}
 
-body.dark-theme .nb--scrolled {
-  background: rgba(12, 15, 24, 0.92);
+  &.dark {
+    background: rgba(12, 15, 24, 0.92);
+  }
 }
 
 .nb__row {
@@ -66,7 +68,7 @@ body.dark-theme .nb--scrolled {
 .nb__links {
   display: flex;
   align-items: center;
-gap:38px;
+  gap: 38px;
   margin-left: auto;
 }
 
@@ -113,7 +115,7 @@ gap:38px;
   flex-shrink: 0;
 }
 
-/* ── THEME TOGGLE ──────────────────────────── */
+/* Theme toggle */
 .nb__theme-toggle {
   display: flex;
   align-items: center;
@@ -132,11 +134,6 @@ gap:38px;
     background: var(--surface2);
     color: var(--text);
     border-color: var(--border2);
-  }
-
-  .nb__theme-toggle:hover {
-    background: var(--surface);
-
     transform: rotate(15deg);
   }
 }
@@ -145,7 +142,7 @@ gap:38px;
   width: 96px;
   height: 32px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--surface2);
   animation: nb-shimmer 1.4s ease-in-out infinite;
 }
 
@@ -163,7 +160,6 @@ gap:38px;
   display: inline-flex;
   align-items: center;
   padding: 7px 16px;
-  border-radius: var(--radius-sm);
   border: 1px solid var(--border2);
   background: transparent;
   color: var(--muted2);
@@ -179,8 +175,8 @@ gap:38px;
 
   &:hover {
     color: var(--text);
-    border-color: rgba(255, 255, 255, 0.24);
-    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--border2);
+    background: var(--surface2);
   }
 }
 
@@ -188,7 +184,6 @@ gap:38px;
   display: inline-flex;
   align-items: center;
   padding: 8px 18px;
-  border-radius: var(--radius-sm);
   background: var(--accent);
   color: #fff;
   font-family: var(--font-body);
@@ -202,7 +197,7 @@ gap:38px;
   box-shadow: none;
 
   &:hover {
-    background: #ff5b1a;
+    background: var(--accent2);
     transform: translateY(-1px);
     box-shadow: 0 4px 24px var(--glow);
   }
@@ -223,8 +218,8 @@ gap:38px;
     border-color 0.2s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.24);
+    background: var(--surface2);
+    border-color: var(--border2);
   }
 }
 
@@ -288,9 +283,8 @@ gap:38px;
   width: 220px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
   padding: 6px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-lift);
   backdrop-filter: blur(18px);
   animation: nb-fadedown 0.15s ease;
   z-index: 10;
@@ -362,15 +356,15 @@ gap:38px;
   box-sizing: border-box;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--surface2);
     color: var(--text);
   }
 
   &--red {
-    color: #fca5a5;
+    color: var(--red);
     &:hover {
       background: rgba(239, 68, 68, 0.1);
-      color: #f87171;
+      color: var(--red);
     }
   }
 }
@@ -385,10 +379,10 @@ gap:38px;
   color: var(--text);
 }
 .nb__dd-item--red .nb__dd-icon {
-  color: #fca5a5;
+  color: var(--red);
 }
 .nb__dd-item--red:hover .nb__dd-icon {
-  color: #f87171;
+  color: var(--red);
 }
 
 .nb__burger {
@@ -431,6 +425,10 @@ gap:38px;
   border-top: 1px solid var(--border);
   padding: 8px 20px 20px;
   animation: nb-slide 0.2s ease;
+
+  &.dark {
+    background: rgba(0, 0, 0, 0.85);
+  }
 }
 
 @keyframes nb-slide {
@@ -464,7 +462,7 @@ gap:38px;
     color: var(--text);
   }
   &--red {
-    color: #fca5a5;
+    color: var(--red);
   }
 }
 
@@ -472,7 +470,6 @@ gap:38px;
   display: block;
   margin-top: 16px;
   padding: 14px;
-  border-radius: var(--radius-md);
   background: var(--accent);
   color: #fff;
   font-family: var(--font-body);

@@ -2,10 +2,12 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { Supabase } from '../../../core/services/supabase';
+import { LucideAngularModule, Check, AlertCircle } from 'lucide-angular';
+
 
 @Component({
   selector: 'app-callback-page',
-  imports: [],
+  imports: [LucideAngularModule],
   templateUrl: './callback-page.html',
   styleUrl: './callback-page.scss',
 })
@@ -16,6 +18,7 @@ export class CallbackPage implements OnInit {
 
   readonly state = signal<'loading' | 'success' | 'error'>('loading');
   readonly errorMessage = signal<string>('');
+    readonly icons = { check: Check, alertCircle: AlertCircle };
 
   async ngOnInit() {
     const queryError = this.route.snapshot.queryParamMap.get('error');

@@ -1,4 +1,8 @@
-<header class="nb" [class.nb--scrolled]="scrolled()">
+<header
+  class="nb"
+  [class.nb--scrolled]="scrolled()"
+  [class.dark]="theme.isDark()"
+>
   <div class="nb__row">
 
     <!-- Logo -->
@@ -9,6 +13,7 @@
       </span>
     </a>
 
+    <!-- Desktop nav -->
     <nav class="nb__links">
       <a routerLink="/analyze" routerLinkActive="nb__link--active" class="nb__link">Analyze</a>
       <a routerLink="/blog" routerLinkActive="nb__link--active" class="nb__link">Blog</a>
@@ -17,10 +22,10 @@
       <a routerLink="/compare" routerLinkActive="nb__link--active" class="nb__link">Compare</a>
     </nav>
 
-    <!-- Desktop auth (right) -->
+    <!-- Desktop auth + theme toggle -->
     <div class="nb__auth">
 
-      <!-- 🌗 THEME TOGGLE -->
+      <!-- 🌗 Theme toggle -->
       <button
         class="nb__theme-toggle"
         (click)="toggleTheme()"
@@ -93,7 +98,7 @@
 
   <!-- Mobile drawer -->
   @if (mobileOpen()) {
-    <div class="nb__drawer">
+    <div class="nb__drawer" [class.dark]="theme.isDark()">
       <a routerLink="/analyze" class="nb__m-link" (click)="closeMobile()">Analyze</a>
       <a (click)="navigateToHome('features'); closeMobile()" class="nb__m-link">Features</a>
       <a (click)="navigateToHome('pricing'); closeMobile()" class="nb__m-link">Pricing</a>

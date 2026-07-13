@@ -9,7 +9,6 @@
   background: var(--bg);
 }
 
-// ── Background ──
 .login-bg {
   position: fixed;
   inset: 0;
@@ -24,49 +23,36 @@
   transform: translate(-50%, -50%);
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(255, 77, 0, 0.12), transparent 65%);
-  border-radius: 50%;
+  background: radial-gradient(circle, var(--glow), transparent 65%);
   animation: pulse 4s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.6;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.1);
-    opacity: 1;
-  }
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
 }
 
 .bg-grid {
-  inset: 0;
   position: absolute;
+  inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3), transparent 72%);
+  mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.3), transparent 72%);
 }
 
-// ── Card ──
 .login-card {
   position: relative;
   z-index: 1;
   width: 100%;
   max-width: 360px;
   padding: 48px 32px;
-  // Lighter card color - more translucent with lighter background
-  background: rgba(20, 25, 40, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 24px 80px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-lift);
   transition: opacity 0.3s, transform 0.3s ease;
 }
 
@@ -75,7 +61,6 @@
   pointer-events: none;
 }
 
-// ── Logo ──
 .login-logo {
   display: flex;
   align-items: center;
@@ -92,7 +77,7 @@
 }
 
 .login-logo__text {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 20px;
   color: var(--text);
@@ -103,35 +88,26 @@
   color: var(--accent);
 }
 
-// ── Error ──
 .login-error {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
-  border-radius: 10px;
   background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.15);
-  color: #fca5a5;
+  color: var(--red);
+  font-family: var(--font-body);
   font-size: 13px;
   margin-bottom: 16px;
   animation: shake 0.3s ease;
 }
 
 @keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-4px);
-  }
-  75% {
-    transform: translateX(4px);
-  }
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
-// ── Google Button ──
 .btn-google {
   width: 100%;
   display: flex;
@@ -139,13 +115,12 @@
   justify-content: center;
   gap: 12px;
   padding: 14px 20px;
-  border-radius: 12px;
   border: none;
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--surface2);
   color: var(--text);
+  font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
-  font-family: 'DM Sans', sans-serif;
   cursor: pointer;
   transition: all 0.25s ease;
   position: relative;
@@ -156,29 +131,20 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent);
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent);
   opacity: 0;
   transition: opacity 0.25s ease;
 }
 
 .btn-google:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--surface);
   transform: scale(1.02);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-lift);
 }
 
-.btn-google:hover::before {
-  opacity: 1;
-}
-
-.btn-google:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.btn-google:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
+.btn-google:hover::before { opacity: 1; }
+.btn-google:active:not(:disabled) { transform: scale(0.98); }
+.btn-google:disabled { cursor: not-allowed; opacity: 0.5; }
 
 .btn-google__icon {
   width: 20px;
@@ -186,24 +152,19 @@
   flex-shrink: 0;
 }
 
-// ── Spinner ──
 .btn-spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255,255,255,0.15);
   border-top-color: #fff;
-  border-radius: 50%;
   animation: spin 0.7s linear infinite;
   flex-shrink: 0;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
-// ── Divider ──
 .login-divider {
   display: flex;
   align-items: center;
@@ -214,17 +175,17 @@
 .login-divider__line {
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--border);
 }
 
 .login-divider__text {
+  font-family: var(--font-body);
   font-size: 11px;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-// ── Guest Button ──
 .btn-guest {
   width: 100%;
   display: flex;
@@ -232,58 +193,37 @@
   justify-content: center;
   gap: 8px;
   padding: 12px 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  background: transparent;
   color: var(--muted2);
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 500;
-  font-family: 'DM Sans', sans-serif;
   cursor: pointer;
   transition: all 0.25s ease;
 }
 
 .btn-guest:hover {
-  border-color: rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border2);
+  background: var(--surface2);
   color: var(--text);
   transform: scale(1.02);
 }
 
-.btn-guest:active {
-  transform: scale(0.98);
-}
+.btn-guest:active { transform: scale(0.98); }
 
 .btn-guest__badge {
+  font-family: var(--font-mono);
   font-size: 10px;
   padding: 2px 8px;
-  border-radius: 100px;
-  background: rgba(255, 77, 0, 0.12);
+  background: rgba(255,77,0,0.12);
   color: var(--accent2);
   font-weight: 600;
   letter-spacing: 0.3px;
 }
 
-// ── Responsive ──
 @media (max-width: 480px) {
-  .login-card {
-    padding: 36px 24px;
-    max-width: 320px;
-  }
-
-  .login-logo__text {
-    font-size: 18px;
-  }
-
-  .login-logo__icon {
-    width: 30px;
-    height: 30px;
-  }
-}
-
-// ── Dark mode optimizations ──
-@media (prefers-color-scheme: dark) {
-  .login-card {
-    background: rgba(25, 30, 50, 0.7);
-  }
+  .login-card { padding: 36px 24px; max-width: 320px; }
+  .login-logo__text { font-size: 18px; }
+  .login-logo__icon { width: 30px; height: 30px; }
 }
