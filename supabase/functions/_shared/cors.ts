@@ -1,6 +1,6 @@
 const allowedOrigins = [
-  "https://thumbnailroast.com",
-  "https://www.thumbnailroast.com",
+  "https://thumbnail-roast.com",
+  "https://www.thumbnail-roast.com",
   "http://localhost:4200",
   "http://localhost:3000",
   "http://localhost:5173",
