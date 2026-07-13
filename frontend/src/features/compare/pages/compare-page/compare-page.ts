@@ -41,7 +41,6 @@ export class ComparePage {
     x: X,
   };
 
-  // Exclude already-selected thumbnails from other pickers
   readonly excludeFromB = computed(() => {
     const a = this.compareService.slotA();
     const c = this.compareService.slotC();
@@ -60,13 +59,9 @@ export class ComparePage {
     return [a?.id, b?.id].filter(Boolean) as string[];
   });
 
-  // Show/hide optional 3rd slot
   readonly showSlotC = signal(false);
-
-  // Track if user has seen the onboarding
   readonly hasVisitedBefore = signal(false);
 
-  // Handle slot selections
   onPickedA(report: ThumbnailReport | null): void {
     this.compareService.slotA.set(report);
     if (report) this.hasVisitedBefore.set(true);
@@ -82,7 +77,6 @@ export class ComparePage {
     if (report) this.hasVisitedBefore.set(true);
   }
 
-  // Add/remove third comparison slot
   addThird(): void {
     this.showSlotC.set(true);
   }
@@ -92,12 +86,10 @@ export class ComparePage {
     this.compareService.slotC.set(null);
   }
 
-  // Run comparison
   async run(): Promise<void> {
     await this.compareService.compare();
   }
 
-  // Reset everything
   reset(): void {
     this.compareService.reset();
     this.showSlotC.set(false);
