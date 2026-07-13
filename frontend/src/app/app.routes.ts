@@ -1,7 +1,6 @@
-// src/app/app.routes.ts
-
 import { Routes } from '@angular/router';
 import { authGuard } from '../core/guards/auth-guard';
+import { planGuard } from '../core/guards/plan-guard';
 
 export const routes: Routes = [
   // ── Landing ─────────────────────────────────────────────────────────
@@ -101,14 +100,14 @@ export const routes: Routes = [
         (m) => m.DashboardPage,
       ),
   },
-  {
-    path: 'compare',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('../features/compare/pages/compare-page/compare-page').then(
-        (m) => m.ComparePage,
-      ),
-  },
+{
+  path: 'compare',
+  canActivate: [authGuard, planGuard],
+  loadComponent: () =>
+    import('../features/compare/pages/compare-page/compare-page').then(
+      (m) => m.ComparePage,
+    ),
+},
 
   // ── Optional: keep waitlist route if you still need it ──────────────
   {

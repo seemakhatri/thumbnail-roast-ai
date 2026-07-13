@@ -1,8 +1,4 @@
-<header
-  class="nb"
-  [class.nb--scrolled]="scrolled()"
-  [class.dark]="theme.isDark()"
->
+<header class="nb" [class.nb--scrolled]="scrolled()" [class.dark]="theme.isDark()">
   <div class="nb__row">
 
     <!-- Logo -->
@@ -19,76 +15,86 @@
       <a routerLink="/blog" routerLinkActive="nb__link--active" class="nb__link">Blog</a>
       <a (click)="navigateToHome('features')" class="nb__link">Features</a>
       <a (click)="navigateToHome('pricing')" class="nb__link">Pricing</a>
+      @if (canCompare()) {
       <a routerLink="/compare" routerLinkActive="nb__link--active" class="nb__link">Compare</a>
+      } @else {
+      <a routerLink="/pricing" class="nb__link nb__link--locked">
+        Compare
+        <span class="nb__link-lock">
+          <lucide-angular [img]="icons.lock" size="8" /> PRO
+        </span>
+      </a>
+      }
     </nav>
 
     <!-- Desktop auth + theme toggle -->
     <div class="nb__auth">
 
       <!-- 🌗 Theme toggle -->
-      <button
-        class="nb__theme-toggle"
-        (click)="toggleTheme()"
-        [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
-        type="button"
-      >
+      <button class="nb__theme-toggle" (click)="toggleTheme()"
+        [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'" type="button">
         <lucide-angular [img]="theme.isDark() ? icons.sun : icons.moon" size="18" />
       </button>
 
       @if (supabase.authLoading()) {
-        <div class="nb__skeleton"></div>
+      <div class="nb__skeleton"></div>
       } @else if (supabase.isLoggedIn()) {
-        <div class="nb__user" (click)="toggleUserMenu()">
-          @if (supabase.currentUser()?.avatar_url) {
-            <img [src]="supabase.currentUser()!.avatar_url!" [alt]="supabase.currentUser()!.full_name ?? 'User'"
-              class="nb__avatar nb__avatar--img" referrerpolicy="no-referrer" />
-          } @else {
-            <span class="nb__avatar nb__avatar--fallback">{{ initials() }}</span>
-          }
-          <div class="nb__user-meta">
-            <span class="nb__user-name">{{ firstName() }}</span>
-            <span class="nb__usage">
-              @if (supabase.userPlan() === 'agency') {
-                Unlimited
-              } @else {
-                {{ supabase.currentUser()?.analyses_used }}/{{ supabase.currentUser()?.analyses_limit }}
-              }
-            </span>
-          </div>
-          <svg class="nb__chevron" [class.nb__chevron--open]="userMenuOpen()" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" />
-          </svg>
-
-          @if (userMenuOpen()) {
-            <div class="nb__dropdown" (click)="$event.stopPropagation()">
-              <div class="nb__dd-header">
-                <span class="nb__dd-email">{{ supabase.currentUser()?.email }}</span>
-                <span class="nb__plan-tag">{{ supabase.userPlan() }}</span>
-              </div>
-              <hr class="nb__dd-hr">
-              <a routerLink="/dashboard" class="nb__dd-item" (click)="closeUserMenu()">
-                <lucide-angular [img]="icons.dashboard" class="nb__dd-icon" size="16" /> Dashboard
-              </a>
-              <a routerLink="/analyze" class="nb__dd-item" (click)="closeUserMenu()">
-                <lucide-angular [img]="icons.flame" class="nb__dd-icon" size="16" /> New Analysis
-              </a>
-              <a routerLink="/compare" class="nb__dd-item" (click)="closeUserMenu()">
-                <lucide-angular [img]="icons.compare" class="nb__dd-icon" size="16" /> Compare
-              </a>
-              <button class="nb__dd-item nb__dd-item--red" (click)="signOut()">
-                <lucide-angular [img]="icons.logout" class="nb__dd-icon" size="16" /> Sign out
-              </button>
-            </div>
-          }
+      <div class="nb__user" (click)="toggleUserMenu()">
+        @if (supabase.currentUser()?.avatar_url) {
+        <img [src]="supabase.currentUser()!.avatar_url!" [alt]="supabase.currentUser()!.full_name ?? 'User'"
+          class="nb__avatar nb__avatar--img" referrerpolicy="no-referrer" />
+        } @else {
+        <span class="nb__avatar nb__avatar--fallback">{{ initials() }}</span>
+        }
+        <div class="nb__user-meta">
+          <span class="nb__user-name">{{ firstName() }}</span>
+          <span class="nb__usage">
+            @if (supabase.userPlan() === 'agency') {
+            Unlimited
+            } @else {
+            {{ supabase.currentUser()?.analyses_used }}/{{ supabase.currentUser()?.analyses_limit }}
+            }
+          </span>
         </div>
+        <svg class="nb__chevron" [class.nb__chevron--open]="userMenuOpen()" width="12" height="12" viewBox="0 0 12 12">
+          <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" />
+        </svg>
+
+        @if (userMenuOpen()) {
+        <div class="nb__dropdown" (click)="$event.stopPropagation()">
+          <div class="nb__dd-header">
+            <span class="nb__dd-email">{{ supabase.currentUser()?.email }}</span>
+            <span class="nb__plan-tag">{{ supabase.userPlan() }}</span>
+          </div>
+          <hr class="nb__dd-hr">
+          <a routerLink="/dashboard" class="nb__dd-item" (click)="closeUserMenu()">
+            <lucide-angular [img]="icons.dashboard" class="nb__dd-icon" size="16" /> Dashboard
+          </a>
+          <a routerLink="/analyze" class="nb__dd-item" (click)="closeUserMenu()">
+            <lucide-angular [img]="icons.flame" class="nb__dd-icon" size="16" /> New Analysis
+          </a>
+          @if (canCompare()) {
+          <a routerLink="/compare" class="nb__m-link" (click)="closeMobile()">Compare</a>
+          } @else {
+          <a routerLink="/pricing" class="nb__m-link nb__m-link--locked" (click)="closeMobile()">
+            Compare <lucide-angular [img]="icons.lock" size="12" />
+          </a>
+          }
+          <button class="nb__dd-item nb__dd-item--red" (click)="signOut()">
+            <lucide-angular [img]="icons.logout" class="nb__dd-icon" size="16" /> Sign out
+          </button>
+        </div>
+        }
+      </div>
       } @else {
-        <a routerLink="/login" class="nb__ghost">Sign In</a>
-        <a routerLink="/login" class="nb__cta">Get Free Roast →</a>
+      <a routerLink="/login" class="nb__ghost">Sign In</a>
+      <a routerLink="/login" class="nb__cta">Get Free Roast →</a>
       }
     </div>
 
     <!-- Hamburger (mobile only) -->
-    <button class="nb__burger" [class.nb__burger--open]="mobileOpen()" (click)="toggleMobile()" aria-label="Toggle menu" type="button">
+    <button class="nb__burger" [class.nb__burger--open]="mobileOpen()" (click)="toggleMobile()" aria-label="Toggle menu"
+      type="button">
       <span></span>
       <span></span>
       <span></span>
@@ -98,19 +104,19 @@
 
   <!-- Mobile drawer -->
   @if (mobileOpen()) {
-    <div class="nb__drawer" [class.dark]="theme.isDark()">
-      <a routerLink="/analyze" class="nb__m-link" (click)="closeMobile()">Analyze</a>
-      <a (click)="navigateToHome('features'); closeMobile()" class="nb__m-link">Features</a>
-      <a (click)="navigateToHome('pricing'); closeMobile()" class="nb__m-link">Pricing</a>
-      <a routerLink="/compare" class="nb__m-link" (click)="closeMobile()">Compare</a>
+  <div class="nb__drawer" [class.dark]="theme.isDark()">
+    <a routerLink="/analyze" class="nb__m-link" (click)="closeMobile()">Analyze</a>
+    <a (click)="navigateToHome('features'); closeMobile()" class="nb__m-link">Features</a>
+    <a (click)="navigateToHome('pricing'); closeMobile()" class="nb__m-link">Pricing</a>
+    <a routerLink="/compare" class="nb__m-link" (click)="closeMobile()">Compare</a>
 
-      @if (supabase.isLoggedIn()) {
-        <a routerLink="/dashboard" class="nb__m-link" (click)="closeMobile()">Dashboard</a>
-        <button class="nb__m-link nb__m-link--red" (click)="signOut()">Sign out</button>
-      } @else {
-        <a routerLink="/login" class="nb__m-cta" (click)="closeMobile()">Get Free Roast →</a>
-      }
-    </div>
+    @if (supabase.isLoggedIn()) {
+    <a routerLink="/dashboard" class="nb__m-link" (click)="closeMobile()">Dashboard</a>
+    <button class="nb__m-link nb__m-link--red" (click)="signOut()">Sign out</button>
+    } @else {
+    <a routerLink="/login" class="nb__m-cta" (click)="closeMobile()">Get Free Roast →</a>
+    }
+  </div>
   }
 
 </header>

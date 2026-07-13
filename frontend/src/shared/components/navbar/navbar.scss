@@ -9,7 +9,6 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   transition: 0.35s;
 
-  // Dark mode applied via .dark class on the header itself
   &.dark {
     background: rgba(12, 15, 24, 0.78);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -107,6 +106,45 @@
   }
 }
 
+/* ── LOCKED LINK STYLING ── */
+.nb__link--locked {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  cursor: default;
+  opacity: 0.6;
+
+  &:hover {
+    color: var(--muted);
+  }
+  &::after {
+    display: none;
+  }
+}
+
+.nb__link-lock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 6px 1px 5px;
+  background: var(--border);
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 600;
+  gap: 3px;
+  line-height: 1.4;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  border: 1px solid var(--border2);
+
+  lucide-angular {
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* ── AUTH ── */
 .nb__auth {
   display: flex;
   align-items: center;
@@ -115,14 +153,12 @@
   flex-shrink: 0;
 }
 
-/* Theme toggle */
 .nb__theme-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 34px;
   height: 34px;
-  border-radius: 999px;
   border: 1px solid var(--border);
   background: transparent;
   transition: 0.25s;
@@ -141,7 +177,6 @@
 .nb__skeleton {
   width: 96px;
   height: 32px;
-  border-radius: 8px;
   background: var(--surface2);
   animation: nb-shimmer 1.4s ease-in-out infinite;
 }
@@ -209,7 +244,6 @@
   align-items: center;
   gap: 8px;
   padding: 5px 12px 5px 5px;
-  border-radius: 100px;
   border: 1px solid var(--border2);
   cursor: pointer;
   user-select: none;
@@ -226,7 +260,6 @@
 .nb__avatar {
   width: 28px;
   height: 28px;
-  border-radius: 50%;
   flex-shrink: 0;
 }
 
@@ -317,7 +350,6 @@
   display: inline-block;
   margin-top: 6px;
   padding: 2px 8px;
-  border-radius: 100px;
   background: rgba(255, 77, 0, 0.12);
   border: 1px solid rgba(255, 77, 0, 0.25);
   font-family: var(--font-mono);
@@ -340,7 +372,6 @@
   gap: 10px;
   width: 100%;
   padding: 9px 12px;
-  border-radius: 8px;
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 500;
@@ -385,6 +416,7 @@
   color: var(--red);
 }
 
+/* ── MOBILE ── */
 .nb__burger {
   display: none;
   flex-direction: column;
@@ -403,7 +435,6 @@
   width: 22px;
   height: 1.5px;
   background: var(--muted2);
-  border-radius: 2px;
   transition: all 0.28s ease;
 }
 
@@ -463,6 +494,18 @@
   }
   &--red {
     color: var(--red);
+  }
+}
+
+.nb__m-link--locked {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  opacity: 0.6;
+
+  &:hover {
+    color: var(--muted);
   }
 }
 

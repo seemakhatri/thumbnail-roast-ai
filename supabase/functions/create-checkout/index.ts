@@ -1,10 +1,8 @@
 import { errorResponse, handleCors, jsonResponse } from "../_shared/cors.ts";
 import { Stripe } from "../_shared/deps.ts";
 
-// Initialize Stripe with your secret key
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!);
 
-// Plan limits mapping - keep in sync with webhook
 const PLAN_LIMITS: Record<string, number> = {
     free: 3,
     creator: 50,
@@ -12,7 +10,6 @@ const PLAN_LIMITS: Record<string, number> = {
     agency: 500
 };
 
-// Plan price IDs - keep in sync with Stripe dashboard
 const PLAN_PRICE_IDS: Record<string, string | undefined> = {
     creator: Deno.env.get("STRIPE_CREATOR_PRICE_ID"),
     business: Deno.env.get("STRIPE_BUSINESS_PRICE_ID"),
@@ -24,7 +21,7 @@ Deno.serve(async (req: Request) => {
     if (corsResponse) return corsResponse;
 
     if (req.method !== "POST") {
-        return errorResponse("Method not allowed", 405);
+       return errorResponse("Method not allowed", 405, req);
     }
 
     try {
@@ -34,7 +31,7 @@ Deno.serve(async (req: Request) => {
         console.log("Create Checkout Request:", { plan, userId });
 
         if (!plan || !userId) {
-            return errorResponse("plan and userId are required", 400);
+         return errorResponse("plan and userId are required", 400, req);
         }
 
         // Get the correct price ID for this plan
@@ -66,12 +63,13 @@ Deno.serve(async (req: Request) => {
 
         console.log("Checkout session created:", session.id);
 
-        return jsonResponse({ url: session.url });
+       return jsonResponse({ url: session.url }, 200, req);
     } catch (error: unknown) {
         console.error("CREATE CHECKOUT ERROR:", error);
-        return errorResponse(
-            error instanceof Error ? error.message : String(error),
-            500,
-        );
+      return errorResponse(
+    error instanceof Error ? error.message : String(error),
+    500,
+    req,
+);
     }
 });

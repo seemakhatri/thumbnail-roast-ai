@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Supabase } from '../../../core/services/supabase';
 import {
@@ -9,6 +9,7 @@ import {
   LucideAngularModule,
   Sun,
   Moon,
+  Lock
 } from 'lucide-angular';
 import { ThemeService } from '../../../core/services/theme';
 
@@ -35,6 +36,7 @@ export class Navbar {
     logout: LogOut,
     sun: Sun,
     moon: Moon,
+    lock: Lock
   };
 
   @HostListener('window:scroll')
@@ -106,4 +108,9 @@ export class Navbar {
   toggleTheme(): void {
   this.theme.toggle();
 }
+
+readonly canCompare = computed(() => {
+  const plan = this.supabase.userPlan();
+  return plan !== 'free' && plan !== undefined; 
+});
 }
