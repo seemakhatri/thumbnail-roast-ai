@@ -1,6 +1,7 @@
 import { createClient } from "../_shared/deps.ts";
 
-const BASE = "https://localhost:4200";
+const BASE =
+  Deno.env.get("FRONTEND_ORIGIN") ?? "https://thumbnail-roast.com";
 
 Deno.serve(async (_req: Request) => {
   const supabase = createClient(

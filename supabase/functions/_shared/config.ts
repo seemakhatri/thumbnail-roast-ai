@@ -86,10 +86,9 @@ export class Config {
     return this.getOptional("ENV") !== "production";
   }
 
-  getFrontendOrigin(): string {
-    return this.getOptional("FRONTEND_ORIGIN") || "http://localhost:4200";
-  }
-
+getFrontendOrigin(): string {
+  return this.getOptional("FRONTEND_ORIGIN") || "https://thumbnail-roast.com";
+}
   getAllowedOrigin(): string {
     return this.getOptional("ALLOWED_ORIGIN") || this.getFrontendOrigin();
   }
