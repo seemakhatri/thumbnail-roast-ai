@@ -25,18 +25,12 @@ export const PLAN_LIMITS: Record<PricingPlan, number> = {
 export class Checkout {
   private readonly supabase = inject(Supabase);
 
-  readonly loading = signal(false);
-  readonly error = signal<string | null>(null);
+readonly loadingPlan = signal<PricingPlan | null>(null);
+readonly error = signal<string | null>(null);
 
-  /**
-   * Initiates Stripe checkout for a paid plan.
-   *
-   * Guards:
-   *  - free plan → navigate to /analyze, not Stripe
-   *  - already on this plan or higher → silently return
-   *  - userId derived from JWT session, never from request body
-   *  - Authorization header sent so edge function can verify identity
-   */
+isLoading(plan: PricingPlan): boolean {
+  return this.loadingPlan() === plan;
+}
   async startCheckout(plan: PricingPlan): Promise<void> {
     if (plan === 'free') return;
 
@@ -48,7 +42,7 @@ export class Checkout {
       return;
     }
 
-    this.loading.set(true);
+this.loadingPlan.set(plan);
     this.error.set(null);
 
     try {
@@ -98,7 +92,7 @@ export class Checkout {
     } catch {
       this.error.set('Checkout service unavailable. Please try again.');
     } finally {
-      this.loading.set(false);
-    }
+  this.loadingPlan.set(null);
+}
   }
 }
