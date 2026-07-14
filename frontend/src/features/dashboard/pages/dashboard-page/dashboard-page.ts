@@ -122,9 +122,7 @@ export class DashboardPage implements OnInit {
   async ngOnInit(): Promise<void> {
     void this.loadDashboard();
     setTimeout(async () => {
-      console.log('[Dashboard] Force loading YouTube videos...');
       await this.youtube.loadVideos();
-      console.log('[Dashboard] YouTube videos after force load:', this.youtube.videos().length);
     }, 3000);
   }
 
@@ -174,7 +172,6 @@ export class DashboardPage implements OnInit {
     try {
       const result = await this.youtube.sync();
       const message = `Synced ${result.inserted} new videos, ${result.updated} updated`;
-      console.log(message);
       await this.youtube.loadVideos();
     } catch (err) {
       console.error('Sync failed:', err);
@@ -182,10 +179,6 @@ export class DashboardPage implements OnInit {
   }
 
   // ─── UI HELPERS ──────────────────────────────────────────────────────
-
-  /**
-   * Get color for a score value
-   */
   scoreColor(score: number): string {
     if (score >= 75) return 'var(--green)';
     if (score >= 50) return 'var(--yellow)';
@@ -220,19 +213,12 @@ export class DashboardPage implements OnInit {
     }
   }
 
-  /**
-   * Calculate percentage difference between two values
-   * Used for niche benchmark comparison
-   */
   getPercentageDifference(value: number, benchmark: number): string {
     if (benchmark === 0) return '0';
     const diff = ((value - benchmark) / benchmark) * 100;
     return Math.abs(Math.round(diff)).toString();
   }
 
-  /**
-   * Refresh dashboard data
-   */
   async refreshDashboard(): Promise<void> {
     await this.dashboard.load();
     if (this.youtube.connected()) {

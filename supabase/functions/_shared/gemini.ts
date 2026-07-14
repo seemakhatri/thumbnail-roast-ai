@@ -735,7 +735,6 @@ export async function analyzeThumbnail(
 ): Promise<ThumbnailAnalysis> {
   const { base64, mimeType } = await buildBase64(imageUrl);
   const niche = await detectNiche(base64, mimeType, apiKey);
-  console.log(`Detected niche: ${niche}`);
 
   const rawText = await runGemini(
     buildScoringPrompt(niche),

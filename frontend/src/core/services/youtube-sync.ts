@@ -210,7 +210,6 @@ const { data, error } = await this.supabase.client
       throw error;
     }
 
-    console.log(`[YouTubeSync] Found ${data?.length || 0} videos`);
     
     if (data && data.length > 0) {
       console.log('[YouTubeSync] First video:', data[0].title);

@@ -40,8 +40,6 @@ export class Gemini {
 
       const accessToken = session?.access_token;
 
-      console.log('JWT exists:', !!accessToken);
-
       const response = await firstValueFrom(
         this.http.post<AnalyzeResponse>(
           `${this.edgeFunctionsUrl}/analyze-thumbnail`,

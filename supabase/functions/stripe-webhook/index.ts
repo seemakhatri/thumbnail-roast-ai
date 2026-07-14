@@ -79,9 +79,6 @@ Deno.serve(async (req: Request) => {
             const userId = session.metadata?.userId;
             const plan = session.metadata?.plan;
 
-            console.log("Processing checkout.session.completed for user:", userId);
-            console.log("Plan:", plan);
-
             if (!userId) {
                 console.error("Missing userId in metadata");
                 return new Response("Missing userId", { status: 400 });
@@ -107,7 +104,6 @@ Deno.serve(async (req: Request) => {
                 throw error;
             }
 
-            console.log(`✅ Profile upgraded to ${plan} with ${analysesLimit} analyses limit`);
         }
 
         // 2. Subscription Canceled
@@ -130,8 +126,6 @@ Deno.serve(async (req: Request) => {
                 console.error("Cancel update error:", error);
                 throw error;
             }
-
-            console.log("✅ Subscription cancelled, user reverted to free plan");
         }
 
         // 3. Subscription Updated

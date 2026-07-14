@@ -1,7 +1,6 @@
 import { createClient } from "../_shared/deps.ts";
 import { handleCors, jsonResponse, errorResponse } from "../_shared/cors.ts";
 import { refreshAccessToken } from "../_shared/google-oauth.ts";
-import type { YouTubeSyncResponse } from "../_shared/types.ts";
 
 const YOUTUBE_API_BASE = "https://youtube.googleapis.com/youtube/v3";
 
@@ -10,12 +9,11 @@ Deno.serve(async (req: Request) => {
   if (corsResponse) return corsResponse;
   if (req.method !== "POST") return errorResponse("Method not allowed", 405);
 
-  console.log("[youtube-sync] request received");
-
   try {
     // ── Authenticate ──────────────────────────────────────────────────────
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) return errorResponse("Authentication required", 401);
+    if (!authHeader?.startsWith("Bearer "))
+      return errorResponse("Authentication required", 401);
 
     const jwt = authHeader.slice(7);
     const tempClient = createClient(
@@ -23,12 +21,13 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { auth: { persistSession: false } },
     );
-    const { data: { user }, error: authError } = await tempClient.auth.getUser(jwt);
+    const {
+      data: { user },
+      error: authError,
+    } = await tempClient.auth.getUser(jwt);
     if (authError || !user) {
-      console.error("[youtube-sync] invalid token:", authError?.message);
       return errorResponse("Invalid token", 401);
     }
-    console.log("[youtube-sync] authenticated user:", user.id);
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -44,44 +43,72 @@ Deno.serve(async (req: Request) => {
       .maybeSingle();
 
     if (connError) {
-      console.error("[youtube-sync] DB error looking up connection:", connError.message);
-      return errorResponse(`Failed to look up YouTube connection: ${connError.message}`, 500);
+      console.error(
+        "[youtube-sync] DB error looking up connection:",
+        connError.message,
+      );
+      return errorResponse(
+        `Failed to look up YouTube connection: ${connError.message}`,
+        500,
+      );
     }
     if (!connection) {
-      console.warn("[youtube-sync] no youtube_connections row for user:", user.id);
-      return errorResponse("No YouTube account connected. Please reconnect.", 404);
+      console.warn(
+        "[youtube-sync] no youtube_connections row for user:",
+        user.id,
+      );
+      return errorResponse(
+        "No YouTube account connected. Please reconnect.",
+        404,
+      );
     }
-    console.log("[youtube-sync] found stored connection for user:", user.id);
 
     // ── SECURITY: mint a fresh access token server-side ──────────────────
     const clientId = Deno.env.get("GOOGLE_OAUTH_CLIENT_ID");
     const clientSecret = Deno.env.get("GOOGLE_OAUTH_CLIENT_SECRET");
     if (!clientId || !clientSecret) {
-      console.error("[youtube-sync] GOOGLE_OAUTH_CLIENT_ID/SECRET not configured");
+      console.error(
+        "[youtube-sync] GOOGLE_OAUTH_CLIENT_ID/SECRET not configured",
+      );
       return errorResponse("Google OAuth is not configured on the server", 500);
     }
 
     let accessToken: string;
     try {
-      const tokens = await refreshAccessToken(connection.refresh_token, clientId, clientSecret);
+      const tokens = await refreshAccessToken(
+        connection.refresh_token,
+        clientId,
+        clientSecret,
+      );
       accessToken = tokens.access_token;
     } catch (err) {
-      console.error("[youtube-sync] token refresh failed:", err instanceof Error ? err.message : err);
-      return errorResponse("YouTube connection expired. Please reconnect your account.", 401);
+      console.error(
+        "[youtube-sync] token refresh failed:",
+        err instanceof Error ? err.message : err,
+      );
+      return errorResponse(
+        "YouTube connection expired. Please reconnect your account.",
+        401,
+      );
     }
-    console.log("[youtube-sync] minted fresh access token");
 
     // ── Fetch channel ────────────────────────────────────────────────────
-    const channelRes = await fetch(`${YOUTUBE_API_BASE}/channels?part=id&mine=true`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    const channelRes = await fetch(
+      `${YOUTUBE_API_BASE}/channels?part=id&mine=true`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
     if (!channelRes.ok) {
-      console.error("[youtube-sync] YouTube channel error:", channelRes.status, await channelRes.text());
+      console.error(
+        "[youtube-sync] YouTube channel error:",
+        channelRes.status,
+        await channelRes.text(),
+      );
       return errorResponse("Failed to get YouTube channel", 502);
     }
     const channelId = (await channelRes.json())?.items?.[0]?.id;
     if (!channelId) return errorResponse("No YouTube channel found", 404);
-    console.log("[youtube-sync] channel id:", channelId);
 
     // ── Fetch ALL videos (pagination) ─────────────────────────────────────
     const videoItems: any[] = [];
@@ -106,7 +133,11 @@ Deno.serve(async (req: Request) => {
       );
 
       if (!videosRes.ok) {
-        console.error("[youtube-sync] YouTube search error:", videosRes.status, await videosRes.text());
+        console.error(
+          "[youtube-sync] YouTube search error:",
+          videosRes.status,
+          await videosRes.text(),
+        );
         return errorResponse("Failed to fetch videos", 502);
       }
 
@@ -116,8 +147,6 @@ Deno.serve(async (req: Request) => {
       }
       nextPageToken = json.nextPageToken;
     } while (nextPageToken);
-
-    console.log(`[youtube-sync] fetched ${videoItems.length} videos across all pages`);
 
     if (videoItems.length === 0) {
       return jsonResponse({
@@ -142,7 +171,11 @@ Deno.serve(async (req: Request) => {
           statsMap[item.id] = item;
         }
       } else {
-        console.error("[youtube-sync] YouTube stats error:", statsRes.status, await statsRes.text());
+        console.error(
+          "[youtube-sync] YouTube stats error:",
+          statsRes.status,
+          await statsRes.text(),
+        );
       }
     }
 
@@ -183,7 +216,10 @@ Deno.serve(async (req: Request) => {
       const videoId = item.id.videoId;
       const snippet = item.snippet;
       const stats = statsMap[videoId]?.statistics ?? {};
-      const thumbnailUrl = snippet.thumbnails?.high?.url ?? snippet.thumbnails?.default?.url ?? null;
+      const thumbnailUrl =
+        snippet.thumbnails?.high?.url ??
+        snippet.thumbnails?.default?.url ??
+        null;
 
       // Find matching report
       let reportId: string | null = null;
@@ -228,7 +264,10 @@ Deno.serve(async (req: Request) => {
 
       if (upsertError) {
         console.error("[youtube-sync] Batch upsert failed:", upsertError);
-        return errorResponse(`Failed to save videos: ${upsertError.message}`, 500);
+        return errorResponse(
+          `Failed to save videos: ${upsertError.message}`,
+          500,
+        );
       }
     }
 
@@ -238,24 +277,32 @@ Deno.serve(async (req: Request) => {
       .update({ last_synced_at: new Date().toISOString() })
       .eq("user_id", user.id);
 
-    console.log(`[youtube-sync] sync complete: ${insertedCount} inserted, ${updatedCount} updated`);
+    console.log(
+      `[youtube-sync] sync complete: ${insertedCount} inserted, ${updatedCount} updated`,
+    );
 
     // ── Return BOTH formats for compatibility ────────────────────────────
     return jsonResponse({
       processed: records.length,
       inserted: insertedCount,
       updated: updatedCount,
-      videos_synced: insertedCount,  // Keep old field for backward compatibility
+      videos_synced: insertedCount, // Keep old field for backward compatibility
       total_videos: videoItems.length,
     });
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "Internal server error";
+    const message =
+      error instanceof Error ? error.message : "Internal server error";
     console.error("[youtube-sync] unhandled error:", message);
     return errorResponse(message, 500);
   }
 });
 
 async function hashUrl(url: string): Promise<string> {
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(url));
-  return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(url),
+  );
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }

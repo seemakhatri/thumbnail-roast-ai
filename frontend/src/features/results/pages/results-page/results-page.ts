@@ -29,7 +29,6 @@ export class ResultsPage implements OnInit {
 
   private async loadReport(): Promise<void> {
     const reportId = this.id();
-      console.log('Route ID:', reportId);
     if (!reportId) {
       this.loading.set(false);
       this.error.set('Report not found.');
@@ -41,7 +40,6 @@ export class ResultsPage implements OnInit {
 
     try {
       const data = await this.supabase.getReportById(reportId);
-          console.log('Report returned:', data);
       if (!data) {
         this.error.set('Report not found. It may have been deleted.');
         return;

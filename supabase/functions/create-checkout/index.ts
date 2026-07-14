@@ -56,11 +56,6 @@ Deno.serve(async (req: Request) => {
 
     const userId = user.id;
 
-    console.log("Create Checkout Request:", {
-      plan,
-      userId,
-    });
-
     // Get the correct price ID for this plan
     const priceId = PLAN_PRICE_IDS[plan as string];
 
@@ -91,8 +86,6 @@ Deno.serve(async (req: Request) => {
       success_url: `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/pricing`,
     });
-
-    console.log("Checkout session created:", session.id);
 
     return jsonResponse({ url: session.url }, 200, req);
   } catch (error: unknown) {
