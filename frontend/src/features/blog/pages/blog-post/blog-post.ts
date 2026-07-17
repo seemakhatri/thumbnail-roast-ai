@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, HostListener, inject, OnInit, signal, computed, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlogService, BlogPostModal } from '../../../../core/services/blog';
 import { MetaService } from '../../../../core/services/meta';
@@ -19,7 +19,7 @@ interface TocItem {
   templateUrl: './blog-post.html',
   styleUrl: './blog-post.scss',
 })
-export class BlogPost implements OnInit {
+export class BlogPost implements OnInit, AfterViewInit {
   private readonly route = inject(ActivatedRoute);
   private readonly blogService = inject(BlogService);
   private readonly meta = inject(MetaService);
@@ -34,6 +34,7 @@ export class BlogPost implements OnInit {
   readonly renderedContent = signal<string>('');
   readonly toc = signal<TocItem[]>([]);
   readonly progress = signal(0);
+  readonly activeTocId = signal<string | null>(null);
 
   readonly shareUrl = computed(() => {
     const p = this.post();
@@ -74,7 +75,6 @@ export class BlogPost implements OnInit {
     this.toc.set(toc);
     this.loading.set(false);
 
-    // Fetch related posts (same category, exclude current)
     if (post.category_slug) {
       const related = await this.blogService.getRelatedPosts(post.slug, post.category_slug);
       this.relatedPosts.set(related);
@@ -84,7 +84,7 @@ export class BlogPost implements OnInit {
       title: post.meta_title ?? post.title,
       description: post.meta_description ?? post.excerpt,
       ogImage: post.cover_image_url ?? undefined,
-      canonical: `https://thumbnailroast.com/blog/${post.slug}`,
+      canonical: `https://thumbnail-roast.com/blog/${post.slug}`,
     });
 
     this.schema.clear();
@@ -109,11 +109,49 @@ export class BlogPost implements OnInit {
     this.blogService.incrementViews(slug);
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => this.updateActiveToc(), 200);
+  }
+
   @HostListener('window:scroll')
   onWindowScroll(): void {
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     this.progress.set(scrollHeight > 0 ? Math.min(100, (scrollTop / scrollHeight) * 100) : 0);
+    this.updateActiveToc();
+  }
+
+  private updateActiveToc(): void {
+    // This still uses the `id` – but the scroll uses text, so it's fine
+    const headings = this.toc()
+      .map((item) => document.getElementById(item.id))
+      .filter((el) => el !== null) as HTMLElement[];
+    let activeId: string | null = null;
+    for (const el of headings) {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.4) {
+        activeId = el.id;
+      } else {
+        break;
+      }
+    }
+    this.activeTocId.set(activeId);
+  }
+
+  // ─── FIXED: scroll by text, not by ID ────────────────────────────────────
+  scrollTo(item: TocItem): void {
+    const headings = document.querySelectorAll('h2');
+    for (const h of headings) {
+      if (h.textContent?.trim() === item.text.trim()) {
+        h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+    }
+    console.warn('Heading not found:', item.text);
+  }
+
+  isActive(id: string): boolean {
+    return this.activeTocId() === id;
   }
 
   copyLink(): void {
@@ -150,45 +188,27 @@ export class BlogPost implements OnInit {
     html = html.replace(tableRegex, (tableBlock: string) => {
       const lines = tableBlock.trim().split('\n').filter(line => line.trim());
       if (lines.length < 2) return tableBlock;
-
       const hasSeparator = lines.some(line => /^[\s\|:-]+$/.test(line.replace(/\|/g, '').trim()));
       if (!hasSeparator) return tableBlock;
-
-      let headerRow = '';
-      let bodyRows = '';
-      let isHeader = true;
-
+      let headerRow = '', bodyRows = '', isHeader = true;
       for (const line of lines) {
-        if (/^[\s\|:-]+$/.test(line.replace(/\|/g, '').trim())) {
-          isHeader = false;
-          continue;
-        }
-
-        const cells = line.split('|')
-          .map(cell => cell.trim())
-          .filter(cell => cell !== '');
-
+        if (/^[\s\|:-]+$/.test(line.replace(/\|/g, '').trim())) { isHeader = false; continue; }
+        const cells = line.split('|').map(c => c.trim()).filter(c => c !== '');
         if (cells.length === 0) continue;
-
-        const rowHtml = cells.map(cell => `<td>${cell}</td>`).join('');
-
         if (isHeader) {
-          headerRow = `<thead><tr>${cells.map(cell => `<th>${cell}</th>`).join('')}</tr></thead>`;
+          headerRow = `<thead><tr>${cells.map(c => `<th>${c}</th>`).join('')}</tr></thead>`;
         } else {
-          bodyRows += `<tr>${rowHtml}</tr>`;
+          bodyRows += `<tr>${cells.map(c => `<td>${c}</td>`).join('')}</tr>`;
         }
       }
-
       if (!headerRow && bodyRows) {
         const firstRow = bodyRows.split('</tr>')[0] + '</tr>';
         headerRow = `<thead>${firstRow.replace(/td>/g, 'th>')}</thead>`;
         bodyRows = bodyRows.replace(firstRow, '');
       }
-
       return `<table>${headerRow}<tbody>${bodyRows}</tbody></table>`;
     });
 
-    // ── Images ────────────────────────────────────────────────────────────
     html = html.replace(
       /!\[(.*?)\]\((.*?)\)/g,
       '<figure class="article-image"><img src="$2" alt="$1" loading="lazy"><figcaption>$1</figcaption></figure>'
@@ -199,7 +219,6 @@ export class BlogPost implements OnInit {
     html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
     html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
 
-    // Tag every H2 with a slug id and collect it for the table of contents.
     const toc: TocItem[] = [];
     html = html.replace(/<h2>(.*?)<\/h2>/g, (_match, text) => {
       const id = this.slugify(text);
@@ -211,30 +230,23 @@ export class BlogPost implements OnInit {
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
 
-    // ── Inline Code ──────────────────────────────────────────────────────
     html = html.replace(/`(.+?)`/g, '<code>$1</code>');
-
-    // ── Links ─────────────────────────────────────────────────────────────
     html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>');
 
-    // ── Unordered Lists ──────────────────────────────────────────────────
     html = html.replace(/(?:^|\n)[\-\*]\s+(.+)(?:\n[\-\*]\s+.+)*/g, (match) => {
       const items = match.split('\n').filter(line => line.trim().startsWith('-') || line.trim().startsWith('*'));
       const listHtml = items.map(item => `<li>${item.replace(/^[\-\*]\s+/, '').trim()}</li>`).join('');
       return `<ul>${listHtml}</ul>`;
     });
 
-    // ── Ordered Lists ────────────────────────────────────────────────────
     html = html.replace(/(?:^|\n)\d+\.\s+(.+)(?:\n\d+\.\s+.+)*/g, (match) => {
       const items = match.split('\n').filter(line => /^\d+\./.test(line.trim()));
       const listHtml = items.map(item => `<li>${item.replace(/^\d+\.\s+/, '').trim()}</li>`).join('');
       return `<ol>${listHtml}</ol>`;
     });
 
-    // ── Blockquotes ──────────────────────────────────────────────────────
     html = html.replace(/^> (.+)$/gm, '<blockquote><p>$1</p></blockquote>');
 
-    // ── Paragraphs ───────────────────────────────────────────────────────
     const blockTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'table', 'blockquote', 'figure'];
     const blockTagRegex = new RegExp(`</?(${blockTags.join('|')})[^>]*>`, 'g');
 

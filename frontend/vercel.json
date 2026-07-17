@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://nykeycuklfncwpuqqpkf.supabase.co/functions/v1/sitemap"
+    }
+  ]
+}
