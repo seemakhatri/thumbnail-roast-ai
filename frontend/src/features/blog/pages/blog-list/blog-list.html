@@ -1,46 +1,67 @@
 <section class="blog-hero bg-signature">
   <div class="bg-signature__glow"></div>
   <div class="blog-hero__inner">
-    <span class="blog-hero__badge">Thumbnail Roast Blog</span>
+    <div class="blog-hero__top">
+      <span class="blog-hero__badge">Thumbnail Roast Blog</span>
+      @if (isAdmin()) {
+        <a routerLink="/blog/create" class="btn-primary btn-sm">+ New Post</a>
+      }
+    </div>
     <h1 class="blog-hero__title">CTR knowledge,<br>no fluff</h1>
     <p class="blog-hero__sub">
       Original research, teardowns, and guides on what actually
       drives clicks on YouTube thumbnails.
     </p>
-
-    @if (categories().length > 0) {
-      <div class="hero-marquee marquee">
-        <div class="marquee__track">
-          @for (cat of categories(); track cat.id) {
-            <button class="hero-marquee__tag" (click)="filterByCategory(cat.slug)">{{ cat.name }}</button>
-          }
-          <!-- duplicated for seamless marquee loop, hidden from a11y tree -->
-          @for (cat of categories(); track cat.id) {
-            <button class="hero-marquee__tag" aria-hidden="true" tabindex="-1">{{ cat.name }}</button>
-          }
-        </div>
-      </div>
-    }
   </div>
 </section>
 
-<!-- Featured posts -->
+<!-- ─── STATS BAR ────────────────────────────────────────────────────────── -->
+<section class="blog-stats">
+  <div class="section-inner">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-number">12+</span>
+        <span class="stat-label">In‑depth guides</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">5</span>
+        <span class="stat-label">Content categories</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">10K+</span>
+        <span class="stat-label">Creators reached</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">4.9/5</span>
+        <span class="stat-label">Reader satisfaction</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── EDITORIAL PICK ───────────────────────────────────────────────────── -->
 @if (featured().length > 0) {
-  <section class="featured-section">
+  <section class="editorial-pick">
     <div class="section-inner">
-      <p class="section-label">Featured</p>
+      <div class="editorial-pick__header">
+        <span class="editorial-pick__label">📌 Editorial Pick</span>
+        <span class="editorial-pick__sub">A strong place to start if you want one high‑signal read</span>
+      </div>
+
       <div class="featured-grid">
         @for (post of featured(); track post.slug; let i = $index) {
           <a
             [routerLink]="['/blog', post.slug]"
             class="featured-card"
-            [class.featured-card--cover]="i === 0">
+            [class.featured-card--cover]="i === 0"
+          >
             <div class="featured-card__media">
               @if (post.cover_image_url) {
                 <img [src]="post.cover_image_url" [alt]="post.title" class="featured-card__img" loading="lazy" />
               } @else {
                 <div class="featured-card__img featured-card__img--placeholder"></div>
               }
+
               @if (i === 0) {
                 <div class="featured-card__scrim"></div>
                 <div class="featured-card__overlay">
@@ -83,23 +104,36 @@
   </section>
 }
 
-<!-- Category filter + grid -->
-<section class="posts-section">
+<!-- ─── BROWSE BY CATEGORY ──────────────────────────────────────────────────── -->
+<section class="browse-categories">
   <div class="section-inner">
-    <div class="category-pills">
-      <button
-        class="pill"
-        [class.pill--active]="activeCategory() === null"
-        (click)="filterByCategory(null)">
-        All
-      </button>
+    <div class="browse-categories__header">
+      <h2 class="browse-categories__title">Browse by Topic</h2>
+      <p class="browse-categories__sub">Start with the categories creators explore most</p>
+    </div>
+
+    <div class="category-grid">
       @for (cat of categories(); track cat.id) {
         <button
-          class="pill"
-          [class.pill--active]="activeCategory() === cat.slug"
-          (click)="filterByCategory(cat.slug)">
-          {{ cat.name }}
+          class="category-card"
+          [class.category-card--active]="activeCategory() === cat.slug"
+          (click)="filterByCategory(cat.slug)"
+        >
+          <span class="category-card__name">{{ cat.name }}</span>
+          <span class="category-card__count">{{ getCategoryCount(cat.slug) }}</span>
         </button>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ─── LATEST ARTICLES ───────────────────────────────────────────────────── -->
+<section class="latest-articles">
+  <div class="section-inner">
+    <div class="latest-articles__header">
+      <h2 class="latest-articles__title">Fresh reads from the desk</h2>
+      @if (activeCategory()) {
+        <button class="btn-ghost btn-sm" (click)="filterByCategory(null)">View all →</button>
       }
     </div>
 
@@ -129,14 +163,14 @@
               }
             </div>
             <div class="post-card__body">
+              <div class="post-card__meta">
+                <span class="post-card__category">{{ post.category_name }}</span>
+                <span class="post-card__date">{{ post.published_at | date:'MMM d, yyyy' }}</span>
+              </div>
               <h3 class="post-card__title">{{ post.title }}</h3>
               <p class="post-card__excerpt">{{ post.excerpt }}</p>
               <div class="post-meta">
-                <span>{{ post.published_at | date:'mediumDate' }}</span>
-                @if (post.read_time_minutes) {
-                  <span>·</span>
-                  <span>{{ post.read_time_minutes }} min read</span>
-                }
+                <span>{{ post.read_time_minutes }} min read</span>
               </div>
             </div>
           </a>
@@ -146,7 +180,7 @@
   </div>
 </section>
 
-<!-- CTA Banner -->
+<!-- ─── CTA BANNER ───────────────────────────────────────────────────────── -->
 <section class="blog-cta">
   <div class="section-inner">
     <div class="blog-cta__card">

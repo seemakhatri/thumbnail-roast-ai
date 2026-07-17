@@ -1,5 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { RouterLink } from '@angular/router';
 import { ThumbnailReport } from '../../../core/models/report.model';
 import { Supabase } from '../../../core/services/supabase';
 import { ShareActions }            from '../../../features/results/components/share-actions/share-actions';
@@ -11,11 +12,15 @@ import { StrengthWeaknessGrid }    from '../../../features/results/components/st
 import { RecommendationsTimeline } from '../../../features/results/components/recommendations-timeline/recommendations-timeline';
 import { CompetitorInsights }      from '../../../features/results/components/competitor-insights/competitor-insights';
 import { UpgradeBanner }           from '../../../features/results/components/upgrade-banner/upgrade-banner';
+import { LucideAngularModule, Lock } from 'lucide-angular';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-report-view',
   standalone: true,
   imports: [
+    RouterLink,
+    LucideAngularModule,
     ShareActions,
     ReportHeroCard,
     PriorityRecommendation,
@@ -25,6 +30,7 @@ import { UpgradeBanner }           from '../../../features/results/components/up
     RecommendationsTimeline,
     CompetitorInsights,
     UpgradeBanner,
+    CommonModule
   ],
   templateUrl: './report-view.html',
   styleUrl: './report-view.scss',
@@ -48,7 +54,7 @@ export class ReportView {
     return plan === 'free';
   });
 
-  
-
-  
+  readonly icons = {
+    lock: Lock,
+  };
 }

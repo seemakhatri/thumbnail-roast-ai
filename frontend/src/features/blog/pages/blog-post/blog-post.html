@@ -1,91 +1,133 @@
 @if (loading()) {
-<div class="post-loading">
-  <div class="skeleton skeleton--hero"></div>
-  <div class="post-layout">
-    <div class="skeleton skeleton--title"></div>
-    <div class="skeleton skeleton--body"></div>
+  <div class="post-loading">
+    <div class="skeleton skeleton--hero"></div>
+    <div class="post-layout">
+      <div class="skeleton skeleton--title"></div>
+      <div class="skeleton skeleton--body"></div>
+    </div>
   </div>
-</div>
 } @else if (notFound()) {
-<div class="not-found">
-  <h1>Post not found</h1>
-  <p>This post may have been moved or deleted.</p>
-  <a routerLink="/blog" class="btn-primary">← Back to blog</a>
-</div>
+  <div class="not-found">
+    <h1>Post not found</h1>
+    <p>This post may have been moved or deleted.</p>
+    <a routerLink="/blog" class="btn-primary">← Back to blog</a>
+  </div>
 } @else if (post(); as p) {
 
-<!-- Cover-image posts: title + byline overlay directly on the hero image -->
-@if (p.cover_image_url) {
-<div class="post-hero">
-  <img [src]="p.cover_image_url" [alt]="p.title" class="post-hero__img" />
-  <div class="post-hero__scrim"></div>
-  <div class="post-hero__content">
-    <div class="post-hero__inner">
-      @if (p.category_name) {
-      <span class="post-tag post-tag--light">{{ p.category_name }}</span>
-      }
-      <h1 class="post-title post-title--light">{{ p.title }}</h1>
-      <div class="post-byline post-byline--light">
-        @if (p.author_name) {
-        <span class="post-avatar">{{ p.author_name.charAt(0) }}</span>
-        <span>{{ p.author_name }}</span>
-        <span class="divider">·</span>
+  <!-- Reading Progress Bar -->
+  <div class="reading-progress" [style.width.%]="progress()">
+    <div class="reading-progress__bar"></div>
+  </div>
+
+  <!-- Hero -->
+  <div class="post-hero">
+    @if (p.cover_image_url) {
+      <img [src]="p.cover_image_url" [alt]="p.title" class="post-hero__img" />
+    } @else {
+      <div class="post-hero__placeholder"></div>
+    }
+    <div class="post-hero__scrim"></div>
+    <div class="post-hero__content">
+      <div class="post-hero__inner">
+        @if (p.category_name) {
+          <span class="post-tag post-tag--light">{{ p.category_name }}</span>
         }
-        <time [dateTime]="p.published_at">{{ p.published_at | date:'mediumDate' }}</time>
-        @if (p.read_time_minutes) {
-        <span class="divider">·</span>
-        <span>{{ p.read_time_minutes }} min read</span>
-        }
+        <h1 class="post-title post-title--light">{{ p.title }}</h1>
+        <div class="post-byline post-byline--light">
+          @if (p.author_name) {
+            <span class="post-avatar">{{ p.author_name.charAt(0) }}</span>
+            <span>{{ p.author_name }}</span>
+            <span class="divider">·</span>
+          }
+          <time [dateTime]="p.published_at">{{ p.published_at | date:'mediumDate' }}</time>
+          @if (p.read_time_minutes) {
+            <span class="divider">·</span>
+            <span>{{ p.read_time_minutes }} min read</span>
+          }
+        </div>
       </div>
     </div>
   </div>
-</div>
-}
 
-<div class="post-layout">
+  <!-- Main Layout -->
+  <div class="post-layout">
+    <!-- Left: Table of Contents (desktop) -->
+    <aside class="post-sidebar post-sidebar--left">
+      @if (toc().length > 0) {
+        <nav class="post-toc">
+          <p class="post-toc__title">On this page</p>
+          <ul class="post-toc__list">
+            @for (item of toc(); track item.id) {
+              <li>
+                <a [href]="'#' + item.id" class="post-toc__link">
+                  {{ item.text }}
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
+      }
+    </aside>
 
-  @if (!p.cover_image_url) {
-  <!-- No cover image: fall back to the plain in-flow header -->
-  <header class="post-header">
-    @if (p.category_name) {
-    <span class="post-tag">{{ p.category_name }}</span>
-    }
-    <h1 class="post-title">{{ p.title }}</h1>
-    <p class="post-excerpt">{{ p.excerpt }}</p>
-    <div class="post-byline">
-      @if (p.author_name) {
-      <span class="post-avatar">{{ p.author_name.charAt(0) }}</span>
-      <span>{{ p.author_name }}</span>
-      <span class="divider">·</span>
+    <!-- Center: Content -->
+    <article class="post-body prose" [innerHTML]="renderedContent()"></article>
+
+    <!-- Right: Sidebar (desktop) -->
+    <aside class="post-sidebar post-sidebar--right">
+      <!-- Share -->
+      <div class="share-box">
+        <p class="share-box__label">Share this article</p>
+        <div class="share-box__buttons">
+          <button class="share-btn share-btn--twitter" (click)="shareOnTwitter()">
+            <lucide-angular [img]="icons.twitter" size="18" />
+          </button>
+          <button class="share-btn share-btn--copy" (click)="copyLink()">
+            <lucide-angular [img]="icons.link" size="18" />
+          </button>
+        </div>
+      </div>
+
+      <!-- Related (if any) -->
+      @if (relatedPosts().length > 0) {
+        <div class="related-box">
+          <p class="related-box__label">Related articles</p>
+          <ul class="related-box__list">
+            @for (rp of relatedPosts(); track rp.slug) {
+              <li>
+                <a [routerLink]="['/blog', rp.slug]" class="related-box__link">
+                  {{ rp.title }}
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
       }
-      <time [dateTime]="p.published_at">{{ p.published_at | date:'mediumDate' }}</time>
-      @if (p.read_time_minutes) {
-      <span class="divider">·</span>
-      <span>{{ p.read_time_minutes }} min read</span>
-      }
-    </div>
-  </header>
-  } @else {
-  <p class="post-excerpt post-excerpt--below-hero">{{ p.excerpt }}</p>
+    </aside>
+  </div>
+
+  <!-- Bottom: FAQ & Author Bio -->
+  @if (p.faq && p.faq.length > 0) {
+    <section class="post-faq">
+      <h2 class="post-faq__title">Frequently asked questions</h2>
+      <div class="faq-list">
+        @for (item of p.faq; track item.question) {
+          <details class="faq-item">
+            <summary class="faq-item__question">{{ item.question }}</summary>
+            <p class="faq-item__answer">{{ item.answer }}</p>
+          </details>
+        }
+      </div>
+    </section>
   }
 
-  <!-- Body content -->
-  <article class="post-body prose"  [innerHTML]="renderedContent()">
-  </article>
-
-  <!-- FAQ section (if exists) -->
-  @if (p.faq && p.faq.length > 0) {
-  <section class="post-faq">
-    <h2 class="post-faq__title">Frequently asked questions</h2>
-    <div class="faq-list">
-      @for (item of p.faq; track item.question) {
-      <details class="faq-item">
-        <summary class="faq-item__question">{{ item.question }}</summary>
-        <p class="faq-item__answer">{{ item.answer }}</p>
-      </details>
-      }
+  @if (p.author_name) {
+    <div class="post-author">
+      <div class="post-author__avatar">{{ p.author_name.charAt(0) }}</div>
+      <div class="post-author__info">
+        <span class="post-author__name">{{ p.author_name }}</span>
+        <span class="post-author__role">Writer at Thumbnail Roast</span>
+      </div>
     </div>
-  </section>
   }
 
   <!-- CTA -->
@@ -99,5 +141,4 @@
 
   <!-- Back link -->
   <a routerLink="/blog" class="back-link">← All posts</a>
-</div>
 }

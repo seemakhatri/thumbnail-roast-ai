@@ -12,7 +12,6 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class Supabase {
   private readonly router = inject(Router);
-
   private readonly platformId = inject(PLATFORM_ID);
 
   private supabase: SupabaseClient | null = null;
@@ -35,16 +34,18 @@ export class Supabase {
     return u.analyses_used < u.analyses_limit;
   });
 
+  // ── NEW: admin check ──────────────────────────────────────────────────
+  readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
+
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
-this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey, {
-  auth: {
-    detectSessionInUrl: true,
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-});
-
+      this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey, {
+        auth: {
+          detectSessionInUrl: true,
+          persistSession: true,
+          autoRefreshToken: true,
+        },
+      });
       this.initAuthListener();
     } else {
       this.authLoading.set(false);
@@ -52,10 +53,7 @@ this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKe
   }
 
   async hasSession(): Promise<boolean> {
-    const {
-      data: { session },
-    } = await this.client.auth.getSession();
-
+    const { data: { session } } = await this.client.auth.getSession();
     return !!session;
   }
 
@@ -95,7 +93,7 @@ this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKe
     try {
       const { data, error } = await this.client
         .from('profiles')
-        .select('*')
+        .select('*') // selects all columns, including 'role'
         .eq('id', authUser.id)
         .single();
 
@@ -124,10 +122,15 @@ this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKe
       plan: 'free',
       analyses_used: 0,
       analyses_limit: 3,
+      role: 'user', // <-- NEW: default role
       created_at: new Date().toISOString(),
     };
 
-    const { data, error } = await this.client.from('profiles').insert(newProfile).select().single();
+    const { data, error } = await this.client
+      .from('profiles')
+      .insert(newProfile)
+      .select()
+      .single();
 
     if (error) {
       this.authError.set(error.message);
@@ -230,15 +233,6 @@ this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKe
   async connectYouTube(): Promise<void> {
     this.authError.set(null);
 
-    // FIX: additional OAuth scopes belong in `options.scopes` (a
-    // dedicated field Supabase merges into the authorize URL), NOT inside
-    // `queryParams.scope`. GoTrue builds its own `scope` query param from
-    // options.scopes + the provider's default scopes; a `scope` key
-    // stuffed into queryParams competes with that and can get dropped —
-    // which is exactly why provider_token / provider_refresh_token were
-    // coming back without YouTube access. access_type/prompt ARE plain
-    // Google query params (not OAuth scopes), so those correctly stay in
-    // queryParams.
     const { data, error } = await this.client.auth.signInWithOAuth({
       provider: 'google',
       options: {

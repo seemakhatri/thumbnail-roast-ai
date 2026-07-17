@@ -1,0 +1,123 @@
+<div class="editor-page">
+  <!-- Header -->
+  <div class="editor-header">
+    <div class="editor-header__left">
+      <h1 class="editor-title">Create New Post</h1>
+      <div class="editor-status">
+        <span class="status-badge" [class.status-badge--draft]="form.get('status')?.value === 'draft'">
+          {{ form.get('status')?.value === 'draft' ? 'Draft' : 'Published' }}
+        </span>
+      </div>
+    </div>
+    <div class="editor-header__actions">
+      <button type="button" class="btn-ghost" (click)="cancel()">
+        <lucide-angular [img]="icons.x" size="16" /> Cancel
+      </button>
+      <button type="submit" class="btn-primary" [disabled]="loading()" (click)="submit()">
+        @if (loading()) { <span class="btn-spinner"></span> Saving… }
+        @else { <lucide-angular [img]="icons.save" size="16" /> Publish }
+      </button>
+    </div>
+  </div>
+
+  <!-- Main editor area -->
+  <div class="editor-main">
+    <!-- Left: Form -->
+    <div class="editor-form">
+      <form [formGroup]="form">
+
+        <!-- Title & Slug -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="title">Title *</label>
+            <input id="title" type="text" formControlName="title" placeholder="My Awesome Post" (input)="generateSlug()" />
+          </div>
+          <div class="form-group">
+            <label for="slug">Slug *</label>
+            <input id="slug" type="text" formControlName="slug" placeholder="my-awesome-post" />
+            <small>URL‑friendly identifier (lowercase, hyphens).</small>
+          </div>
+        </div>
+
+        <!-- Excerpt -->
+        <div class="form-group">
+          <label for="excerpt">Excerpt *</label>
+          <textarea id="excerpt" formControlName="excerpt" rows="2" placeholder="Brief summary of the post"></textarea>
+        </div>
+
+        <!-- Content with image upload -->
+        <div class="form-group">
+          <div class="editor-toolbar">
+            <label for="content">Content (Markdown) *</label>
+            <div class="toolbar-actions">
+              <button type="button" class="toolbar-btn" (click)="togglePreview()">
+                <lucide-angular [img]="icons.eye" size="16" />
+                {{ previewMode() === 'edit' ? 'Preview' : 'Edit' }}
+              </button>
+              <button type="button" class="toolbar-btn" (click)="imageInput.click()">
+                <lucide-angular [img]="icons.image" size="16" /> Insert Image
+              </button>
+              <input #imageInput type="file" accept="image/*" (change)="uploadImage($event)" style="display:none" />
+            </div>
+          </div>
+          @if (previewMode() === 'edit') {
+            <textarea id="content" formControlName="content" rows="12" placeholder="Write your post in Markdown..."></textarea>
+          } @else {
+            <div class="preview-pane">
+              <article class="post-body prose" [innerHTML]="previewHtml"></article>
+            </div>
+          }
+        </div>
+
+        <!-- Additional fields -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cover_image_url">Cover Image URL</label>
+            <input id="cover_image_url" type="url" formControlName="cover_image_url" placeholder="https://..." />
+          </div>
+          <div class="form-group">
+            <label for="category_id">Category ID</label>
+            <input id="category_id" type="text" formControlName="category_id" placeholder="UUID or slug" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="meta_title">Meta Title</label>
+            <input id="meta_title" type="text" formControlName="meta_title" placeholder="SEO title" />
+          </div>
+          <div class="form-group">
+            <label for="meta_description">Meta Description</label>
+            <input id="meta_description" type="text" formControlName="meta_description" placeholder="SEO description" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="faq">FAQ (JSON array)</label>
+            <textarea id="faq" formControlName="faq" rows="3" placeholder='[{"question":"...", "answer":"..."}]'></textarea>
+          </div>
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" formControlName="status">
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group checkbox">
+            <label>
+              <input type="checkbox" formControlName="featured" />
+              Featured Post
+            </label>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Right: Live Preview (only when preview mode is on?) Actually we have a toggle, so we can show the preview in the content area. But we might also have a side-by-side layout. Let's keep it simple: the preview replaces the textarea when toggled. That's already implemented above. -->
+  </div>
+</div>

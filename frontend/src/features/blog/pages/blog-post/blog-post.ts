@@ -1,9 +1,12 @@
-import { Component, HostListener, inject, OnInit, signal } from '@angular/core';
+import { Component, HostListener, inject, OnInit, signal, computed } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlogService, BlogPostModal } from '../../../../core/services/blog';
 import { MetaService } from '../../../../core/services/meta';
 import { SchemaService } from '../../../../core/services/schema';
 import { CommonModule } from '@angular/common';
+import { Supabase } from '../../../../core/services/supabase';
+import { LucideAngularModule, Share2, Twitter, Link2, Flame } from 'lucide-angular';
+import { Toast } from '../../../../core/services/toast';
 
 interface TocItem {
   id: string;
@@ -12,7 +15,7 @@ interface TocItem {
 
 @Component({
   selector: 'app-blog-post',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, LucideAngularModule],
   templateUrl: './blog-post.html',
   styleUrl: './blog-post.scss',
 })
@@ -21,20 +24,41 @@ export class BlogPost implements OnInit {
   private readonly blogService = inject(BlogService);
   private readonly meta = inject(MetaService);
   private readonly schema = inject(SchemaService);
+  private readonly supabase = inject(Supabase);
+  private readonly toast = inject(Toast);
 
   readonly post = signal<BlogPostModal | null>(null);
+  readonly relatedPosts = signal<BlogPostModal[]>([]);
   readonly loading = signal(true);
   readonly notFound = signal(false);
-
-  // Content is parsed once into HTML + a heading-derived TOC, rather than
-  // re-parsed on every change-detection cycle via a template method call.
   readonly renderedContent = signal<string>('');
   readonly toc = signal<TocItem[]>([]);
   readonly progress = signal(0);
 
+  readonly shareUrl = computed(() => {
+    const p = this.post();
+    if (!p) return '';
+    return `https://thumbnail-roast.com/blog/${p.slug}`;
+  });
+
+  readonly icons = {
+    share: Share2,
+    twitter: Twitter,
+    link: Link2,
+    flame: Flame,
+  };
+
   async ngOnInit(): Promise<void> {
     const slug = this.route.snapshot.paramMap.get('slug')!;
-    const post = await this.blogService.getPostBySlug(slug);
+    const user = this.supabase.currentUser();
+    const isAdmin = user?.role === 'admin';
+
+    let post: BlogPostModal | null = null;
+    if (isAdmin) {
+      post = await this.blogService.getPostBySlugAdmin(slug);
+    } else {
+      post = await this.blogService.getPostBySlug(slug);
+    }
 
     if (!post) {
       this.notFound.set(true);
@@ -43,13 +67,18 @@ export class BlogPost implements OnInit {
       return;
     }
 
-    this.post.set(post);
-
     const { html, toc } = this.processContent(post.content);
+
+    this.post.set(post);
     this.renderedContent.set(html);
     this.toc.set(toc);
-
     this.loading.set(false);
+
+    // Fetch related posts (same category, exclude current)
+    if (post.category_slug) {
+      const related = await this.blogService.getRelatedPosts(post.slug, post.category_slug);
+      this.relatedPosts.set(related);
+    }
 
     this.meta.set({
       title: post.meta_title ?? post.title,
@@ -69,9 +98,9 @@ export class BlogPost implements OnInit {
       cover_image_url: post.cover_image_url ?? undefined,
     });
     this.schema.breadcrumb([
-      { name: 'Home', url: 'https://thumbnailroast.com' },
-      { name: 'Blog', url: 'https://thumbnailroast.com/blog' },
-      { name: post.title, url: `https://thumbnailroast.com/blog/${post.slug}` },
+      { name: 'Home', url: 'https://thumbnail-roast.com' },
+      { name: 'Blog', url: 'https://thumbnail-roast.com/blog' },
+      { name: post.title, url: `https://thumbnail-roast.com/blog/${post.slug}` },
     ]);
     if (post.faq?.length) {
       this.schema.faq(post.faq);
@@ -85,6 +114,22 @@ export class BlogPost implements OnInit {
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     this.progress.set(scrollHeight > 0 ? Math.min(100, (scrollTop / scrollHeight) * 100) : 0);
+  }
+
+  copyLink(): void {
+    const url = this.shareUrl();
+    if (!url) return;
+    navigator.clipboard.writeText(url).then(() => {
+      this.toast.success('Link copied to clipboard!');
+    });
+  }
+
+  shareOnTwitter(): void {
+    const post = this.post();
+    if (!post) return;
+    const text = encodeURIComponent(`📖 "${post.title}" by ThumbnailRoast`);
+    const url = encodeURIComponent(this.shareUrl());
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
   }
 
   private slugify(text: string): string {
