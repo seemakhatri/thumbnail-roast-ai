@@ -23,9 +23,10 @@
     <div class="hero-card__score-out-of">out of 100</div>
   </div>
 
-  <!-- Verdict badge -->
+  <!-- Verdict badge with Lucide icon -->
   <div class="hero-card__verdict" [ngClass]="verdictData().css">
-    {{ verdictData().emoji }} {{ verdictData().label }}
+    <lucide-angular [img]="verdictData().icon" size="14" />
+    {{ verdictData().label }}
   </div>
 
   <!-- Roast headline -->

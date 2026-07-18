@@ -123,7 +123,7 @@ export class CircuitBreaker {
 }
 
 // Create shared instances
-export const geminiCircuitBreaker = new CircuitBreaker(
+export const aiCircuitBreaker = new CircuitBreaker(
   "gemini-api",
   3, // Failure threshold
   120, // Timeout seconds

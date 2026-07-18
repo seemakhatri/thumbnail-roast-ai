@@ -99,7 +99,7 @@ function safeParseAnalysis(raw: string, provider: string): ThumbnailAnalysis {
 // Check https://ai.google.dev/gemini-api/docs/rate-limits for current numbers.
 const GEMINI_MODEL = "gemini-flash-lite-latest";
 
-export class GeminiAnalyzer implements VisionAnalyzer {
+export class OpenRouterAnalyzer implements VisionAnalyzer {
   readonly name = "gemini";
 
   async analyze(imageUrl: string, apiKey: string): Promise<ThumbnailAnalysis> {

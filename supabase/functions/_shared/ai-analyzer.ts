@@ -1,18 +1,18 @@
+// _shared/ai-analyzer.ts  (formerly gemini.ts)
+//
+// Renamed as part of the Gemini -> OpenRouter migration. Every prompt,
+// niche weight table, and scoring formula below is UNCHANGED from the
+// original gemini.ts — only the network layer changed: instead of calling
+// Google's generateContent REST API directly, this file now calls
+// getAIProvider().generate(), which resolves to whichever provider
+// AI_PROVIDER selects (OpenRouterProvider today). The model name is never
+// hardcoded here — it comes from OPENROUTER_MODEL, read inside
+// providers/openrouter.ts.
+
 import { AnalysisMetrics, ThumbnailAnalysis } from "./types.ts";
 import { KNOWLEDGE_GRAPH } from "./knowledge-graph.ts";
-
-const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta";
-
-// IMPORTANT: verify these are current before deploying — Google renames/
-// retires free-tier models every few months (gemini-2.0-flash, which used
-// to be the fallback here, was retired in March 2026). Check
-// https://ai.google.dev/gemini-api/docs/models for the live list.
-// Pulling these from env means a model rename is a config change, not a
-// redeploy.
-const MODEL_PRIMARY =
-  Deno.env.get("GEMINI_MODEL_PRIMARY") ?? "gemini-flash-lite-latest";
-const MODEL_FALLBACK =
-  Deno.env.get("GEMINI_MODEL_FALLBACK") ?? "gemini-2.5-flash";
+import { fetchImageAsBase64 } from "./image-prep.ts";
+import { getAIProvider } from "./providers/index.ts";
 
 // ── NICHE DETECTION PROMPT (unchanged) ─────────────────────────────────────
 const NICHE_DETECT_PROMPT = `You are a YouTube niche classifier.
@@ -429,39 +429,6 @@ What do **top creators in this niche** do differently? Provide **specific, non�
 }`;
 }
 
-// ── IMAGE PREPROCESSING (unchanged) ───────────────────────────────────────
-async function preprocessImageBuffer(
-  arrayBuffer: ArrayBuffer,
-): Promise<{ buffer: ArrayBuffer; mimeType: string }> {
-  try {
-    const blob = new Blob([arrayBuffer]);
-    const bitmap = await createImageBitmap(blob);
-    if (bitmap.width <= 640)
-      return { buffer: arrayBuffer, mimeType: "image/jpeg" };
-
-    const targetWidth = 640;
-    const targetHeight = Math.round(
-      (bitmap.height / bitmap.width) * targetWidth,
-    );
-    const canvas = new OffscreenCanvas(targetWidth, targetHeight);
-    const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
-
-    const outputBlob = await canvas.convertToBlob({
-      type: "image/jpeg",
-      quality: 0.85,
-    });
-    const resizedBuffer = await outputBlob.arrayBuffer();
-    console.log(
-      `Image resized: ${bitmap.width}×${bitmap.height} → ${targetWidth}×${targetHeight}`,
-    );
-    return { buffer: resizedBuffer, mimeType: "image/jpeg" };
-  } catch (e) {
-    console.warn("Image preprocessing skipped:", e);
-    return { buffer: arrayBuffer, mimeType: "image/jpeg" };
-  }
-}
-
 // ── JSON HELPERS ───────────────────────────────────────────────────────────
 function sanitizeJsonString(raw: string): string {
   return raw
@@ -526,7 +493,7 @@ function scoreToVerdict(score: number): ThumbnailAnalysis["verdict"] {
   return "needs_work";
 }
 
-function parseGeminiResponse(
+function parseAIResponse(
   rawText: string,
   niche: string,
 ): ThumbnailAnalysis {
@@ -540,7 +507,7 @@ function parseGeminiResponse(
     const match = cleaned.match(/\{[\s\S]*\}/);
     if (!match)
       throw new Error(
-        "Gemini returned unparseable response: " + cleaned.slice(0, 300),
+        "AI provider returned unparseable response: " + cleaned.slice(0, 300),
       );
 
     let candidate = match[0];
@@ -557,7 +524,7 @@ function parseGeminiResponse(
       parsed = JSON.parse(candidate);
     } catch {
       throw new Error(
-        "Gemini returned invalid JSON even after repair: " +
+        "AI provider returned invalid JSON even after repair: " +
           cleaned.slice(0, 500),
       );
     }
@@ -604,105 +571,26 @@ function parseGeminiResponse(
   return result;
 }
 
-// ── GEMINI CALLER ──────────────────────────────────────────────────────────
-async function buildBase64(
-  imageUrl: string,
-): Promise<{ base64: string; mimeType: string }> {
-  const raw = await fetch(imageUrl);
-  if (!raw.ok) throw new Error(`Failed to fetch image: ${raw.status}`);
-  const rawBuffer = await raw.arrayBuffer();
-  const { buffer, mimeType } = await preprocessImageBuffer(rawBuffer);
-
-  const uint8Array = new Uint8Array(buffer);
-  let binary = "";
-  const chunkSize = 8192;
-  for (let i = 0; i < uint8Array.length; i += chunkSize) {
-    binary += String.fromCharCode(...uint8Array.subarray(i, i + chunkSize));
-  }
-  return { base64: btoa(binary), mimeType };
-}
-
-async function callGemini(
-  model: string,
-  payload: unknown,
-  apiKey: string,
-  retries = 2,
-): Promise<Response> {
-  const url = `${GEMINI_API_BASE}/models/${model}:generateContent?key=${apiKey}`;
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (response.ok) return response;
-    if (response.status !== 503 && response.status !== 429) return response;
-
-    console.log(
-      `Gemini overloaded (${response.status}). Retry ${attempt}/${retries}`,
-    );
-    const backoff = attempt * 1500 + Math.random() * 500; // jittered backoff
-    await new Promise((r) => setTimeout(r, backoff));
-  }
-  throw new Error("Gemini unavailable after retries");
-}
-
-async function runGemini(
+// ── AI PROVIDER CALLER ──────────────────────────────────────────────────
+// Replaces the old callGemini()/runGemini() pair. Retries, timeout, and
+// backoff now live inside the provider implementation (see
+// providers/openrouter.ts) so this function is provider-agnostic — it
+// never sees a status code or a model name, only a finished text response
+// or a thrown error.
+async function runAIProvider(
   prompt: string,
   base64: string,
   mimeType: string,
-  apiKey: string,
 ): Promise<string> {
-  const payload = {
-    contents: [
-      {
-        parts: [
-          { inline_data: { mime_type: mimeType, data: base64 } },
-          { text: prompt },
-        ],
-      },
-    ],
-    generationConfig: {
-      temperature: 0.1,
-      topK: 20,
-      topP: 0.9,
-      maxOutputTokens: 4096,
-      responseMimeType: "application/json",
-    },
-    safetySettings: [
-      { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_ONLY_HIGH" },
-      { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_ONLY_HIGH" },
-    ],
-  };
+  const provider = getAIProvider();
+  const text = await provider.generate({
+    prompt,
+    images: [{ base64, mimeType }],
+    temperature: 0.1,
+    maxOutputTokens: 4096,
+  });
 
-  let response = await callGemini(MODEL_PRIMARY, payload, apiKey);
-  if (!response.ok) {
-    console.warn(
-      `Primary model failed (${response.status}), falling back to ${MODEL_FALLBACK}`,
-    );
-    response = await callGemini(MODEL_FALLBACK, payload, apiKey);
-  }
-  if (!response.ok) {
-    throw new Error(
-      `Gemini API error ${response.status}: ${await response.text()}`,
-    );
-  }
-
-  const data = (await response.json()) as {
-    candidates?: Array<{
-      finishReason?: string;
-      content?: { parts?: Array<{ text?: string }> };
-    }>;
-  };
-
-  const candidate = data?.candidates?.[0];
-  if (!candidate) throw new Error("Gemini returned no candidates.");
-  if (candidate.finishReason === "SAFETY")
-    throw new Error("Image blocked by Gemini safety filters.");
-
-  const text =
-    candidate?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
-  if (!text) throw new Error("Gemini returned empty response.");
+  if (!text) throw new Error(`${provider.name} returned empty response.`);
   return text;
 }
 
@@ -711,13 +599,9 @@ export function normalizeNiche(niche: string | undefined | null): string {
   return Object.keys(NICHE_WEIGHTS).includes(n) ? n : "general";
 }
 
-async function detectNiche(
-  base64: string,
-  mimeType: string,
-  apiKey: string,
-): Promise<string> {
+async function detectNiche(base64: string, mimeType: string): Promise<string> {
   try {
-    const raw = await runGemini(NICHE_DETECT_PROMPT, base64, mimeType, apiKey);
+    const raw = await runAIProvider(NICHE_DETECT_PROMPT, base64, mimeType);
     const parsed = JSON.parse(sanitizeJsonString(raw)) as { niche?: string };
     const niche = parsed.niche ?? "general";
     return Object.keys(NICHE_WEIGHTS).includes(niche) ? niche : "general";
@@ -728,39 +612,36 @@ async function detectNiche(
 }
 
 // ── MAIN EXPORT: single-pass analysis ──────────────────────────────────────
-// Two Gemini calls total (niche detect + one scoring pass), down from four.
+// Two AI calls total (niche detect + one scoring pass), down from four.
 export async function analyzeThumbnail(
   imageUrl: string,
-  apiKey: string,
 ): Promise<ThumbnailAnalysis> {
-  const { base64, mimeType } = await buildBase64(imageUrl);
-  const niche = await detectNiche(base64, mimeType, apiKey);
+  const { base64, mimeType } = await fetchImageAsBase64(imageUrl);
+  const niche = await detectNiche(base64, mimeType);
 
-  const rawText = await runGemini(
+  const rawText = await runAIProvider(
     buildScoringPrompt(niche),
     base64,
     mimeType,
-    apiKey,
   );
-  return parseGeminiResponse(rawText, niche);
+  return parseAIResponse(rawText, niche);
 }
 
 // ── STABLE VARIANT: configurable pass count, defaults to 1 ────────────────
 // Your original always ran 3 parallel passes regardless of plan — that's
-// what was burning 4 Gemini calls per single user analysis. Default this
-// to 1 pass (2 calls total including niche detect) and only spend the
-// extra quota on multi-pass averaging for plans that can absorb it.
+// what was burning 4 calls per single user analysis. Default this to 1
+// pass (2 calls total including niche detect) and only spend the extra
+// quota on multi-pass averaging for plans that can absorb it.
 //
-//   analyzeThumbnailStable(url, key)        -> 1 pass  (2 Gemini calls)
-//   analyzeThumbnailStable(url, key, 3)     -> 3 passes (4 Gemini calls) —
-//                                              reserve this for creator/agency
+//   analyzeThumbnailStable(url)        -> 1 pass  (2 AI calls)
+//   analyzeThumbnailStable(url, 3)     -> 3 passes (4 AI calls) — reserve
+//                                          this for creator/agency plans
 export async function analyzeThumbnailStable(
   imageUrl: string,
-  apiKey: string,
   passes = 1,
 ): Promise<ThumbnailAnalysis> {
-  const { base64, mimeType } = await buildBase64(imageUrl);
-  const niche = await detectNiche(base64, mimeType, apiKey);
+  const { base64, mimeType } = await fetchImageAsBase64(imageUrl);
+  const niche = await detectNiche(base64, mimeType);
   console.log(
     `Stable analysis (${passes} pass${passes > 1 ? "es" : ""}) — detected niche: ${niche}`,
   );
@@ -768,14 +649,14 @@ export async function analyzeThumbnailStable(
   const scoringPrompt = buildScoringPrompt(niche);
 
   if (passes <= 1) {
-    const rawText = await runGemini(scoringPrompt, base64, mimeType, apiKey);
-    return parseGeminiResponse(rawText, niche);
+    const rawText = await runAIProvider(scoringPrompt, base64, mimeType);
+    return parseAIResponse(rawText, niche);
   }
 
   const results = await Promise.all(
     Array.from({ length: passes }, () =>
-      runGemini(scoringPrompt, base64, mimeType, apiKey).then((raw) =>
-        parseGeminiResponse(raw, niche),
+      runAIProvider(scoringPrompt, base64, mimeType).then((raw) =>
+        parseAIResponse(raw, niche),
       ),
     ),
   );

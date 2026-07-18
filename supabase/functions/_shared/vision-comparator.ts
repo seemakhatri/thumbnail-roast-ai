@@ -183,7 +183,7 @@ export interface VisionComparator {
 
 const GEMINI_MODEL = "gemini-flash-lite-latest";
 
-export class GeminiComparator implements VisionComparator {
+export class OpenRouterComparator implements VisionComparator {
   readonly name = "gemini";
 
   async compare(inputs: ThumbnailInput[], apiKey: string): Promise<RawComparisonResponse> {

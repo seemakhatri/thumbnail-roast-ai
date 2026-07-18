@@ -1,18 +1,20 @@
 <svg class="score-ring-svg" [attr.width]="size()" [attr.height]="size()"
   [attr.viewBox]="'0 0 ' + size() + ' ' + size()">
-  <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius()" fill="none" stroke="rgba(255,255,255,0.06)"
-    stroke-width="7" />
-  <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius()" fill="none" stroke="url(#scoreGrad)"
-    stroke-width="7" stroke-linecap="round" [attr.stroke-dasharray]="dashArray()"
-    [attr.stroke-dashoffset]="dashOffset()" [attr.transform]="'rotate(-90 ' + center() + ' ' + center() + ')'" />
+  <!-- Background circle -->
+  <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius()" fill="none"
+    class="score-ring__bg" stroke-width="7" />
+  <!-- Progress circle -->
+  <circle [attr.cx]="center()" [attr.cy]="center()" [attr.r]="radius()" fill="none"
+    class="score-ring__progress" stroke-width="7" stroke-linecap="round"
+    [attr.stroke-dasharray]="dashArray()" [attr.stroke-dashoffset]="dashOffset()"
+    [attr.transform]="'rotate(-90 ' + center() + ' ' + center() + ')'" />
   <defs>
     <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#ff4d00" />
-      <stop offset="100%" stop-color="#ff9060" />
+      <stop offset="0%" stop-color="var(--accent)" />
+      <stop offset="100%" stop-color="var(--accent2)" />
     </linearGradient>
   </defs>
-  <text [attr.x]="center()" [attr.y]="center() + 4" text-anchor="middle" fill="#fff" font-size="18" font-weight="800"
-    font-family="Syne">
+  <text [attr.x]="center()" [attr.y]="center() + 4" text-anchor="middle" class="score-ring__text">
     {{ score() }}
   </text>
 </svg>

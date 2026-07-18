@@ -1,5 +1,4 @@
 import { Component, computed, input } from '@angular/core';
-import { getScoreRingDashArray, getScoreRingOffset } from '../../../core/utils/report.utils';
 
 @Component({
   selector: 'app-score-ring',
@@ -12,7 +11,10 @@ export class ScoreRing {
   readonly size = input(90);
   readonly radius = input(36);
 
-  readonly dashArray = computed(() => getScoreRingDashArray(this.radius()));
-  readonly dashOffset = computed(() => getScoreRingOffset(this.score(), this.radius()));
+  readonly dashArray = computed(() => 2 * Math.PI * this.radius());
+  readonly dashOffset = computed(() => {
+    const percent = Math.min(100, Math.max(0, this.score()));
+    return this.dashArray() * (1 - percent / 100);
+  });
   readonly center = computed(() => this.size() / 2);
 }

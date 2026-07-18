@@ -4,14 +4,26 @@ import { RouterLink } from '@angular/router';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { ThumbnailReport } from '../../../../core/models/report.model';
 import { ScoreRing } from '../../../../shared/components/score-ring/score-ring';
-import { LucideAngularModule, Flame, Share2 } from 'lucide-angular';
+import {
+  LucideAngularModule,
+  Flame,
+  Share2,
+  AlertCircle,
+  BarChart3,
+  ThumbsUp,
+  Trophy,
+} from 'lucide-angular';
 
-const VERDICT_MAP: Record<string, { label: string; emoji: string; css: string }> = {
-  needs_work: { label: 'Needs Work',  emoji: '⚠️',  css: 'verdict--red'    },
-  decent:     { label: 'Decent',      emoji: '📊',  css: 'verdict--yellow' },
-  good:       { label: 'Good',        emoji: '👍',  css: 'verdict--blue'   },
-  strong:     { label: 'Strong',      emoji: '🔥',  css: 'verdict--orange' },
-  excellent:  { label: 'Excellent',   emoji: '🏆',  css: 'verdict--green'  },
+// Verdict map with Lucide icons instead of emojis
+const VERDICT_MAP: Record<
+  string,
+  { label: string; icon: any; css: string }
+> = {
+  needs_work: { label: 'Needs Work', icon: AlertCircle, css: 'verdict--red' },
+  decent: { label: 'Decent', icon: BarChart3, css: 'verdict--yellow' },
+  good: { label: 'Good', icon: ThumbsUp, css: 'verdict--blue' },
+  strong: { label: 'Strong', icon: Flame, css: 'verdict--orange' },
+  excellent: { label: 'Excellent', icon: Trophy, css: 'verdict--green' },
 };
 
 @Component({
@@ -22,10 +34,13 @@ const VERDICT_MAP: Record<string, { label: string; emoji: string; css: string }>
   animations: [
     trigger('heroEnter', [
       transition(':enter', [
-        animate('600ms cubic-bezier(0,.4,.6,1)', keyframes([
-          style({ opacity: 0, transform: 'scale(0.97) translateY(20px)', offset: 0 }),
-          style({ opacity: 1, transform: 'scale(1) translateY(0)',        offset: 1 }),
-        ])),
+        animate(
+          '600ms cubic-bezier(0,.4,.6,1)',
+          keyframes([
+            style({ opacity: 0, transform: 'scale(0.97) translateY(20px)', offset: 0 }),
+            style({ opacity: 1, transform: 'scale(1) translateY(0)', offset: 1 }),
+          ])
+        ),
       ]),
     ]),
   ],
@@ -50,13 +65,16 @@ export class ReportHeroCard {
   readonly summary = computed(() => {
     const r = this.report();
     const score = r.overall_score;
-    const ctr   = r.ctr_score;
-    const emo   = r.emotion_score;
+    const ctr = r.ctr_score;
+    const emo = r.emotion_score;
 
-    if (score >= 80) return 'Your thumbnail has elite visual impact — minor tweaks could push it further.';
-    if (score >= 65) return `Strong CTR potential (${ctr}/100) but emotion and curiosity could be stronger.`;
-    if (score >= 50) return `Competent but forgettable. Readability and emotional hook need the most work.`;
-    return `Low click-through potential. The core concept and visual execution both need rebuilding.`;
+    if (score >= 80)
+      return 'Your thumbnail has elite visual impact — minor tweaks could push it further.';
+    if (score >= 65)
+      return `Strong CTR potential (${ctr}/100) but emotion and curiosity could be stronger.`;
+    if (score >= 50)
+      return 'Competent but forgettable. Readability and emotional hook need the most work.';
+    return 'Low click-through potential. The core concept and visual execution both need rebuilding.';
   });
 
   readonly ringGlow = computed(() => {
@@ -69,7 +87,7 @@ export class ReportHeroCard {
   copyShareLink(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     const slug = this.report().share_slug;
-    const url  = `${window.location.origin}/report/${slug}`;
+    const url = `${window.location.origin}/report/${slug}`;
     navigator.clipboard.writeText(url).then(() => {
       this.copied.set(true);
       setTimeout(() => this.copied.set(false), 2500);

@@ -1,40 +1,31 @@
-// functions/analyze-thumbnail/index.ts - PRODUCTION VERSION
+// functions/analyze-thumbnail/index.ts - PRODUCTION VERSION WITH DEBUG LOGGING
 
-import { 
-  handleCors, 
-  jsonResponse, 
+import {
+  jsonResponse,
   errorResponse,
-  getCorsHeaders 
+  getCorsHeaders,
 } from "../_shared/cors.ts";
 import { createClient } from "../_shared/deps.ts";
-import { analyzeThumbnailStable } from "../_shared/gemini.ts";
+import { analyzeThumbnailStable } from "../_shared/ai-analyzer.ts";
 import { hashImageUrl } from "../_shared/image-cache.ts";
 import { createLogger } from "../_shared/logger.ts";
-import { 
-  apiRateLimiter, 
-  guestRateLimiter, 
-  authRateLimiter 
+import {
+  guestRateLimiter,
+  authRateLimiter,
 } from "../_shared/rate-limiter.ts";
-import { 
-  AnalyzeRequestSchema, 
+import {
+  AnalyzeRequestSchema,
   validateRequest,
-  withValidation 
 } from "../_shared/validation.ts";
-import { 
-  geminiCircuitBreaker 
-} from "../_shared/circuit-breaker.ts";
-import { 
-  logThumbnailAnalyzed 
+import {
+  logThumbnailAnalyzed,
 } from "../_shared/audit.ts";
-import { 
-  getEncryptionService 
-} from "../_shared/encryption.ts";
-import { 
-  applySecurityHeaders 
+import {
+  applySecurityHeaders,
 } from "../_shared/security-headers.ts";
+import { aiCircuitBreaker } from "../_shared/circuit-breaker.ts";
 
 const logger = createLogger("analyze-thumbnail");
-const ENV = Deno.env.get("ENV") || "development";
 
 const PLAN_LIMITS: Record<string, number> = {
   guest: 3,
@@ -73,17 +64,20 @@ Deno.serve(async (req: Request) => {
   const startTime = Date.now();
   const correlationId = req.headers.get("x-correlation-id") || crypto.randomUUID();
   const origin = req.headers.get("origin");
-  
-  // Enhanced logging with correlation ID
-  logger.info("Request started", { 
-    correlationId, 
-    method: req.method,
-    path: new URL(req.url).pathname,
-  });
 
-  // CORS
-  const corsResponse = handleCors(req);
-  if (corsResponse) return applySecurityHeaders(corsResponse);
+  console.log(`[${correlationId}] Request started: ${req.method} ${new URL(req.url).pathname}`);
+
+  // ─── CORS preflight ─────────────────────────────────────────────────────
+  if (req.method === "OPTIONS") {
+    const headers = getCorsHeaders(origin);
+    return new Response(null, {
+      status: 204,
+      headers: {
+        ...headers,
+        "Content-Length": "0",
+      },
+    });
+  }
 
   if (req.method !== "POST") {
     const response = errorResponse("Method not allowed", 405, req);
@@ -91,7 +85,20 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // ── Rate Limiting ──────────────────────────────────────────────────────
+    console.log(`[${correlationId}] Parsing request body...`);
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      const response = errorResponse("Invalid JSON body", 400, req);
+      return applySecurityHeaders(response);
+    }
+
+    const validated = validateRequest(AnalyzeRequestSchema, body);
+    const { imageUrl } = validated;
+    console.log(`[${correlationId}] Validated imageUrl: ${imageUrl}`);
+
+    // ─── Auth & Rate Limiting ──────────────────────────────────────────────
     const authHeader = req.headers.get("Authorization");
     let userId: string | null = null;
     let isAuthenticated = false;
@@ -107,18 +114,17 @@ Deno.serve(async (req: Request) => {
       if (user) {
         userId = user.id;
         isAuthenticated = true;
+        console.log(`[${correlationId}] Authenticated user: ${userId}`);
       }
     }
 
-    // Apply rate limits
-    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || 
-                     req.headers.get("x-real-ip") || 
-                     "unknown";
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
 
     const rateLimiter = isAuthenticated ? authRateLimiter : guestRateLimiter;
     const identifier = isAuthenticated ? `user:${userId}` : `ip:${clientIp}`;
-    
-    // Different limits for authenticated vs guest
+
     const rateCheck = await rateLimiter.checkLimit(identifier, {
       windowMs: isAuthenticated ? 60000 : 3600000,
       maxRequests: isAuthenticated ? 10 : 3,
@@ -126,8 +132,6 @@ Deno.serve(async (req: Request) => {
 
     if (!rateCheck.allowed) {
       const remainingSeconds = Math.ceil((rateCheck.resetAt.getTime() - Date.now()) / 1000);
-      
-      // Add rate limit headers
       const headers = {
         ...getCorsHeaders(origin),
         "X-RateLimit-Limit": String(rateCheck.limit),
@@ -135,45 +139,13 @@ Deno.serve(async (req: Request) => {
         "X-RateLimit-Reset": String(Math.ceil(rateCheck.resetAt.getTime() / 1000)),
         "Retry-After": String(remainingSeconds),
       };
-
-      logger.warn("Rate limit exceeded", { 
-        correlationId, 
-        identifier, 
-        resetAt: rateCheck.resetAt 
-      });
-
       return new Response(
-        JSON.stringify({ 
-          error: `Rate limit exceeded. Try again in ${remainingSeconds} seconds` 
-        }),
-        {
-          status: 429,
-          headers: {
-            ...headers,
-            "Content-Type": "application/json",
-          },
-        }
+        JSON.stringify({ error: `Rate limit exceeded. Try again in ${remainingSeconds} seconds` }),
+        { status: 429, headers: { ...headers, "Content-Type": "application/json" } }
       );
     }
 
-    // ── Validate Request ──────────────────────────────────────────────────
-    let body;
-    try {
-      body = await req.json();
-    } catch {
-      const response = errorResponse("Invalid JSON body", 400, req);
-      return applySecurityHeaders(response);
-    }
-
-    const validated = validateRequest(AnalyzeRequestSchema, body);
-    const { imageUrl } = validated;
-
-    if (!isValidStorageUrl(imageUrl)) {
-      const response = errorResponse("imageUrl must be a Supabase Storage URL", 400, req);
-      return applySecurityHeaders(response);
-    }
-
-    // ── Check Limits ──────────────────────────────────────────────────────
+    // ─── Check Limits & Usage ──────────────────────────────────────────────
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -232,7 +204,7 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // ── Cache Check ──────────────────────────────────────────────────────
+    // ─── Cache Check ─────────────────────────────────────────────────────
     const imageHash = await hashImageUrl(imageUrl);
     const cutoff = new Date(Date.now() - CACHE_MAX_AGE_DAYS * 86400 * 1000).toISOString();
 
@@ -247,71 +219,84 @@ Deno.serve(async (req: Request) => {
 
     if (cached) {
       const { user_id: _uid, guest_ip: _ip, ...publicReport } = cached;
-      
-      logger.info("Cache hit", { 
-        correlationId, 
-        reportId: cached.id,
-        userId: userId || "guest"
-      });
-
-      const response = jsonResponse({ 
-        success: true, 
-        report: { ...publicReport, was_cached: true } 
-      }, 200, req);
+      console.log(`[${correlationId}] Cache hit for report ${cached.id}`);
+      const response = jsonResponse({ success: true, report: { ...publicReport, was_cached: true } }, 200, req);
       return applySecurityHeaders(response);
     }
 
-    // ── Call AI with Circuit Breaker ──────────────────────────────────────
-    const geminiKey = Deno.env.get("GEMINI_API_KEY");
-    if (!geminiKey) {
-      const response = errorResponse("No vision provider configured", 500, req);
-      return applySecurityHeaders(response);
-    }
+    // ─── AI Call ─────────────────────────────────────────────────────────
+    console.log(`[${correlationId}] Starting AI analysis...`);
+    const openrouterKey = Deno.env.get("OPENROUTER_API_KEY");
+    console.log(`[${correlationId}] OPENROUTER_API_KEY present: ${!!openrouterKey}`);
 
-    // Paid plans get 3-pass averaging
+    let analysis: Awaited<ReturnType<typeof analyzeThumbnailStable>>;
+    let usedProvider = "openrouter";
     const passes = userPlan === "creator" || userPlan === "business" || userPlan === "agency" ? 3 : 1;
+    console.log(`[${correlationId}] Using ${passes} pass(es)`);
 
-    let analysis;
-    try {
-      analysis = await geminiCircuitBreaker.execute(() =>
-        analyzeThumbnailStable(imageUrl, geminiKey, passes)
-      );
-    } catch (circuitError) {
-      // Circuit breaker open - try fallback
-      logger.error("Circuit breaker open or API failed", circuitError as Error, {
-        correlationId,
-        userId: userId || "guest",
-      });
-
-      // Attempt fallback with Groq if available
+    if (!openrouterKey) {
+      console.log(`[${correlationId}] OPENROUTER_API_KEY missing, attempting Groq fallback...`);
       const groqKey = Deno.env.get("GROQ_API_KEY");
       if (groqKey) {
         try {
-          // Import Groq analyzer
           const { analyzeWithFallback, GroqAnalyzer } = await import("../_shared/vision-analyzer.ts");
           const result = await analyzeWithFallback(imageUrl, [
             { analyzer: new GroqAnalyzer(), apiKey: groqKey },
           ]);
           analysis = result.analysis;
-          logger.info("Used Groq fallback successfully", { correlationId });
+          usedProvider = result.provider;
+          console.log(`[${correlationId}] Groq fallback succeeded`);
         } catch (groqError) {
-          logger.error("Groq fallback also failed", groqError as Error, { correlationId });
+          console.error(`[${correlationId}] Groq fallback failed:`, groqError);
           const response = errorResponse("All AI providers are currently unavailable", 502, req);
           return applySecurityHeaders(response);
         }
       } else {
-        const response = errorResponse("AI service temporarily unavailable", 502, req);
+        console.error(`[${correlationId}] No AI provider configured (OPENROUTER_API_KEY and GROQ_API_KEY missing)`);
+        const response = errorResponse("No vision provider configured", 500, req);
         return applySecurityHeaders(response);
+      }
+    } else {
+      try {
+        console.log(`[${correlationId}] Calling OpenRouter via circuit breaker...`);
+        analysis = await aiCircuitBreaker.execute(() =>
+          analyzeThumbnailStable(imageUrl, passes)
+        );
+        console.log(`[${correlationId}] OpenRouter succeeded`);
+      } catch (aiError) {
+        console.error(`[${correlationId}] OpenRouter failed:`, aiError);
+        // Fallback to Groq
+        const groqKey = Deno.env.get("GROQ_API_KEY");
+        if (groqKey) {
+          try {
+            const { analyzeWithFallback, GroqAnalyzer } = await import("../_shared/vision-analyzer.ts");
+            const result = await analyzeWithFallback(imageUrl, [
+              { analyzer: new GroqAnalyzer(), apiKey: groqKey },
+            ]);
+            analysis = result.analysis;
+            usedProvider = result.provider;
+            console.log(`[${correlationId}] Groq fallback succeeded after OpenRouter failure`);
+          } catch (groqError) {
+            console.error(`[${correlationId}] Groq fallback also failed:`, groqError);
+            const response = errorResponse("All AI providers are currently unavailable", 502, req);
+            return applySecurityHeaders(response);
+          }
+        } else {
+          console.error(`[${correlationId}] No Groq fallback configured`);
+          const response = errorResponse("AI service temporarily unavailable (no fallback)", 502, req);
+          return applySecurityHeaders(response);
+        }
       }
     }
 
-    // ── Save Report ──────────────────────────────────────────────────────
+    // ─── Save Report ──────────────────────────────────────────────────────
+    console.log(`[${correlationId}] Saving report...`);
     const reportRecord = {
       user_id: userId ?? null,
       guest_ip: userId ? null : clientIp,
       image_url: imageUrl,
       image_hash: imageHash,
-      analyzed_by: "gemini",
+      analyzed_by: usedProvider,
       share_slug: generateSlug(),
       overall_score: analysis.overall_score,
       verdict: analysis.verdict,
@@ -357,7 +342,7 @@ Deno.serve(async (req: Request) => {
       return applySecurityHeaders(response);
     }
 
-    // ── Audit Log ──────────────────────────────────────────────────────
+    // ── Audit ─────────────────────────────────────────────────────────────
     await logThumbnailAnalyzed(
       userId,
       savedReport.id,
@@ -366,38 +351,20 @@ Deno.serve(async (req: Request) => {
       req
     );
 
-    // ── Increment Usage ──────────────────────────────────────────────────
     if (userId) {
       await supabaseAdmin.rpc("increment_analyses_used", { user_id: userId });
     }
 
-    // ── Response ──────────────────────────────────────────────────────────
     const { user_id: _uid, guest_ip: _ip, ...publicReport } = savedReport;
 
-    const duration = Date.now() - startTime;
-    logger.info("Request completed", { 
-      correlationId, 
-      duration,
-      success: true,
-      score: analysis.overall_score,
-      userId: userId || "guest",
-    });
-
-    const response = jsonResponse({ 
-      success: true, 
-      report: publicReport 
-    }, 200, req);
+    console.log(`[${correlationId}] Analysis completed, provider: ${usedProvider}, score: ${analysis.overall_score}`);
+    const response = jsonResponse({ success: true, report: publicReport }, 200, req);
     return applySecurityHeaders(response);
-    
   } catch (error: unknown) {
     const duration = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : "Internal server error";
-    
-    logger.error("Unhandled error", error as Error, {
-      correlationId,
-      duration,
-      path: new URL(req.url).pathname,
-    });
+    console.error(`[${correlationId}] Unhandled error:`, error);
+    logger.error("Unhandled error", error as Error, { correlationId, duration, path: new URL(req.url).pathname });
 
     const response = errorResponse(
       Deno.env.get("ENV") === "production" ? "An internal error occurred" : errorMessage,

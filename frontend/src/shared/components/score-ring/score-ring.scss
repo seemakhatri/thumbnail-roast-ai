@@ -1,0 +1,25 @@
+.score-ring-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.score-ring__bg {
+  stroke: var(--border);
+  transition: stroke 0.3s;
+}
+
+.score-ring__progress {
+  stroke: url(#scoreGrad);
+  transition: stroke-dashoffset 0.8s ease, stroke 0.5s ease;
+}
+
+.score-ring__text {
+  fill: var(--text);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  dominant-baseline: central;
+  text-anchor: middle;
+}
