@@ -26,27 +26,7 @@
   } @else {
   <div class="post-hero__placeholder"></div>
   }
-  <div class="post-hero__scrim"></div>
-  <div class="post-hero__content">
-    <div class="post-hero__inner">
-      @if (p.category_name) {
-      <span class="post-tag post-tag--light">{{ p.category_name }}</span>
-      }
-      <h1 class="post-title post-title--light">{{ p.title }}</h1>
-      <div class="post-byline post-byline--light">
-        @if (p.author_name) {
-        <span class="post-avatar">{{ p.author_name.charAt(0) }}</span>
-        <span>{{ p.author_name }}</span>
-        <span class="divider">·</span>
-        }
-        <time [dateTime]="p.published_at">{{ p.published_at | date:'mediumDate' }}</time>
-        @if (p.read_time_minutes) {
-        <span class="divider">·</span>
-        <span>{{ p.read_time_minutes }} min read</span>
-        }
-      </div>
-    </div>
-  </div>
+
 </div>
 
 <!-- Main Layout -->
@@ -59,9 +39,10 @@
       <ul class="post-toc__list">
         @for (item of toc(); track item.id) {
         <li>
-      <a (click)="scrollTo(item); $event.preventDefault()" class="post-toc__link" [class.active]="isActive(item.id)">
-  {{ item.text }}
-</a>
+          <a (click)="scrollTo(item); $event.preventDefault()" class="post-toc__link"
+            [class.active]="isActive(item.id)">
+            {{ item.text }}
+          </a>
         </li>
         }
       </ul>

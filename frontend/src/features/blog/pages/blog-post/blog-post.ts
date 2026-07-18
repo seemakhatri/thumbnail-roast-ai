@@ -1,4 +1,12 @@
-import { Component, HostListener, inject, OnInit, signal, computed, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnInit,
+  signal,
+  computed,
+  AfterViewInit,
+} from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlogService, BlogPostModal } from '../../../../core/services/blog';
 import { MetaService } from '../../../../core/services/meta';
@@ -116,7 +124,8 @@ export class BlogPost implements OnInit, AfterViewInit {
   @HostListener('window:scroll')
   onWindowScroll(): void {
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrollHeight =
+      document.documentElement.scrollHeight - document.documentElement.clientHeight;
     this.progress.set(scrollHeight > 0 ? Math.min(100, (scrollTop / scrollHeight) * 100) : 0);
     this.updateActiveToc();
   }
@@ -186,19 +195,30 @@ export class BlogPost implements OnInit, AfterViewInit {
     // ── Tables ────────────────────────────────────────────────────────────
     const tableRegex = /((?:^\|.*\|$\n?)+)/gm;
     html = html.replace(tableRegex, (tableBlock: string) => {
-      const lines = tableBlock.trim().split('\n').filter(line => line.trim());
+      const lines = tableBlock
+        .trim()
+        .split('\n')
+        .filter((line) => line.trim());
       if (lines.length < 2) return tableBlock;
-      const hasSeparator = lines.some(line => /^[\s\|:-]+$/.test(line.replace(/\|/g, '').trim()));
+      const hasSeparator = lines.some((line) => /^[\s\|:-]+$/.test(line.replace(/\|/g, '').trim()));
       if (!hasSeparator) return tableBlock;
-      let headerRow = '', bodyRows = '', isHeader = true;
+      let headerRow = '',
+        bodyRows = '',
+        isHeader = true;
       for (const line of lines) {
-        if (/^[\s\|:-]+$/.test(line.replace(/\|/g, '').trim())) { isHeader = false; continue; }
-        const cells = line.split('|').map(c => c.trim()).filter(c => c !== '');
+        if (/^[\s\|:-]+$/.test(line.replace(/\|/g, '').trim())) {
+          isHeader = false;
+          continue;
+        }
+        const cells = line
+          .split('|')
+          .map((c) => c.trim())
+          .filter((c) => c !== '');
         if (cells.length === 0) continue;
         if (isHeader) {
-          headerRow = `<thead><tr>${cells.map(c => `<th>${c}</th>`).join('')}</tr></thead>`;
+          headerRow = `<thead><tr>${cells.map((c) => `<th>${c}</th>`).join('')}</tr></thead>`;
         } else {
-          bodyRows += `<tr>${cells.map(c => `<td>${c}</td>`).join('')}</tr>`;
+          bodyRows += `<tr>${cells.map((c) => `<td>${c}</td>`).join('')}</tr>`;
         }
       }
       if (!headerRow && bodyRows) {
@@ -211,7 +231,7 @@ export class BlogPost implements OnInit, AfterViewInit {
 
     html = html.replace(
       /!\[(.*?)\]\((.*?)\)/g,
-      '<figure class="article-image"><img src="$2" alt="$1" loading="lazy"><figcaption>$1</figcaption></figure>'
+      '<figure class="article-image"><img src="$2" alt="$1" loading="lazy"><figcaption>$1</figcaption></figure>',
     );
 
     // ── Headings ──────────────────────────────────────────────────────────
@@ -234,29 +254,50 @@ export class BlogPost implements OnInit, AfterViewInit {
     html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>');
 
     html = html.replace(/(?:^|\n)[\-\*]\s+(.+)(?:\n[\-\*]\s+.+)*/g, (match) => {
-      const items = match.split('\n').filter(line => line.trim().startsWith('-') || line.trim().startsWith('*'));
-      const listHtml = items.map(item => `<li>${item.replace(/^[\-\*]\s+/, '').trim()}</li>`).join('');
+      const items = match
+        .split('\n')
+        .filter((line) => line.trim().startsWith('-') || line.trim().startsWith('*'));
+      const listHtml = items
+        .map((item) => `<li>${item.replace(/^[\-\*]\s+/, '').trim()}</li>`)
+        .join('');
       return `<ul>${listHtml}</ul>`;
     });
 
     html = html.replace(/(?:^|\n)\d+\.\s+(.+)(?:\n\d+\.\s+.+)*/g, (match) => {
-      const items = match.split('\n').filter(line => /^\d+\./.test(line.trim()));
-      const listHtml = items.map(item => `<li>${item.replace(/^\d+\.\s+/, '').trim()}</li>`).join('');
+      const items = match.split('\n').filter((line) => /^\d+\./.test(line.trim()));
+      const listHtml = items
+        .map((item) => `<li>${item.replace(/^\d+\.\s+/, '').trim()}</li>`)
+        .join('');
       return `<ol>${listHtml}</ol>`;
     });
 
     html = html.replace(/^> (.+)$/gm, '<blockquote><p>$1</p></blockquote>');
 
-    const blockTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'table', 'blockquote', 'figure'];
+    const blockTags = [
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'ul',
+      'ol',
+      'li',
+      'table',
+      'blockquote',
+      'figure',
+    ];
     const blockTagRegex = new RegExp(`</?(${blockTags.join('|')})[^>]*>`, 'g');
 
     const parts = html.split(/\n\n/);
-    html = parts.map(part => {
-      if (blockTagRegex.test(part)) return part;
-      if (!part.trim()) return '';
-      if (!/^<[a-z]/.test(part.trim())) return `<p>${part.trim()}</p>`;
-      return part;
-    }).join('');
+    html = parts
+      .map((part) => {
+        if (blockTagRegex.test(part)) return part;
+        if (!part.trim()) return '';
+        if (!/^<[a-z]/.test(part.trim())) return `<p>${part.trim()}</p>`;
+        return part;
+      })
+      .join('');
 
     return { html, toc };
   }
