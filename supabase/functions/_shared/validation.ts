@@ -40,6 +40,17 @@ export const YouTubeConnectRequestSchema = z.object({
     .regex(/^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/, "Invalid token format"),
 });
 
+export const ResearchRequestSchema = z.object({
+  mode: z.enum(["channel", "niche", "keyword"]),
+  input: z.string()
+    .min(2, "Input is too short")
+    .max(200, "Input exceeds maximum length"),
+});
+
+export const ChannelAuditRequestSchema = z.object({
+  force: z.boolean().optional(),
+});
+
 export const CreateCheckoutSchema = z.object({
   plan: z.enum(["creator", "business", "agency"]),
   userId: z.string().uuid("Invalid user ID"),

@@ -222,6 +222,20 @@
     }
     }
 
+    <!-- ─── Promo: AI Channel Audit ────────────────────────────────────── -->
+<div class="dash-promo">
+  <div class="dash-promo__content">
+    <div class="dash-promo__icon">
+      <lucide-angular [img]="icons.gauge" size="28" />
+    </div>
+    <div>
+      <h4>AI Channel Audit</h4>
+      <p>Get a full channel health report – thumbnail trends, branding, growth opportunities.</p>
+    </div>
+    <a routerLink="/channel-audit" class="btn-primary">Run Audit →</a>
+  </div>
+</div>
+
     <!-- Reports - REMOVED the "Recent Reports" heading since app-report-history shows its own -->
     <section class="dash-section" id="reports">
       <app-report-history [reports]="reports()" />

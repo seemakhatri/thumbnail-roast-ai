@@ -9,7 +9,8 @@ import {
   LucideAngularModule,
   Sun,
   Moon,
-  Lock
+  Lock,
+  Gauge
 } from 'lucide-angular';
 import { ThemeService } from '../../../core/services/theme';
 
@@ -36,7 +37,8 @@ export class Navbar {
     logout: LogOut,
     sun: Sun,
     moon: Moon,
-    lock: Lock
+    lock: Lock,
+      gauge: Gauge, 
   };
 
   @HostListener('window:scroll')
@@ -112,5 +114,15 @@ export class Navbar {
 readonly canCompare = computed(() => {
   const plan = this.supabase.userPlan();
   return plan !== 'free' && plan !== undefined; 
+});
+
+readonly canResearch = computed(() => {
+  const plan = this.supabase.userPlan();
+  return plan !== 'free' && plan !== undefined;
+});
+
+readonly canChannelAudit = computed(() => {
+  const plan = this.supabase.userPlan();
+  return plan !== 'free' && plan !== undefined;
 });
 }

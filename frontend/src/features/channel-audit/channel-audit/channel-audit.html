@@ -1,0 +1,312 @@
+<div class="ca-page">
+  <!-- HEADER -->
+<header class="ca-header">
+  <span class="ca-header__badge">AI Channel Audit</span>
+  <h1 class="ca-header__title">Your Whole Channel, Roasted &amp; Ranked</h1>
+  <p class="ca-header__sub">
+    We analyze every synced video's thumbnail, title, upload rhythm, and branding to show you
+    exactly where your channel is winning — and what's holding it back.
+  </p>
+</header>
+
+  <!-- EMPTY STATE: not enough synced videos -->
+  @if (!loading() && !hasEnoughData()) {
+    <div class="ca-empty">
+      <lucide-angular [img]="icons.youtube" size="36" />
+      <h2>Sync your YouTube channel first</h2>
+      <p>
+        AI Channel Audit needs at least 5 synced videos to find real patterns. Connect your
+        channel and sync from your Dashboard, then come back here.
+      </p>
+      <div class="ca-empty__actions">
+        <button type="button" class="ca-btn ca-btn--primary" (click)="syncVideos()" [disabled]="youtubeSync.syncing()">
+          @if (youtubeSync.syncing()) {
+            <span class="spinner"></span> Syncing…
+          } @else {
+            <lucide-angular [img]="icons.refresh" size="16" /> Sync YouTube Videos
+          }
+        </button>
+        <a routerLink="/dashboard" class="ca-btn ca-btn--ghost">
+          Go to Dashboard <lucide-angular [img]="icons.arrowRight" size="14" />
+        </a>
+      </div>
+    </div>
+  }
+
+  <!-- LOADING SKELETON -->
+  @if (loading()) {
+    <div class="ca-skeleton">
+      <div class="sk sk--hero"></div>
+      <div class="sk-row">
+        <div class="sk sk--card"></div>
+        <div class="sk sk--card"></div>
+      </div>
+      <div class="sk sk--card sk--wide"></div>
+    </div>
+  }
+
+  <!-- ERROR STATE -->
+  @if (!loading() && error() && hasEnoughData()) {
+    <div class="ca-error">
+      <lucide-angular [img]="icons.alertCircle" size="28" />
+      <p>{{ error() }}</p>
+      <button type="button" class="ca-btn ca-btn--primary" (click)="runFirstAudit()">Try Again</button>
+    </div>
+  }
+
+  <!-- REPORT -->
+  @if (!loading() && audit(); as a) {
+    <div class="ca-report">
+      <!-- Toolbar -->
+      <div class="ca-toolbar">
+        <span class="ca-toolbar__meta">
+          <lucide-angular [img]="icons.gauge" size="14" />
+          {{ a.videos_analyzed_count }} of {{ a.channel_video_count }} videos analyzed
+          · updated {{ timeAgo(a.created_at) }}
+        </span>
+        <button type="button" class="ca-btn ca-btn--ghost" (click)="refresh()" [disabled]="refreshing()">
+          @if (refreshing()) {
+            <span class="spinner"></span> Refreshing…
+          } @else {
+            <lucide-angular [img]="icons.refresh" size="14" /> Refresh Audit
+          }
+        </button>
+      </div>
+
+      <!-- HERO: Overall score + breakdown + summary -->
+      <div class="ca-hero">
+        <div class="ca-hero__score">
+          <app-score-ring [score]="a.overall_channel_score" [size]="130" [radius]="52" />
+          <span class="ca-badge" [class]="scoreVerdict().css">{{ scoreVerdict().label }}</span>
+        </div>
+
+        <div class="ca-hero__breakdown">
+          <app-metric-bar label="Thumbnail Quality" [score]="a.score_breakdown.thumbnail_quality" />
+          <app-metric-bar label="Upload Consistency" [score]="a.score_breakdown.consistency" />
+          <app-metric-bar label="Branding" [score]="a.score_breakdown.branding" />
+          <app-metric-bar label="Title Strength" [score]="a.score_breakdown.title_strength" />
+        </div>
+
+        <div class="ca-hero__summary">
+          <h3>Channel Summary</h3>
+          <p>{{ a.summary }}</p>
+        </div>
+      </div>
+
+      <!-- TREND + CONSISTENCY + TITLES + BRANDING -->
+      <div class="ca-grid ca-grid--4">
+        <div class="ca-card">
+          <div class="ca-card__head">
+            <lucide-angular [img]="trendIcon(a.thumbnail_quality_trend.direction)" size="15" [class]="trendCss(a.thumbnail_quality_trend.direction)" />
+            <h3>Thumbnail Trend</h3>
+          </div>
+          <div class="ca-stat" [class]="trendCss(a.thumbnail_quality_trend.direction)">
+            {{ trendLabel(a.thumbnail_quality_trend.direction) }}
+          </div>
+          @if (a.thumbnail_quality_trend.previous_avg !== null) {
+            <p class="ca-card__note">
+              {{ a.thumbnail_quality_trend.previous_avg }} → {{ a.thumbnail_quality_trend.recent_avg }} avg score
+            </p>
+          } @else {
+            <p class="ca-card__note">Analyze a few more videos to see a trend.</p>
+          }
+        </div>
+
+        <div class="ca-card">
+          <div class="ca-card__head">
+            <lucide-angular [img]="icons.calendar" size="15" />
+            <h3>Upload Consistency</h3>
+          </div>
+          <div class="ca-stat">{{ a.upload_consistency.label }}</div>
+          @if (a.upload_consistency.avg_gap_days !== null) {
+            <p class="ca-card__note">
+              ~{{ a.upload_consistency.avg_gap_days }} days between uploads
+              · {{ a.upload_consistency.uploads_per_month }}/mo
+            </p>
+          }
+        </div>
+
+        <div class="ca-card">
+          <div class="ca-card__head">
+            <lucide-angular [img]="icons.type" size="15" />
+            <h3>Title Patterns</h3>
+          </div>
+          <div class="ca-stat">{{ a.title_pattern_analysis.avg_word_count }} words avg</div>
+          <p class="ca-card__note">
+            {{ a.title_pattern_analysis.pct_with_numbers }}% use numbers ·
+            {{ a.title_pattern_analysis.pct_power_words }}% use power words
+          </p>
+        </div>
+
+        <div class="ca-card">
+          <div class="ca-card__head">
+            <lucide-angular [img]="icons.palette" size="15" />
+            <h3>Branding Consistency</h3>
+          </div>
+          <div class="ca-stat">{{ a.branding_consistency.score }}/100</div>
+          <p class="ca-card__note">{{ a.branding_consistency.note }}</p>
+        </div>
+      </div>
+
+      <!-- STRENGTHS / WEAKNESSES -->
+      <div class="ca-grid ca-grid--2">
+        <div class="ca-insight-card ca-insight-card--positive">
+          <div class="ca-card__head">
+            <lucide-angular [img]="icons.checkCircle" size="16" />
+            <h3>Strengths</h3>
+          </div>
+          <ul>
+            @for (s of a.strengths; track s) {
+              <li>{{ s }}</li>
+            }
+          </ul>
+        </div>
+
+        <div class="ca-insight-card ca-insight-card--negative">
+          <div class="ca-card__head">
+            <lucide-angular [img]="icons.alertCircle" size="16" />
+            <h3>Weaknesses</h3>
+          </div>
+          <ul>
+            @for (w of a.weaknesses; track w) {
+              <li>{{ w }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- CONTENT GAPS / GROWTH OPPORTUNITIES -->
+      <div class="ca-grid ca-grid--2">
+        <div class="ca-insight-card">
+          <div class="ca-card__head">
+            <lucide-angular [img]="icons.lightbulb" size="16" />
+            <h3>Content Gaps</h3>
+          </div>
+          <ul>
+            @for (g of a.content_gaps; track g) {
+              <li>{{ g }}</li>
+            }
+          </ul>
+        </div>
+
+        <div class="ca-insight-card">
+          <div class="ca-card__head">
+            <lucide-angular [img]="icons.trendingUp" size="16" />
+            <h3>Growth Opportunities</h3>
+          </div>
+          <ul>
+            @for (o of a.growth_opportunities; track o) {
+              <li>{{ o }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- BEST / WORST PERFORMING -->
+      <section class="ca-videos-section">
+        <div class="ca-section-head">
+          <lucide-angular [img]="icons.trophy" size="16" />
+          <h3>Best Performing (by Score)</h3>
+        </div>
+        <div class="ca-video-row">
+          @for (v of a.best_performing_by_score; track v.youtube_video_id) {
+            <div class="ca-video-card">
+              @if (v.thumbnail_url) {
+                <img [src]="v.thumbnail_url" [alt]="v.title" loading="lazy" />
+              }
+              <div class="ca-video-card__body">
+                <p class="ca-video-card__title">{{ v.title }}</p>
+                <span class="ca-video-card__meta">
+                  @if (v.overall_score !== null) {
+                    <strong>{{ v.overall_score }}</strong> score ·
+                  }
+                  <lucide-angular [img]="icons.eye" size="11" /> {{ formatViews(v.views) }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="ca-videos-section">
+        <div class="ca-section-head">
+          <lucide-angular [img]="icons.thumbsDown" size="16" />
+          <h3>Needs the Most Work</h3>
+        </div>
+        <div class="ca-video-row">
+          @for (v of a.worst_performing_by_score; track v.youtube_video_id) {
+            <div class="ca-video-card">
+              @if (v.thumbnail_url) {
+                <img [src]="v.thumbnail_url" [alt]="v.title" loading="lazy" />
+              }
+              <div class="ca-video-card__body">
+                <p class="ca-video-card__title">{{ v.title }}</p>
+                <span class="ca-video-card__meta">
+                  @if (v.overall_score !== null) {
+                    <strong>{{ v.overall_score }}</strong> score ·
+                  }
+                  <lucide-angular [img]="icons.eye" size="11" /> {{ formatViews(v.views) }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- TOPIC / NICHE PERFORMANCE -->
+      @if (a.topic_performance.length > 0) {
+        <section class="ca-topics">
+          <div class="ca-section-head">
+            <lucide-angular [img]="icons.layers" size="16" />
+            <h3>Topic / Niche Performance</h3>
+          </div>
+          <div class="ca-topics__table">
+            <div class="ca-topics__row ca-topics__row--head">
+              <span>Niche</span>
+              <span>Avg Score</span>
+              <span>Avg Views</span>
+              <span>Videos</span>
+            </div>
+            @for (t of a.topic_performance; track t.niche) {
+              <div class="ca-topics__row">
+                <span>{{ t.niche }}</span>
+                <span>{{ t.avg_score }}</span>
+                <span>{{ formatViews(t.avg_views) }}</span>
+                <span>{{ t.video_count }}</span>
+              </div>
+            }
+          </div>
+        </section>
+      }
+
+      <!-- RECOMMENDATIONS -->
+      <section class="ca-recommendations">
+        <div class="ca-section-head">
+          <lucide-angular [img]="icons.zap" size="16" />
+          <h3>Actionable Recommendations</h3>
+        </div>
+        <ul class="ca-rec-list">
+          @for (r of a.recommendations; track r; let i = $index) {
+            <li>
+              <span class="ca-rec-number">{{ i + 1 }}</span>
+              {{ r }}
+            </li>
+          }
+        </ul>
+      </section>
+
+      <!-- NEXT VIDEO IDEAS -->
+      <section class="ca-ideas">
+        <div class="ca-section-head">
+          <lucide-angular [img]="icons.sparkles" size="16" />
+          <h3>Suggested Next Videos</h3>
+        </div>
+        <div class="ca-ideas__grid">
+          @for (idea of a.next_video_ideas; track idea) {
+            <div class="ca-idea-card">{{ idea }}</div>
+          }
+        </div>
+      </section>
+    </div>
+  }
+</div>

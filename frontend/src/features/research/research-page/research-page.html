@@ -1,0 +1,225 @@
+<div class="research-page">
+  <!-- HEADER -->
+  <header class="research-header">
+    <span class="eyebrow">Research Engine</span>
+    <h1>Turn YouTube Data into a Winning Plan</h1>
+    <p>Enter a channel, niche, or keyword — we'll pull real data and give you a strategy.</p>
+  </header>
+
+  <!-- FORM -->
+  @if (!session()) {
+    <div class="research-form">
+      <div class="mode-tabs">
+        @for (option of modeOptions; track option.value) {
+          <button
+            type="button"
+            class="mode-tab"
+            [class.active]="mode() === option.value"
+            (click)="selectMode(option.value)"
+          >
+            <lucide-angular [img]="option.icon" size="16" />
+            {{ option.label }}
+          </button>
+        }
+      </div>
+
+      <div class="input-row">
+        <input
+          type="text"
+          [placeholder]="currentPlaceholder()"
+          [(ngModel)]="inputValue"
+          (keydown.enter)="submit()"
+          [disabled]="loading()"
+        />
+        <button type="button" class="submit-btn" (click)="submit()" [disabled]="loading()">
+          @if (loading()) {
+            <span class="spinner"></span> Researching…
+          } @else {
+            <lucide-angular [img]="icons.search" size="16" /> Run Research
+          }
+        </button>
+      </div>
+
+      @if (error()) {
+        <p class="error-text">{{ error() }}</p>
+      }
+    </div>
+  }
+
+  <!-- RESULTS -->
+  @if (session(); as s) {
+    <div class="research-results">
+      <!-- Toolbar -->
+      <div class="results-toolbar">
+        <span class="results-input">
+          <lucide-angular [img]="icons.target" size="14" />
+          {{ s.mode }}: "{{ s.input }}"
+        </span>
+        <div class="toolbar-actions">
+          <button type="button" class="share-btn" (click)="share()">
+            <lucide-angular [img]="icons.share" size="14" /> Share
+          </button>
+          <button type="button" class="new-search-btn" (click)="reset()">
+            <lucide-angular [img]="icons.plus" size="14" /> New search
+          </button>
+        </div>
+      </div>
+
+      <!-- TOP ROW: Opportunity + Strategy -->
+      <div class="top-row">
+        <!-- Opportunity Score -->
+        <div class="opportunity-card">
+          <div class="score-ring">
+            <svg viewBox="0 0 120 120" class="ring">
+              <circle cx="60" cy="60" r="54" stroke="var(--border)" stroke-width="8" fill="none"/>
+              <circle
+                cx="60" cy="60" r="54"
+                stroke="var(--accent)"
+                stroke-width="8"
+                fill="none"
+                [style.stroke-dasharray]="339.292 * opportunityScore() / 100"
+                stroke-linecap="round"
+                transform="rotate(-90 60 60)"
+              />
+            </svg>
+            <div class="score-value">{{ opportunityScore() }}<span>/100</span></div>
+          </div>
+          <div class="score-label">
+            <span class="badge" [class]="opportunityLabel().toLowerCase()">
+              {{ opportunityLabel() }} Opportunity
+            </span>
+            <span class="subtext">Based on demand & competition</span>
+          </div>
+        </div>
+
+        <!-- Strategy Box -->
+        <div class="strategy-card">
+          <div class="strategy-head">
+            <lucide-angular [img]="icons.lightbulb" size="18" />
+            <h3>Your Winning Strategy</h3>
+          </div>
+          <p>{{ strategy() }}</p>
+          <div class="strategy-tags">
+            <span class="tag">
+              <lucide-angular [img]="icons.trending" size="12" />
+              Demand: {{ s.insights.search_volume_signal }}
+            </span>
+            <span class="tag">
+              <lucide-angular [img]="icons.target" size="12" />
+              Competition: {{ s.insights.competition_level }}
+            </span>
+            <span class="tag">
+              <lucide-angular [img]="icons.users" size="12" />
+              Avg views: {{ s.insights.average_views | number }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIDEO IDEAS -->
+      <div class="video-ideas">
+        <div class="video-ideas__head">
+          <lucide-angular [img]="icons.sparkles" size="18" />
+          <h3>Top 5 Video Ideas for You</h3>
+        </div>
+        <ul>
+          @for (idea of videoIdeas(); track $index) {
+            <li>
+              <span class="idea-number">{{ $index + 1 }}</span>
+              {{ idea }}
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- INSIGHT GRID -->
+      <div class="insight-grid">
+        <!-- Thumbnail Patterns -->
+        <section class="insight-card thumbnail-patterns">
+          <div class="insight-card__head">
+            <lucide-angular [img]="icons.layers" size="16" />
+            <h3>Winning Thumbnail Patterns</h3>
+          </div>
+          <div class="pattern-grid">
+            @for (style of s.insights.thumbnail_styles; track style) {
+              <div class="pattern-item">
+                <span class="pattern-icon">{{ getThumbnailIcon(style) }}</span>
+                <span class="pattern-label">{{ style }}</span>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Trending Topics -->
+        <section class="insight-card">
+          <div class="insight-card__head">
+            <lucide-angular [img]="icons.trending" size="16" />
+            <h3>Trending Topics</h3>
+          </div>
+          <ul>
+            @for (item of s.insights.trending_topics; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </section>
+
+        <!-- Title Patterns -->
+        <section class="insight-card">
+          <div class="insight-card__head">
+            <lucide-angular [img]="icons.lightbulb" size="16" />
+            <h3>Title Patterns</h3>
+          </div>
+          <ul>
+            @for (item of s.insights.title_patterns; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </section>
+
+        <!-- Audience Interests -->
+        <section class="insight-card">
+          <div class="insight-card__head">
+            <lucide-angular [img]="icons.users" size="16" />
+            <h3>Audience Interests</h3>
+          </div>
+          <ul>
+            @for (item of s.insights.audience_interests; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </section>
+
+        <!-- Comment Themes -->
+        <section class="insight-card">
+          <div class="insight-card__head">
+            <lucide-angular [img]="icons.message" size="16" />
+            <h3>Comment Themes</h3>
+          </div>
+          <ul>
+            @for (item of s.insights.comment_themes; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </section>
+
+        <!-- Content Gaps (highlighted) -->
+        <section class="insight-card highlight">
+          <div class="insight-card__head">
+            <lucide-angular [img]="icons.target" size="16" />
+            <h3>Content Gaps</h3>
+          </div>
+          <ul>
+            @for (item of s.insights.content_gaps; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </section>
+      </div>
+
+      <!-- Optional small footer note (removed "Based on ...") -->
+      <div class="results-footer">
+        <span class="powered-by">🔍 Analyzed via real YouTube data</span>
+      </div>
+    </div>
+  }
+</div>

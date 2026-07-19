@@ -39,6 +39,9 @@ export class Config {
       "ALLOWED_ORIGIN",
       "ENV",
       "SUPABASE_DB_URL",
+      "APIFY_API_TOKEN",
+      "APIFY_YT_ACTOR",
+      "KIE_API_KEY",
     ];
 
     for (const key of optional) {

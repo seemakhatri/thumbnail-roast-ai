@@ -1,13 +1,3 @@
-// _shared/providers/index.ts
-//
-// Provider factory. Callers (ai-analyzer.ts, vision-analyzer.ts,
-// vision-comparator.ts) never construct a provider class directly — they
-// call getAIProvider() and get back whatever AI_PROVIDER selects. Today
-// that's only "openrouter", but adding a second provider later means:
-//   1. implement AIProvider in providers/<name>.ts
-//   2. add one case to the switch below
-// No other file in the codebase needs to change.
-
 import type { AIProvider } from "./provider.ts";
 import { OpenRouterProvider } from "./openrouter.ts";
 

@@ -143,3 +143,13 @@ export const stripeCircuitBreaker = new CircuitBreaker(
   300,
   2
 );
+
+// Apify actor runs are slower and more prone to transient failures
+// (proxy issues, YouTube layout changes) than the AI/YouTube API calls
+// above, so it gets a longer open-circuit cool-down.
+export const apifyCircuitBreaker = new CircuitBreaker(
+  "apify-api",
+  4,
+  120,
+  2
+);

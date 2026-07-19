@@ -1,5 +1,3 @@
-// functions/analyze-thumbnail/index.ts - PRODUCTION VERSION WITH DEBUG LOGGING
-
 import {
   jsonResponse,
   errorResponse,

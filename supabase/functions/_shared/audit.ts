@@ -14,6 +14,8 @@ export enum AuditAction {
   YOUTUBE_CONNECTED = "YOUTUBE_CONNECTED",
   YOUTUBE_DISCONNECTED = "YOUTUBE_DISCONNECTED",
   YOUTUBE_SYNCED = "YOUTUBE_SYNCED",
+  RESEARCH_SESSION_CREATED = "RESEARCH_SESSION_CREATED",
+  CHANNEL_AUDIT_GENERATED = "CHANNEL_AUDIT_GENERATED",
   SUBSCRIPTION_CREATED = "SUBSCRIPTION_CREATED",
   SUBSCRIPTION_UPDATED = "SUBSCRIPTION_UPDATED",
   SUBSCRIPTION_CANCELLED = "SUBSCRIPTION_CANCELLED",
@@ -89,6 +91,38 @@ export async function logThumbnailAnalyzed(
     resourceType: "report",
     resourceId: reportId,
     metadata: { score, niche },
+  }, req);
+}
+
+export async function logResearchSession(
+  userId: string,
+  sessionId: string,
+  mode: string,
+  input: string,
+  req?: Request
+): Promise<void> {
+  await logAuditEvent({
+    userId,
+    action: AuditAction.RESEARCH_SESSION_CREATED,
+    resourceType: "research_session",
+    resourceId: sessionId,
+    metadata: { mode, input },
+  }, req);
+}
+
+export async function logChannelAuditGenerated(
+  userId: string,
+  auditId: string,
+  overallScore: number,
+  videosAnalyzed: number,
+  req?: Request
+): Promise<void> {
+  await logAuditEvent({
+    userId,
+    action: AuditAction.CHANNEL_AUDIT_GENERATED,
+    resourceType: "channel_audit",
+    resourceId: auditId,
+    metadata: { overallScore, videosAnalyzed },
   }, req);
 }
 

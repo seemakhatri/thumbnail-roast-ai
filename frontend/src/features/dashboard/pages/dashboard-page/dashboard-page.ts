@@ -24,6 +24,7 @@ import {
   ArrowUpRight,
   LucideAngularModule,
   Settings,
+  Gauge,
 } from 'lucide-angular';
 import { environment } from '../../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -71,6 +72,7 @@ export class DashboardPage implements OnInit {
     chevron: ChevronRight,
     upgrade: ArrowUpRight,
     settings: Settings,
+    gauge: Gauge,
   };
 
   readonly activeSection = signal<SidebarSection>('overview');

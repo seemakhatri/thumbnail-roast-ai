@@ -9,23 +9,48 @@
       </span>
     </a>
 
-    <!-- Desktop nav -->
-    <nav class="nb__links">
-      <a routerLink="/analyze" routerLinkActive="nb__link--active" class="nb__link">Analyze</a>
-      <a routerLink="/blog" routerLinkActive="nb__link--active" class="nb__link">Blog</a>
-      <a (click)="navigateToHome('features')" class="nb__link">Features</a>
-      <a (click)="navigateToHome('pricing')" class="nb__link">Pricing</a>
-      @if (canCompare()) {
-      <a routerLink="/compare" routerLinkActive="nb__link--active" class="nb__link">Compare</a>
-      } @else {
-      <a routerLink="/pricing" class="nb__link nb__link--locked">
-        Compare
-        <span class="nb__link-lock">
-          <lucide-angular [img]="icons.lock" size="8" /> PRO
-        </span>
-      </a>
-      }
-    </nav>
+<!-- Desktop nav -->
+<nav class="nb__links">
+  <a routerLink="/analyze" routerLinkActive="nb__link--active" class="nb__link">Analyze</a>
+  <a routerLink="/blog" routerLinkActive="nb__link--active" class="nb__link">Blog</a>
+  <a (click)="navigateToHome('features')" class="nb__link">Features</a>
+  <a (click)="navigateToHome('pricing')" class="nb__link">Pricing</a>
+  @if (canCompare()) {
+  <a routerLink="/compare" routerLinkActive="nb__link--active" class="nb__link">Compare</a>
+  } @else {
+  <a routerLink="/pricing" class="nb__link nb__link--locked">
+    Compare
+    <span class="nb__link-lock">
+      <lucide-angular [img]="icons.lock" size="8" /> PRO
+    </span>
+  </a>
+  }
+  @if (canResearch()) {
+  <a routerLink="/research" routerLinkActive="nb__link--active" class="nb__link">Research</a>
+  } @else {
+  <a routerLink="/pricing" class="nb__link nb__link--locked">
+    Research
+    <span class="nb__link-lock">
+      <lucide-angular [img]="icons.lock" size="8" /> PRO
+    </span>
+  </a>
+  }
+  <!-- Channel Audit (desktop) -->
+@if (canChannelAudit()) {
+<a routerLink="/channel-audit" routerLinkActive="nb__link--active" class="nb__link">
+  Channel Audit
+</a>
+} @else {
+<a routerLink="/pricing" class="nb__link nb__link--locked">
+  Channel Audit
+  <span class="nb__link-lock">
+    <lucide-angular [img]="icons.lock" size="8" /> PRO
+  </span>
+</a>
+}
+</nav>
+
+
 
     <!-- Desktop auth + theme toggle -->
     <div class="nb__auth">
@@ -80,6 +105,14 @@
             Compare <lucide-angular [img]="icons.lock" size="12" />
           </a>
           }
+          @if (canResearch()) {
+          <a routerLink="/research" class="nb__m-link" (click)="closeMobile()">Research</a>
+          <a routerLink="/channel-audit" class="nb__m-link" (click)="closeMobile()">Channel Audit</a>
+          } @else {
+          <a routerLink="/pricing" class="nb__m-link nb__m-link--locked" (click)="closeMobile()">
+            Research <lucide-angular [img]="icons.lock" size="12" />
+          </a>
+          }
           <button class="nb__dd-item nb__dd-item--red" (click)="signOut()">
             <lucide-angular [img]="icons.logout" class="nb__dd-icon" size="16" /> Sign out
           </button>
@@ -109,6 +142,7 @@
     <a (click)="navigateToHome('features'); closeMobile()" class="nb__m-link">Features</a>
     <a (click)="navigateToHome('pricing'); closeMobile()" class="nb__m-link">Pricing</a>
     <a routerLink="/compare" class="nb__m-link" (click)="closeMobile()">Compare</a>
+    <a routerLink="/research" class="nb__m-link" (click)="closeMobile()">Research</a>
 
     @if (supabase.isLoggedIn()) {
     <a routerLink="/dashboard" class="nb__m-link" (click)="closeMobile()">Dashboard</a>
