@@ -1,13 +1,14 @@
-@if (!isWaitlistPage()) {
-  <app-navbar />
+@if (supabase.authLoading()) {
+  <div class="auth-loading">...</div>
+} @else {
+  @if (!isWaitlistPage()) {
+    <app-navbar />
+  }
+  <main>
+    <router-outlet />
+  </main>
+  @if (!isWaitlistPage()) {
+    <app-footer />
+  }
+  <app-toast />
 }
-
-<main>
-  <router-outlet />
-</main>
-
-@if (!isWaitlistPage()) {
-  <app-footer />
-}
-
-<app-toast />

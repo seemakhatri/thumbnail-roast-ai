@@ -6,38 +6,47 @@
     <div class="hero__glow-primary"></div>
   </div>
 
-
-
-  <div class="logo"> 
-       <img src="assets/FINAL.svg" alt="ThumbnailRoast" class="nb__logo-icon" />
-  </div>
-  <!-- Badge / Eyebrow (like "OPEN SOURCE · RUNS ON YOUR MACHINE") -->
   <span class="hero__badge fade-up d1">
-    AI Thumbnail Intelligence | Stop Losing Views
+    Stop Guessing. Start Proving.
   </span>
 
-  <!-- Headline (uses Switzer / clean sans) -->
   <h1 class="hero__headline fade-up d2">
-    AI CTR Intelligence For Creators<br>
+    Your thumbnail is good.<br>
+    <span class="hero__headline--fire">Is it working?</span>
   </h1>
 
-  
-
-  <!-- Sub copy -->
   <p class="hero__sub fade-up d3">
-    Upload your thumbnail, discover what's holding it back,
-    and get clear fixes before you hit publish.
+    Upload once. Get a clear decision: <strong>Publish as-is</strong> or <strong>one high-impact fix</strong>.<br>
+    Then track if it actually moved your CTR.
   </p>
 
-  <!-- CTA Buttons -->
   <div class="hero__actions fade-up d4">
-    <button class="hero__cta" type="button" (click)="scrollToAnalyze()">
-      Get Started
+    <button class="hero__cta" (click)="scrollToAnalyze()">
+      <lucide-angular [img]="icons.flame" size="16" />
+      Analyze Your Thumbnail — Free
     </button>
-    <button class="hero__cta-ghost" type="button" (click)="scrollToHowItWorks()">
-      See how it works
-      <lucide-angular [img]="icons.arrowDown" size="14" class="hero__cta-ghost-icon" aria-hidden="true" />
+    <button class="hero__cta-ghost" (click)="scrollToHowItWorks()">
+      How it works
+      <lucide-angular [img]="icons.arrowDown" size="14" />
     </button>
+  </div>
+
+  <!-- Trust bar -->
+  <div class="hero__trust fade-up d5">
+    <div class="hero__trust-item">
+      <span class="hero__trust-num">12,400+</span>
+      <span class="hero__trust-label">thumbnails analyzed</span>
+    </div>
+    <div class="hero__trust-divider"></div>
+    <div class="hero__trust-item">
+      <span class="hero__trust-num">+31%</span>
+      <span class="hero__trust-label">avg CTR improvement</span>
+    </div>
+    <div class="hero__trust-divider"></div>
+    <div class="hero__trust-item">
+      <span class="hero__trust-num">4.9/5</span>
+      <span class="hero__trust-label">creator satisfaction</span>
+    </div>
   </div>
 
 </section>

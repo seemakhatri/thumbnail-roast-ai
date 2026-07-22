@@ -1,22 +1,15 @@
-.features{
-
-    padding:140px 32px;
-
-    max-width:1120px;
-
-    margin:auto;
-
-    position:relative;
+.features {
+  padding: 80px 24px 140px;
+  max-width: 1120px;
+  margin: 0 auto;
+  position: relative;
 }
 
 .features__header {
   position: relative;
   z-index: 1;
-
   max-width: 620px;
-
   margin-bottom: 80px;
-
   text-align: left;
 }
 
@@ -27,7 +20,6 @@
   align-items: center;
   gap: 10px;
   padding: 0;
-  border-radius: 100px;
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 700;
@@ -35,46 +27,34 @@
   text-transform: uppercase;
   color: var(--accent);
   margin-bottom: 18px;
-  backdrop-filter: blur(8px);
 }
 
-
 .features__title {
-
   font-family: var(--font-display);
-
-  font-size: clamp(2rem, 3.5vw, 2.9rem);
-
+  font-size: clamp(1.8rem, 3.6vw, 2.9rem);
   font-weight: 600;
-
   letter-spacing: -0.03em;
-
   line-height: 1.08;
-
   color: var(--text);
-
   margin-bottom: 22px;
-
   max-width: 620px;
 }
 
 .features__sub {
-
   font-family: var(--font-body);
-
-  font-size: clamp(.9rem,1.2vw,1.05rem);
-
+  font-size: clamp(.9rem, 1.2vw, 1.05rem);
   font-weight: 400;
-
   color: var(--muted);
-
   line-height: 1.7;
-
   max-width: 520px;
-
   margin: 0;
+
+  strong {
+    color: var(--text);
+    font-weight: 600;
+  }
 }
-// ─── HOW IT WORKS STEPS ──────────────────────────────────────────────────────
+
 .features__steps {
   position: relative;
   z-index: 1;
@@ -83,7 +63,6 @@
   gap: 0;
   margin-bottom: 80px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
@@ -93,9 +72,15 @@
   flex-direction: column;
   position: relative;
   transition: background 0.2s;
+  border-right: 1px solid var(--border);
 
-  &:not(:last-child) { border-right: 1px solid var(--border); }
-  &:hover { background: rgba(255, 255, 255, 0.02); }
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover {
+    background: var(--surface2);
+  }
 }
 
 .features__step-top {
@@ -117,16 +102,14 @@
 .features__step-icon-wrapper {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 77, 0, 0.1);
   border: 1px solid rgba(255, 77, 0, 0.2);
   flex-shrink: 0;
+  color: var(--accent2);
 }
-
-.features__step-icon { color: var(--accent2); }
 
 .features__step-title {
   font-family: var(--font-display);
@@ -134,7 +117,7 @@
   font-weight: 600;
   margin-bottom: 10px;
   letter-spacing: -0.3px;
-  color: var(--accent);
+  color: var(--text);
 }
 
 .features__step-desc {
@@ -145,16 +128,12 @@
   font-weight: 300;
 }
 
-.features__step-body { flex: 1; }
-
-// ─── FEATURE GRID ────────────────────────────────────────────────────────────
 .features__grid {
   position: relative;
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
-  border-radius: var(--radius-lg);
   overflow: hidden;
   margin-bottom: 56px;
   background: var(--border);
@@ -163,8 +142,8 @@
 .features__cell {
   background: var(--bg);
   padding: 36px 32px;
-    border: 1px solid var(--border);
-  transition: background 0.2s, transform 0.2s, box-shadow 0.25s;
+  border: 1px solid var(--border);
+  transition: background 0.2s, transform 0.2s;
   position: relative;
 
   &:hover {
@@ -176,30 +155,12 @@
 .features__icon {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 18px;
-  transition: transform 0.25s var(--ease);
+  color: var(--accent2);
 }
-
-.features__cell {
-  background: var(--bg);
-  padding: 36px 32px;
-  position: relative;
-   border: 0.6px solid var(--border);
-
-  transition:
-    background .2s ease,
-    border-color .2s ease;
-
-  &:hover {
-    background: var(--surface2);
-  }
-}
-
-.features__icon-svg { color: var(--text); }
 
 .features__name {
   font-family: var(--font-display);
@@ -207,7 +168,7 @@
   font-weight: 600;
   margin-bottom: 10px;
   letter-spacing: -0.3px;
-  color: var(--accent);
+  color: var(--text);
 }
 
 .features__desc {
@@ -218,7 +179,6 @@
   font-weight: 300;
 }
 
-// ─── METRICS STRIP ───────────────────────────────────────────────────────────
 .features__metrics {
   position: relative;
   z-index: 1;
@@ -226,7 +186,6 @@
   align-items: center;
   gap: 20px;
   padding: 22px 28px;
-  border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: transparent;
   flex-wrap: wrap;
@@ -252,14 +211,11 @@
 
 .features__metric-chip {
   padding: 5px 12px;
-  border-radius: 6px;
-  background: transparent;
   border: 1px solid var(--border);
   font-family: var(--font-body);
   font-size: 11.5px;
   color: var(--muted2);
   font-weight: 400;
-  letter-spacing: 0.2px;
   transition: all 0.15s;
   cursor: default;
 
@@ -269,28 +225,34 @@
   }
 }
 
-// ─── RESPONSIVE ──────────────────────────────────────────────────────────────
 @media (max-width: 900px) {
-  .features__grid { grid-template-columns: repeat(2, 1fr); }
-  .features__steps { grid-template-columns: 1fr; }
-
+  .features__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .features__steps {
+    grid-template-columns: 1fr;
+  }
   .features__step {
-    border-right: none !important;
+    border-right: none;
     border-bottom: 1px solid var(--border);
-    &:last-child { border-bottom: none; }
+    &:last-child {
+      border-bottom: none;
+    }
   }
 }
 
 @media (max-width: 580px) {
-  .features { padding: 80px 16px; }
-  .features__grid { grid-template-columns: 1fr; }
-
+  .features {
+    padding: 60px 16px 80px;
+  }
+  .features__grid {
+    grid-template-columns: 1fr;
+  }
   .features__metrics {
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
   }
-
   .features__metrics-label {
     border-right: none;
     padding-right: 0;

@@ -1,12 +1,14 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, inject, input, signal, OnInit } from '@angular/core';
 import { ReportView } from '../../../../shared/components/report-view/report-view';
 import { Supabase } from '../../../../core/services/supabase';
+import { Analysis } from '../../../../core/services/analysis';
 import { ThumbnailReport } from '../../../../core/models/report.model';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-results-page',
-  imports: [ReportView, RouterLink],
+  imports: [ReportView, RouterLink, CommonModule],
   templateUrl: './results-page.html',
   styleUrl: './results-page.scss',
 })
@@ -14,6 +16,7 @@ export class ResultsPage implements OnInit {
   readonly id = input<string>();
 
   private readonly supabase = inject(Supabase);
+  private readonly analysis = inject(Analysis);
 
   readonly report = signal<ThumbnailReport | null>(null);
   readonly loading = signal(true);
@@ -35,6 +38,17 @@ export class ResultsPage implements OnInit {
       return;
     }
 
+    // ── Check if analysis service already has the report ──
+    const cachedReport = this.analysis.report();
+    if (cachedReport && cachedReport.id === reportId) {
+      this.report.set(cachedReport);
+      this.loading.set(false);
+      // Mark transition as complete
+      this.analysis.markTransitionComplete();
+      return;
+    }
+
+    // ── Fallback: fetch from Supabase ──
     this.loading.set(true);
     this.error.set(null);
 

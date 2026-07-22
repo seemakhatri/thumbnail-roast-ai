@@ -27,17 +27,25 @@ export class ShareActions {
     flame: Flame,
   };
 
-setTab(tab: ResultsTab): void {
-  this.activeTab.set(tab);
-  const sectionId =
-    tab === 'recommendations'
-      ? 'recommendations-section'
-      : tab === 'competitor'
-        ? 'competitor-section'
-        : 'overview-section';
+  setTab(tab: ResultsTab): void {
+    this.activeTab.set(tab);
+    const sectionId =
+      tab === 'recommendations'
+        ? 'recommendations-section'
+        : tab === 'competitor'
+          ? 'competitor-section'
+          : 'overview-section';
 
-  document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
+    // Try to find the element
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      // Fallback: scroll to top of the page (overview) or just log
+      console.warn(`Section ${sectionId} not found – scrolling to top`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
 
   async copyShareLink(): Promise<void> {
     const slug = this.report()?.share_slug;

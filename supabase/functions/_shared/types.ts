@@ -22,13 +22,31 @@ export interface Recommendation {
 
 export type Verdict = "needs_work" | "decent" | "good" | "strong" | "excellent";
 
+// Coarser bucket used only for the "should we even recommend changes?" decision
+// tree. Deliberately separate from Verdict (which stays fine-grained for
+// scoring/UI) — this is the strategist's internal classification step.
+export type PerformanceTier = "elite" | "strong" | "average" | "weak";
+
 export interface ThumbnailAnalysis {
   overall_score: number;
   verdict: Verdict;
+  tier: PerformanceTier;
+  // True only when the model believes a change would move CTR by a
+  // meaningful, defensible amount. When false, recommendations MUST be [].
+  changes_recommended: boolean;
   roast_title: string;
+    publish_decision: "publish" | "publish_after_minor_changes" | "rework";
+  executive_summary: string;
   roast: string;
+  // Populated only when changes_recommended is false — a confident
+  // explanation of why the thumbnail already works. Empty string otherwise.
+  why_it_works: string;
   strengths: string[];
+  // Allowed to be empty. An elite thumbnail with nothing actively hurting
+  // CTR should return [] here, not invented nitpicks.
   weaknesses: string[];
+  // Allowed to be empty when changes_recommended is false. Never padded to
+  // hit a fixed count.
   recommendations: Recommendation[];
   competitor_insights: string[];
   metrics: AnalysisMetrics;
@@ -54,6 +72,9 @@ export interface ThumbnailReport {
   share_slug: string;
   overall_score: number;
   verdict: Verdict;
+  tier?: PerformanceTier;
+  changes_recommended?: boolean;
+  why_it_works?: string;
   roast_title: string;
   roast: string;
   ctr_score: number;

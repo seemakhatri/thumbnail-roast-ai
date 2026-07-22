@@ -1,50 +1,52 @@
 <div class="hero-card" [@heroEnter]>
+  <!-- Full‑bleed background thumbnail -->
+  <div class="hero-card__bg" [style.background-image]="'url(' + report().image_url + ')'"></div>
 
-  <!-- Radial glow -->
-  <div class="hero-card__glow" aria-hidden="true"></div>
-
-  <!-- Thumbnail preview -->
-  <div class="hero-card__thumb-wrap">
-    @if (report().image_url) {
+  <div class="hero-card__content">
+    <!-- Thumbnail (smaller, above the fold) -->
+    <div class="hero-card__thumb-wrap">
       <img [src]="report().image_url" [alt]="report().roast_title" class="hero-card__thumb" />
-    } @else {
-      <div class="hero-card__thumb-placeholder">🖼️</div>
-    }
-    <div class="hero-card__analyzed-badge">
-      <span class="hero-card__analyzed-dot"></span>
-      Analyzed
+      <div class="hero-card__analyzed-badge">
+        <span class="hero-card__analyzed-dot"></span>
+        Analyzed
+      </div>
+    </div>
+
+    <!-- Score ring -->
+    <div class="hero-card__ring-wrap">
+      <div class="hero-card__ring-glow" [style.background]="ringGlow()"></div>
+      <app-score-ring [score]="report().overall_score" [size]="160" [radius]="68" />
+      <div class="hero-card__score-out-of">out of 100</div>
+    </div>
+
+    <!-- Badges: Verdict + Publish -->
+    <div class="hero-card__badges">
+      <div class="hero-card__verdict" [ngClass]="verdictData().css">
+        <lucide-angular [img]="verdictData().icon" size="14" />
+        {{ verdictData().label }}
+      </div>
+      <div class="hero-card__publish" [ngClass]="publishDecision().css">
+        <lucide-angular [img]="publishDecision().icon" size="14" />
+        {{ publishDecision().label }}
+      </div>
+    </div>
+
+    <!-- Headline -->
+    <h2 class="hero-card__headline">"{{ report().roast_title }}"</h2>
+
+    <!-- Executive summary -->
+    <p class="hero-card__summary">{{ summary() }}</p>
+
+    <!-- Actions -->
+    <div class="hero-card__actions">
+      <a routerLink="/analyze" class="hero-card__btn-primary">
+        <lucide-angular [img]="icons.flame" size="16" />
+        Roast Another
+      </a>
+      <button type="button" class="hero-card__btn-ghost" (click)="copyShareLink()">
+        <lucide-angular [img]="icons.share" size="16" />
+        {{ copied() ? 'Copied!' : 'Share Report' }}
+      </button>
     </div>
   </div>
-
-  <!-- Score ring — centered, large -->
-  <div class="hero-card__ring-wrap">
-    <div class="hero-card__ring-glow" [style.background]="ringGlow()"></div>
-    <app-score-ring [score]="report().overall_score" [size]="160" [radius]="68" />
-    <div class="hero-card__score-out-of">out of 100</div>
-  </div>
-
-  <!-- Verdict badge with Lucide icon -->
-  <div class="hero-card__verdict" [ngClass]="verdictData().css">
-    <lucide-angular [img]="verdictData().icon" size="14" />
-    {{ verdictData().label }}
-  </div>
-
-  <!-- Roast headline -->
-  <h2 class="hero-card__headline">"{{ report().roast_title }}"</h2>
-
-  <!-- Quick summary sentence -->
-  <p class="hero-card__summary">{{ summary() }}</p>
-
-  <!-- Action row -->
-  <div class="hero-card__actions">
-    <a routerLink="/analyze" class="hero-card__btn-primary">
-      <lucide-angular [img]="icons.flame" size="16" />
-      Roast Another
-    </a>
-    <button type="button" class="hero-card__btn-ghost" (click)="copyShareLink()">
-      <lucide-angular [img]="icons.share" size="16" />
-      {{ copied() ? 'Copied!' : 'Share Report' }}
-    </button>
-  </div>
-
 </div>

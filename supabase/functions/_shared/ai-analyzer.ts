@@ -9,7 +9,7 @@
 // hardcoded here — it comes from OPENROUTER_MODEL, read inside
 // providers/openrouter.ts.
 
-import { AnalysisMetrics, ThumbnailAnalysis } from "./types.ts";
+import { AnalysisMetrics, Recommendation, ThumbnailAnalysis } from "./types.ts";
 import { KNOWLEDGE_GRAPH } from "./knowledge-graph.ts";
 import { fetchImageAsBase64 } from "./image-prep.ts";
 import { getAIProvider } from "./providers/index.ts";
@@ -40,7 +40,7 @@ Return exactly:
   "confidence": "high"
 }`;
 
-// ── NICHE-AWARE SCORING WEIGHTS ────────────────────────────────────────────
+// ─── NICHE-AWARE SCORING WEIGHTS ────────────────────────────────────────────
 // Unchanged from your version — the weights themselves were fine. The bug
 // was in how `composition` got READ during scoring (see buildOverallScore
 // below), not in these numbers.
@@ -260,7 +260,9 @@ DETECTED NICHE: ${niche.toUpperCase()}
 ${GROUNDING_BLOCK}
 
 ## ROLE & TONE
-You are a **brutally honest, 20‑year YouTube veteran** who has seen millions of thumbnails. Your feedback is **specific, data‑driven, and actionable** – never vague. You hate generic advice like “improve your face” or “make it pop.” You always reference **exact visual elements** you see.
+You are an **experienced YouTube growth strategist**, not a critic. Your job is NOT to find something wrong with every thumbnail — your job is to predict whether changing this thumbnail would meaningfully move CTR. Most of the thumbnails you see are fine. Some are genuinely excellent. You are just as comfortable saying "this already works, ship it" as you are saying "this specific thing is costing you clicks." Confidence in either direction is the goal — reflexive criticism is a failure mode, not thoroughness.
+
+You still reference **exact visual elements** you see, whether you're praising or critiquing. You never use vague, generic language ("improve your face", "make it pop") in either direction.
 
 ## SCORING PHILOSOPHY
 Score across the **full 0‑100 spectrum** – do not cluster in the middle. Use these anchors:
@@ -341,23 +343,51 @@ Compute the weighted average (the server does the math, but you should reason ab
 - **40‑59**: “decent”
 - **0‑39**: “needs_work”
 
-## STEP 3: Roast – brutally honest, specific, and actionable
+## STEP 2.5: Classify tier, then decide if change is even worth it — DO THIS BEFORE WRITING ANYTHING ELSE
 
-Write a **2‑3 sentence roast** that:
+First, classify into exactly one tier:
+- **elite** (roughly score 88+): would stop scroll in any niche, nothing meaningfully wrong.
+- **strong** (roughly 70-87): clearly working, may have one real lever left.
+- **average** (roughly 45-69): functional but forgettable, or a mix of real strengths and real problems.
+- **weak** (below 45): a clear structural problem is suppressing CTR.
+
+Then ask yourself, honestly: **"If this creator changes anything about this thumbnail, is CTR likely to improve by a meaningful, defensible amount?"**
+
+- If the tier is **elite**, the answer is almost always **NO**. Set changes_recommended: false. Do not go looking for something to fix to justify your existence — a confident "this works, ship it" is the correct, valuable output.
+- If the tier is **strong**, the answer is often still NO unless there's one specific, visible lever with real expected impact — not a cosmetic tweak.
+- If the tier is **average** or **weak**, the answer is usually YES, and there is real work to do below.
+
+This decision gates everything in Steps 3-5. It is not optional and it is not a formality — treat "no changes needed" as an equally valid, equally confident output as "here's what to fix."
+
+## STEP 3: Roast — calibrated, not obligated to criticize
+
+If changes_recommended is **false**: write the SAME 2-3 confident sentences into BOTH \`roast\` and \`why_it_works\` — naming the specific visual elements that make this thumbnail work and why they'll drive clicks in this niche. \`roast\` must never be an empty string, even in this branch — "no critique" does not mean "no text," it means the text is positive instead of critical. Set \`roast_title\` to match (e.g. "Already elite — ship it"). Do NOT manufacture a weakness to sound balanced.
+
+If changes_recommended is **true**: write a **2‑3 sentence roast** that:
 - Directly addresses the **main issue** you see.
 - Mentions **specific visual elements** (e.g., “the red text in the bottom‑right”, “the subject’s neutral expression”).
 - Tells the creator **exactly why** it’s hurting CTR **in their niche**.
 
-Then, provide a **shareable one‑liner** (max 70 characters) that summarises the key weakness – perfect for social media.
+Then, provide a **shareable one‑liner** (max 70 characters) — either the key weakness or, for elite thumbnails, the key strength.
 
-## STEP 4: Strengths & Weaknesses (3 each)
+## STEP 4: Strengths & Weaknesses
 
-- **Strengths:** What actually works well in this thumbnail, **citing specific elements**.
-- **Weaknesses:** What is **actively hurting** CTR, again **citing specific elements**. Be ruthless.
+- **Strengths:** What actually works well, **citing specific elements**. Always populate this — even a weak thumbnail usually has 1-2 things going for it.
+- **Weaknesses:** Only include something here if it is clearly visible AND actively hurting CTR. This array is allowed to be **empty** — an elite or strong thumbnail with nothing genuinely wrong should return [], not a padded-out list of nitpicks dressed up as flaws.
 
-## STEP 5: Recommendations (3 recommendations, sorted by priority)
+## STEP 5: Recommendations — only if changes_recommended is true
 
-Each recommendation MUST:
+If changes_recommended is **false**, recommendations MUST be an empty array []. Do not include "optional" or "minor" suggestions just to fill the field — an empty array is the correct, confident answer.
+
+If changes_recommended is **true**, include only recommendations that satisfy **ALL FOUR** of these bars — drop anything that fails even one:
+1. The issue is clearly visible in the image, not inferred or speculative.
+2. Fixing it is likely to improve CTR, not just make the thumbnail "nicer."
+3. The expected impact is meaningful — not a marginal, sub-5% nudge.
+4. The recommendation is specific and actionable — a creator could execute it today without guessing.
+
+This usually means **1-3** recommendations, sorted by priority — never pad to a fixed count. One sharp, high-confidence recommendation beats three filler ones.
+
+Each recommendation you do include MUST:
 - Have a **title** that names the specific element to fix.
 - Have a **description** that explains:
   - What’s wrong now (with a direct reference to the image).
@@ -387,14 +417,17 @@ What do **top creators in this niche** do differently? Provide **specific, non�
 {
   "overall_score": number,
   "verdict": "needs_work" | "decent" | "good" | "strong" | "excellent",
-  "roast_title": "short, 3‑5 word critique",
-  "roast": "2‑3 sentence brutal, specific roast",
-  "share_one_liner": "max 70 chars, shareable summary",
+  "tier": "elite" | "strong" | "average" | "weak",
+  "changes_recommended": boolean,
+  "roast_title": "short, 3‑5 word summary — critique OR praise, whichever applies",
+  "roast": "2‑3 sentences: brutal + specific if changes_recommended is true, confident + specific if false",
+  "why_it_works": "2‑3 sentences naming specific elements that work — ONLY populated when changes_recommended is false, otherwise empty string",
+  "share_one_liner": "max 70 chars, shareable summary of the key weakness OR key strength",
   "strengths": ["specific strength 1", "specific strength 2", "specific strength 3"],
-  "weaknesses": ["specific weakness 1", "specific weakness 2", "specific weakness 3"],
+  "weaknesses": ["specific weakness 1 — omit entirely, this array can be []"],
   "recommendations": [
     {
-      "title": "Fix [specific element]",
+      "title": "Fix [specific element] — this whole array is [] when changes_recommended is false",
       "description": "Currently [exact problem]. For ${niche} thumbnails, change to [concrete alternative]. This works because [niche‑specific reason].",
       "priority": "high" | "medium" | "low",
       "category": "visual" | "text" | "emotion" | "composition",
@@ -485,12 +518,93 @@ function computeOverallScore(
   return Math.max(0, Math.min(100, computed));
 }
 
+// Model compliance isn't perfect: sometimes instead of returning [] it
+// returns [""] or ["  "] — a single empty/whitespace string. That renders in
+// the UI as an empty bullet or tag, which reads as broken, not as "nothing
+// to report." Strip these defensively rather than trusting the prompt alone.
+function sanitizeStringArray(arr: unknown): string[] {
+  if (!Array.isArray(arr)) return [];
+  return arr
+    .filter((s): s is string => typeof s === "string")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+}
+
 function scoreToVerdict(score: number): ThumbnailAnalysis["verdict"] {
   if (score >= 90) return "excellent";
   if (score >= 75) return "strong";
   if (score >= 60) return "good";
   if (score >= 40) return "decent";
   return "needs_work";
+}
+
+// Backend-derived fallback if the model omits `tier` — keeps the decision
+// tree meaningful even on a malformed response, and gives us a value to
+// cross-check the model's own tier against.
+function scoreToTier(score: number): ThumbnailAnalysis["tier"] {
+  if (score >= 88) return "elite";
+  if (score >= 70) return "strong";
+  if (score >= 45) return "average";
+  return "weak";
+}
+
+// Pulls the upper bound out of an impact string like "+12-18% CTR" so we can
+// enforce the "meaningful impact" bar server-side, independent of whether the
+// model actually followed the prompt's four-part bar for recommendations.
+function impactUpperBound(impact: string): number {
+  const matches = impact.match(/(\d+)/g);
+  if (!matches || matches.length === 0) return 0;
+  return Math.max(...matches.map(Number));
+}
+
+// ── SAFETY NET — enforces "no changes recommended" even if the model drifts ──
+// This is deliberately independent of prompt compliance: prompts get ignored
+// sometimes (model swaps, temperature drift, long context). The trust problem
+// this whole redesign exists to fix is too important to leave to the prompt
+// alone, so we re-derive and enforce here:
+//   - elite-tier scores never surface recommendations, no matter what the
+//     model returned, unless contrast is genuinely broken (see the
+//     computeOverallScore safety net above, which already caps score in
+//     that case — so if score reads elite, contrast wasn't the issue).
+//   - any individual recommendation under the "meaningful impact" bar
+//     (< 8% upper-bound CTR lift) is dropped rather than shown.
+//   - if every recommendation gets dropped, changes_recommended flips to
+//     false and why_it_works falls back to a generic-but-honest note built
+//     from the strengths the model already gave us.
+function enforceRecommendationPolicy(
+  score: number,
+  aiChangesRecommended: boolean,
+  recommendations: Recommendation[],
+  strengths: string[],
+  whyItWorks: string,
+): { changes_recommended: boolean; recommendations: Recommendation[]; why_it_works: string } {
+  const tier = scoreToTier(score);
+  const MEANINGFUL_IMPACT_FLOOR = 8; // percent, upper bound of the range
+
+  let filtered = recommendations.filter(
+    (r) => impactUpperBound(r.impact ?? "") >= MEANINGFUL_IMPACT_FLOOR,
+  );
+
+  // Elite thumbnails don't get recommendations from this backend, full stop —
+  // this is the actual fix for "always finds something to criticize," applied
+  // as code, not just as a prompt request.
+  if (tier === "elite") {
+    filtered = [];
+  }
+
+  const changesRecommended = aiChangesRecommended && filtered.length > 0;
+
+  const fallbackWhyItWorks =
+    whyItWorks ||
+    (strengths.length
+      ? `This already works: ${strengths.slice(0, 2).join("; ")}.`
+      : "No changes are recommended — nothing here is likely to move CTR meaningfully.");
+
+  return {
+    changes_recommended: changesRecommended,
+    recommendations: changesRecommended ? filtered.slice(0, 3) : [],
+    why_it_works: changesRecommended ? "" : fallbackWhyItWorks,
+  };
 }
 
 function parseAIResponse(
@@ -549,15 +663,64 @@ function parseAIResponse(
   const textCount = parsed.text_count ?? 0;
   const overallScore = computeOverallScore(metrics, niche, textCount);
 
+  const policy = enforceRecommendationPolicy(
+    overallScore,
+    parsed.changes_recommended ?? (parsed.recommendations ?? []).length > 0,
+    (parsed.recommendations ?? []) as Recommendation[],
+    parsed.strengths ?? [],
+    parsed.why_it_works ?? "",
+  );
+
+  const cleanStrengths = sanitizeStringArray(parsed.strengths);
+  // Enforce that weaknesses are empty when changes_recommended is false
+  const cleanWeaknesses = policy.changes_recommended
+    ? sanitizeStringArray(parsed.weaknesses)
+    : [];
+
+  // Never let the UI show a blank roast quote. If the model left it empty —
+  // this does happen despite the prompt instruction — fall back to
+  // why_it_works (no-changes path) or a strength-derived line (has-changes
+  // path), so there is always something honest to display.
+  const roast =
+    (parsed.roast ?? "").trim() ||
+    policy.why_it_works ||
+    (cleanStrengths.length
+      ? `${cleanStrengths[0]}${cleanStrengths[1] ? " " + cleanStrengths[1] : ""}`
+      : "");
+  const roastTitle =
+    (parsed.roast_title ?? "").trim() ||
+    (policy.changes_recommended ? "Room to improve" : "Already elite — ship it");
+
+  // ── Compute publish decision and executive summary ──────────────────────
+  const publishDecision = determinePublishDecision({
+    overallScore,
+    tier: parsed.tier ?? scoreToTier(overallScore),
+    changesRecommended: policy.changes_recommended,
+    recommendations: policy.recommendations,
+    strengths: cleanStrengths,
+  });
+
+  const executiveSummary = generateExecutiveSummary({
+    overallScore,
+    tier: parsed.tier ?? scoreToTier(overallScore),
+    changesRecommended: policy.changes_recommended,
+    recommendations: policy.recommendations,
+    strengths: cleanStrengths,
+    publishDecision,
+  });
+
   const result: ThumbnailAnalysis = {
     overall_score: overallScore,
     verdict: scoreToVerdict(overallScore),
-    roast_title: parsed.roast_title ?? "",
-    roast: parsed.roast ?? "",
-    strengths: (parsed.strengths ?? []).slice(0, 5),
-    weaknesses: (parsed.weaknesses ?? []).slice(0, 5),
-    recommendations: (parsed.recommendations ?? []).slice(0, 5),
-    competitor_insights: (parsed.competitor_insights ?? []).slice(0, 5),
+    tier: parsed.tier ?? scoreToTier(overallScore),
+    changes_recommended: policy.changes_recommended,
+    roast_title: roastTitle,
+    roast,
+    why_it_works: policy.why_it_works,
+    strengths: cleanStrengths.slice(0, 5),
+    weaknesses: cleanWeaknesses.slice(0, 5),
+    recommendations: policy.recommendations,
+    competitor_insights: sanitizeStringArray(parsed.competitor_insights).slice(0, 5),
     metrics,
     niche,
     thumbnail_style: parsed.thumbnail_style ?? "",
@@ -566,6 +729,9 @@ function parseAIResponse(
     text_count: textCount,
     has_arrow: parsed.has_arrow ?? false,
     has_circle: parsed.has_circle ?? false,
+    // NEW FIELDS
+    publish_decision: publishDecision.decision,
+    executive_summary: executiveSummary,
   };
 
   return result;
@@ -627,6 +793,100 @@ export async function analyzeThumbnail(
   return parseAIResponse(rawText, niche);
 }
 
+// ── PUBLISH DECISION & EXECUTIVE SUMMARY ──────────────────────────────────
+// These helpers are used by both parseAIResponse and analyzeThumbnailStable
+// to generate consistent, trust-building output.
+
+function determinePublishDecision(params: {
+  overallScore: number;
+  tier: ThumbnailAnalysis["tier"];
+  changesRecommended: boolean;
+  recommendations: Recommendation[];
+  strengths: string[];
+}): {
+  decision: "publish" | "publish_after_minor_changes" | "rework";
+  label: string;
+  reason: string;
+} {
+  const { overallScore, tier, changesRecommended, recommendations, strengths } = params;
+
+  const hasCritical = recommendations.some((r) => r.priority === "high");
+  const hasMedium = recommendations.some((r) => r.priority === "medium");
+
+  // Rule 1: Elite or Strong with no critical issues → publish
+  if ((tier === "elite" || tier === "strong") && !hasCritical && !changesRecommended) {
+    return {
+      decision: "publish",
+      label: "✅ Publish As-Is",
+      reason: `This thumbnail is already ${tier} — it's ready to perform.`,
+    };
+  }
+
+  // Rule 2: Average with only minor/medium issues → publish after minor changes
+  if (tier === "average" && !hasCritical && changesRecommended) {
+    const suggestion = recommendations.length > 0
+      ? recommendations[0].title
+      : "minor improvements";
+    return {
+      decision: "publish_after_minor_changes",
+      label: "⚠️ Publish After Minor Changes",
+      reason: `This thumbnail is solid, but ${suggestion} could boost CTR.`,
+    };
+  }
+
+  // Rule 3: Weak or critical issues → rework
+  if (tier === "weak" || hasCritical) {
+    const criticalCount = recommendations.filter((r) => r.priority === "high").length;
+    return {
+      decision: "rework",
+      label: "❌ Rework Before Publishing",
+      reason: `${criticalCount} critical issue${criticalCount > 1 ? "s" : ""} need${criticalCount > 1 ? "" : "s"} attention before this thumbnail can perform.`,
+    };
+  }
+
+  // Fallback (should not happen)
+  return {
+    decision: "publish_after_minor_changes",
+    label: "⚠️ Review Before Publishing",
+    reason: "Consider the recommendations below to maximise CTR.",
+  };
+}
+
+function generateExecutiveSummary(params: {
+  overallScore: number;
+  tier: ThumbnailAnalysis["tier"];
+  changesRecommended: boolean;
+  recommendations: Recommendation[];
+  strengths: string[];
+  publishDecision: {
+    decision: "publish" | "publish_after_minor_changes" | "rework";
+    label: string;
+    reason: string;
+  };
+}): string {
+  const { overallScore, tier, changesRecommended, recommendations, strengths, publishDecision } = params;
+
+  const strengthSummary = strengths.length > 0
+    ? `Strengths: ${strengths.slice(0, 2).join("; ")}.`
+    : "";
+
+  if (!changesRecommended || recommendations.length === 0) {
+    return `This thumbnail is ${tier} (${overallScore}/100). ${strengthSummary} No changes needed — publish with confidence.`;
+  }
+
+  const criticalCount = recommendations.filter((r) => r.priority === "high").length;
+  const totalCount = recommendations.length;
+
+  let action = "";
+  if (criticalCount > 0) {
+    action = `${criticalCount} critical issue${criticalCount > 1 ? "s" : ""} require fixing.`;
+  } else {
+    action = `${totalCount} minor improvement${totalCount > 1 ? "s" : ""} suggested.`;
+  }
+
+  return `This thumbnail is ${tier} (${overallScore}/100). ${strengthSummary} ${action} ${publishDecision.reason}`;
+}
+
 // ── STABLE VARIANT: configurable pass count, defaults to 1 ────────────────
 // Your original always ran 3 parallel passes regardless of plan — that's
 // what was burning 4 calls per single user analysis. Default this to 1
@@ -635,7 +895,7 @@ export async function analyzeThumbnail(
 //
 //   analyzeThumbnailStable(url)        -> 1 pass  (2 AI calls)
 //   analyzeThumbnailStable(url, 3)     -> 3 passes (4 AI calls) — reserve
-//                                          this for creator/agency plans
+//                                        this for creator/agency plans
 export async function analyzeThumbnailStable(
   imageUrl: string,
   passes = 1,
@@ -650,7 +910,9 @@ export async function analyzeThumbnailStable(
 
   if (passes <= 1) {
     const rawText = await runAIProvider(scoringPrompt, base64, mimeType);
-    return parseAIResponse(rawText, niche);
+    const analysis = parseAIResponse(rawText, niche);
+    // We already have publish_decision and executive_summary from parseAIResponse
+    return analysis;
   }
 
   const results = await Promise.all(
@@ -686,10 +948,64 @@ export async function analyzeThumbnailStable(
     results[0].text_count ?? 0,
   );
 
+  // Majority vote across passes on whether change is worth it at all, then
+  // re-run the same safety net against the AVERAGED score — not pass 0's
+  // score — so a pass that happened to score higher/lower doesn't leave a
+  // stale set of recommendations attached to a now-different overall score.
+  const changesVotes = results.filter((r) => r.changes_recommended).length;
+  const changesRecommendedMajority = changesVotes > results.length / 2;
+  // Use the recommendations from whichever pass most closely matches the
+  // averaged score, so the wording stays coherent with the final metrics.
+  const closestPass = results.reduce((best, r) =>
+    Math.abs(r.overall_score - overallScore) <
+    Math.abs(best.overall_score - overallScore)
+      ? r
+      : best,
+  );
+
+  const policy = enforceRecommendationPolicy(
+    overallScore,
+    changesRecommendedMajority,
+    closestPass.recommendations,
+    closestPass.strengths,
+    closestPass.why_it_works,
+  );
+
+  // Re-enforce weaknesses clearing for the averaged result
+  const cleanWeaknesses = policy.changes_recommended
+    ? sanitizeStringArray(closestPass.weaknesses)
+    : [];
+
+  // ── Compute publish decision and executive summary for the averaged result ──
+  const finalTier = scoreToTier(overallScore);
+  const publishDecision = determinePublishDecision({
+    overallScore,
+    tier: finalTier,
+    changesRecommended: policy.changes_recommended,
+    recommendations: policy.recommendations,
+    strengths: closestPass.strengths,
+  });
+
+  const executiveSummary = generateExecutiveSummary({
+    overallScore,
+    tier: finalTier,
+    changesRecommended: policy.changes_recommended,
+    recommendations: policy.recommendations,
+    strengths: closestPass.strengths,
+    publishDecision,
+  });
+
   return {
-    ...results[0],
+    ...closestPass,
     overall_score: overallScore,
     verdict: scoreToVerdict(overallScore),
+    tier: finalTier,
+    changes_recommended: policy.changes_recommended,
+    recommendations: policy.recommendations,
+    why_it_works: policy.why_it_works,
+    weaknesses: cleanWeaknesses.slice(0, 5),
     metrics: averagedMetrics,
+    publish_decision: publishDecision.decision,
+    executive_summary: executiveSummary,
   };
 }

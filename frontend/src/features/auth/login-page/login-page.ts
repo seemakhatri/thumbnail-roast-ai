@@ -24,12 +24,11 @@ export class LoginPage implements OnInit {
   };
 
   async ngOnInit(): Promise<void> {
-    
     try {
       await this.supabase.waitForAuthReady();
-      
+
       const isLoggedIn = this.supabase.isLoggedIn();
-      
+
       if (isLoggedIn) {
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/dashboard';
         await this.router.navigateByUrl(returnUrl);
@@ -45,19 +44,11 @@ export class LoginPage implements OnInit {
   async signInWithGoogle(): Promise<void> {
     this.loading.set(true);
     this.error.set(null);
-    
+
     try {
-      
       const result = await this.supabase.signInWithGoogle();
-      
     } catch (err: unknown) {
       console.error('[LoginPage] Sign-in error:', err);
-      console.error('[LoginPage] Error details:', {
-        name: err instanceof Error ? err.name : 'Unknown',
-        message: err instanceof Error ? err.message : 'No message',
-        stack: err instanceof Error ? err.stack : 'No stack'
-      });
-      
       const msg = err instanceof Error ? err.message : 'Sign-in failed. Please try again.';
       this.error.set(msg);
       this.loading.set(false);
@@ -65,6 +56,8 @@ export class LoginPage implements OnInit {
   }
 
   continueAsGuest(): void {
+    // Persist guest session
+    localStorage.setItem('guest_session', 'true');
     this.router.navigate(['/analyze']);
   }
 }

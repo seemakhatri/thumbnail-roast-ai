@@ -25,16 +25,15 @@ export class Supabase {
   readonly currentUser = signal<AppUser | null>(null);
   readonly authLoading = signal<boolean>(true);
   readonly authError = signal<string | null>(null);
+  readonly sessionExpired = signal<boolean>(false);
 
   readonly isLoggedIn = computed(() => !!this.currentUser());
   readonly userPlan = computed(() => this.currentUser()?.plan ?? 'free');
   readonly canAnalyze = computed(() => {
     const u = this.currentUser();
-    if (!u) return true; // guest gets 3 free
+    if (!u) return true;
     return u.analyses_used < u.analyses_limit;
   });
-
-  // ── NEW: admin check ──────────────────────────────────────────────────
   readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
 
   constructor() {
@@ -64,7 +63,7 @@ export class Supabase {
     return this.supabase;
   }
 
-  // ── Auth listener ───────────────────────────────────────────────────────
+  // ── Auth listener with enhanced event handling ────────────────────────
   private initAuthListener(): void {
     // Restore session on load
     this.client.auth.getSession().then(({ data }) => {
@@ -75,14 +74,46 @@ export class Supabase {
       }
     });
 
-    // Live updates
+    // Live updates with enhanced event handling
     this.client.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        this.loadProfile(session.user);
-      }
-      if (event === 'SIGNED_OUT') {
-        this.currentUser.set(null);
-        this.authLoading.set(false);
+      console.log('[Supabase] Auth event:', event, session?.user?.email);
+
+      switch (event) {
+        case 'SIGNED_IN':
+          if (session?.user) {
+            this.loadProfile(session.user);
+            this.sessionExpired.set(false);
+          }
+          break;
+
+        case 'SIGNED_OUT':
+          this.currentUser.set(null);
+          this.authLoading.set(false);
+          this.sessionExpired.set(false);
+          this.router.navigate(['/']);
+          break;
+
+        case 'TOKEN_REFRESHED':
+          // Session was refreshed – reload profile to ensure up-to-date data
+          if (session?.user) {
+            this.loadProfile(session.user);
+          }
+          break;
+
+        case 'USER_UPDATED':
+          // User metadata changed – reload profile
+          if (session?.user) {
+            this.loadProfile(session.user);
+          }
+          break;
+
+        case 'PASSWORD_RECOVERY':
+          // Handle password recovery if needed
+          break;
+
+        default:
+          // Handle other events
+          break;
       }
     });
   }
@@ -93,7 +124,7 @@ export class Supabase {
     try {
       const { data, error } = await this.client
         .from('profiles')
-        .select('*') // selects all columns, including 'role'
+        .select('*')
         .eq('id', authUser.id)
         .single();
 
@@ -105,10 +136,10 @@ export class Supabase {
 
       if (error) throw error;
       this.currentUser.set(data as AppUser);
+      this.authLoading.set(false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to load profile';
       this.authError.set(msg);
-    } finally {
       this.authLoading.set(false);
     }
   }
@@ -122,7 +153,7 @@ export class Supabase {
       plan: 'free',
       analyses_used: 0,
       analyses_limit: 3,
-      role: 'user', // <-- NEW: default role
+      role: 'user',
       created_at: new Date().toISOString(),
     };
 
@@ -134,12 +165,15 @@ export class Supabase {
 
     if (error) {
       this.authError.set(error.message);
+      this.authLoading.set(false);
       return;
     }
 
     this.currentUser.set(data as AppUser);
+    this.authLoading.set(false);
   }
 
+  // ── Sign In ─────────────────────────────────────────────────────────────
   async signInWithGoogle(): Promise<void> {
     this.authError.set(null);
 

@@ -1,7 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ThumbnailReport } from '../../../../core/models/report.model';
-import { LucideAngularModule, Zap, TrendingUp } from 'lucide-angular';
+import { LucideAngularModule, Zap, TrendingUp, CheckCircle2 } from 'lucide-angular';
 
 @Component({
   selector: 'app-priority-recommendation',
@@ -23,10 +23,19 @@ export class PriorityRecommendation {
   readonly icons = {
     zap: Zap,
     trendingUp: TrendingUp,
+    check: CheckCircle2,
   };
 
   readonly topRec = computed(() => {
     const recs = this.report().recommendations ?? [];
     return recs.find(r => r.priority === 'high') ?? recs[0] ?? null;
   });
+
+  // When the backend says no changes are worth making, this is not "nothing
+  // to show" — it's a confident, positive verdict and should read as one.
+  readonly showPublishAsIs = computed(
+    () => this.report().changes_recommended === false,
+  );
+
+  readonly whyItWorks = computed(() => this.report().why_it_works ?? '');
 }

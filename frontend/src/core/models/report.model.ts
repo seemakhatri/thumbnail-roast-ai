@@ -1,3 +1,5 @@
+// core/models/report.model.ts (or wherever ThumbnailReport is defined)
+
 import { ThumbnailAnalysis } from './analysis.model';
 
 export class ThumbnailReport {
@@ -7,6 +9,9 @@ export class ThumbnailReport {
   share_slug!: string;
   overall_score!: number;
   verdict!: string;
+  tier?: 'elite' | 'strong' | 'average' | 'weak';
+  changes_recommended?: boolean;
+  why_it_works?: string;
   roast_title!: string;
   roast!: string;
   niche?: string;
@@ -32,7 +37,11 @@ export class ThumbnailReport {
   has_arrow?: boolean;
   has_circle?: boolean;
   created_at!: string;
-  
+
+  // ─── NEW FIELDS from backend ──────────────────────────────────────────
+  publish_decision!: 'publish' | 'publish_after_minor_changes' | 'rework';
+  executive_summary!: string;
+
   // Alias for template convenience
   get score(): number {
     return this.overall_score;

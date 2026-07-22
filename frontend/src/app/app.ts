@@ -5,6 +5,7 @@ import { filter } from 'rxjs/operators';
 import { Navbar } from '../shared/components/navbar/navbar';
 import { Footer } from '../shared/components/footer/footer';
 import { ToastContainer } from '../shared/components/toast/toast';
+import { Supabase } from '../core/services/supabase';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { ToastContainer } from '../shared/components/toast/toast';
 })
 export class App {
   private router = inject(Router);
+   readonly supabase = inject(Supabase); 
 
   readonly isWaitlistPage = signal(false);
 

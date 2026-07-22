@@ -1,17 +1,19 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { UploadDropzone } from '../../../../shared/components/upload-dropzone/upload-dropzone';
 import { Analysis } from '../../../../core/services/analysis';
 import { Toast } from '../../../../core/services/toast';
 import { LoadingState } from '../loading-state/loading-state';
-import { 
-  Flame, 
+import {
+  Flame,
   RefreshCw,
   Zap,
   Lock,
   Gift,
+  CheckCircle,
+  ArrowRight,
   LucideAngularModule,
-  LucideIconData
 } from 'lucide-angular';
 
 @Component({
@@ -20,6 +22,14 @@ import {
   imports: [UploadDropzone, LoadingState, LucideAngularModule],
   templateUrl: './upload-section.html',
   styleUrl: './upload-section.scss',
+  animations: [
+    trigger('slideUp', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('400ms 100ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+    ]),
+  ],
 })
 export class UploadSection {
   private readonly analysis = inject(Analysis);
@@ -35,20 +45,23 @@ export class UploadSection {
   readonly previewUrl = this.analysis.previewUrl;
   readonly error = this.analysis.error;
   readonly isWorking = this.analysis.isWorking;
+  readonly isComplete = this.analysis.isComplete;
+  readonly report = this.analysis.report;
 
- // Lucide icons
   readonly icons = {
     flame: Flame,
     refreshCw: RefreshCw,
     zap: Zap,
     lock: Lock,
-    gift: Gift
+    gift: Gift,
+    checkCircle: CheckCircle,
+    arrowRight: ArrowRight,
   };
 
   readonly proofStats = [
-    { icon: this.icons.zap, label: 'Results in <strong>~15 seconds</strong>' },
-    { icon: this.icons.lock, label: 'No account needed' },
-    { icon: this.icons.gift, label: '<strong>3 free</strong> roasts / month' },
+    { icon: this.icons.zap, label: '<strong>~15 seconds</strong> to decision' },
+    { icon: this.icons.lock, label: '<strong>No account</strong> needed' },
+    { icon: this.icons.gift, label: '<strong>3 free</strong> analyses / month' },
   ];
 
   onFileSelected(file: File): void {
@@ -70,18 +83,25 @@ export class UploadSection {
     }
 
     this.validationError.set(null);
-    await this.analysis.analyze(file);
 
-    if (this.analysis.error()) {
+    try {
+      const report = await this.analysis.analyze(file);
+      // Analysis complete – show the complete state
+      // User clicks "View Your Report" to navigate
+    } catch (err) {
       this.toast.error(this.analysis.error()!);
-      return;
     }
+  }
 
-    const report = this.analysis.report();
-    if (report) {
-      this.toast.success('Analysis complete!');
-      await this.router.navigate(['/results', report.id]);
-    }
+  goToResults(): void {
+    const report = this.report();
+    if (!report) return;
+
+    // Navigate to results page
+    this.router.navigate(['/results', report.id]).then(() => {
+      // Mark transition as complete after navigation
+      this.analysis.markTransitionComplete();
+    });
   }
 
   reset(): void {

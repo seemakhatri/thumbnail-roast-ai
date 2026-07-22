@@ -60,13 +60,40 @@ export class YoutubeCallback {
         throw new Error('No authenticated session found.');
       }
 
-      const providerRefreshToken = session.provider_refresh_token;
+      let providerRefreshToken = session.provider_refresh_token;
 
+      // ── FALLBACK: If no refresh token, re-initiate OAuth ──────────────
       if (!providerRefreshToken) {
-        throw new Error(
-          'Google returned no refresh token. Check that access_type=offline, ' +
-            'prompt=consent, and scopes are set via options.scopes in connectYouTube().',
-        );
+        console.warn('[YouTubeCallback] No refresh token found. Re-initiating OAuth...');
+        this.message = 'Requesting YouTube access…';
+
+        // Try to get a new token with offline access
+        const { data, error: oauthError } = await this.supabase.client.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            skipBrowserRedirect: true,
+            redirectTo: `${window.location.origin}/auth/youtube-callback`,
+            scopes: [
+              'https://www.googleapis.com/auth/youtube.readonly',
+              'https://www.googleapis.com/auth/yt-analytics.readonly',
+            ].join(' '),
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent',
+            },
+          },
+        });
+
+        if (oauthError) {
+          throw new Error(`OAuth re-initiation failed: ${oauthError.message}`);
+        }
+
+        if (data?.url) {
+          window.location.href = data.url;
+          return; // Exit – user will come back to this page
+        }
+
+        throw new Error('Unable to re-initiate OAuth flow.');
       }
 
       this.message = 'Saving your YouTube connection…';

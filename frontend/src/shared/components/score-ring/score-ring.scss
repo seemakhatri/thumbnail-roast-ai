@@ -5,7 +5,7 @@
 }
 
 .score-ring__bg {
-  stroke: var(--border);
+  stroke: rgba(255,255,255,0.15); // lighter for dark backgrounds, but will be overridden per usage
   transition: stroke 0.3s;
 }
 
@@ -15,11 +15,12 @@
 }
 
 .score-ring__text {
-  fill: var(--text);
+  fill: #ffffff; // always white
   font-family: var(--font-display);
   font-size: 18px;
   font-weight: 800;
   letter-spacing: -0.5px;
   dominant-baseline: central;
   text-anchor: middle;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }

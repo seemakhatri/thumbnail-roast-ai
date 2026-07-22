@@ -1,12 +1,11 @@
 <section class="page-shell page-shell--results">
   @if (loading()) {
-    <div class="results-section">
+    <div class="results-skeleton">
+      <div class="skeleton skeleton--hero"></div>
       <div class="skeleton skeleton--bar"></div>
       <div class="skeleton skeleton--card skeleton--tall"></div>
-      <div class="sw-grid">
-        <div class="skeleton skeleton--card"></div>
-        <div class="skeleton skeleton--card"></div>
-      </div>
+      <div class="skeleton skeleton--card"></div>
+      <div class="skeleton skeleton--card"></div>
     </div>
   } @else if (error()) {
     <div class="state-card state-card--error">

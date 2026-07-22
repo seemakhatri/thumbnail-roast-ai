@@ -40,6 +40,15 @@ export class PricingSection {
 
   readonly currentSlide = signal(0);
 
+  private goToFreeStart(): void {
+    const analyzeSection = document.getElementById('analyze');
+    if (analyzeSection) {
+      analyzeSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      void this.router.navigate(['/analyze']);
+    }
+  }
+
   getButtonLabel(planId: PricingPlan): string {
     const current = this.currentPlan();
 
@@ -82,7 +91,7 @@ export class PricingSection {
 
     if (PLAN_RANK[current] >= PLAN_RANK[planId]) {
       if (planId === 'free') {
-        document.getElementById('analyze')?.scrollIntoView({ behavior: 'smooth' });
+        this.goToFreeStart();
       } else {
         void this.router.navigate(['/dashboard']);
       }
@@ -90,7 +99,7 @@ export class PricingSection {
     }
 
     if (planId === 'free') {
-      document.getElementById('analyze')?.scrollIntoView({ behavior: 'smooth' });
+      this.goToFreeStart();
       return;
     }
 

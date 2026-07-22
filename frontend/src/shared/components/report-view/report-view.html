@@ -1,3 +1,5 @@
+<!-- shared/components/report-view/report-view.html -->
+
 <div class="report-view" [@pageEnter]>
   <app-share-actions [report]="report()" [showTabs]="showTabs()" />
 
@@ -5,70 +7,27 @@
   <div id="overview-section" class="report-section">
     <app-report-hero-card [report]="report()" />
     <app-priority-recommendation [report]="report()" />
-
-    <!-- Locked: Metrics Grid -->
-    <div class="locked-wrapper" [class.locked]="showUpgradeBanner()">
-      <app-metrics-grid [report]="report()" />
-      <div class="lock-overlay" *ngIf="showUpgradeBanner()">
-        <lucide-angular [img]="icons.lock" size="28" />
-        <p class="lock-overlay__title">Unlock full metric breakdown</p>
-        <p class="lock-overlay__sub">See exactly where your thumbnail wins and loses</p>
-        <a routerLink="/pricing" class="btn-primary lock-overlay__btn">Upgrade to Unlock</a>
-      </div>
-    </div>
-
-    <!-- Locked: Roast Card -->
-    <div class="locked-wrapper" [class.locked]="showUpgradeBanner()">
-      <app-roast-card [report]="report()" />
-      <div class="lock-overlay" *ngIf="showUpgradeBanner()">
-        <lucide-angular [img]="icons.lock" size="28" />
-        <p class="lock-overlay__title">Read the full brutal roast</p>
-        <p class="lock-overlay__sub">Every weakness exposed, with direct fixes</p>
-        <a routerLink="/pricing" class="btn-primary lock-overlay__btn">Upgrade to Unlock</a>
-      </div>
-    </div>
-
-    <!-- Locked: Strength & Weakness Grid -->
-    <div class="locked-wrapper" [class.locked]="showUpgradeBanner()">
-      <app-strength-weakness-grid [report]="report()" />
-      <div class="lock-overlay" *ngIf="showUpgradeBanner()">
-        <lucide-angular [img]="icons.lock" size="28" />
-        <p class="lock-overlay__title">Unlock strengths & weaknesses</p>
-        <p class="lock-overlay__sub">See exactly what works and what needs fixing</p>
-        <a routerLink="/pricing" class="btn-primary lock-overlay__btn">Upgrade to Unlock</a>
-      </div>
-    </div>
+    <app-metrics-grid [report]="report()" />
+    <app-roast-card [report]="report()" />
+    <app-strength-weakness-grid [report]="report()" />
   </div>
 
   <!-- Recommendations Section -->
-  <div id="recommendations-section" class="report-section">
-    <!-- Locked: Recommendations Timeline -->
-    <div class="locked-wrapper" [class.locked]="showUpgradeBanner()">
+  @if (report().recommendations && report().recommendations.length > 0) {
+    <div id="recommendations-section" class="report-section">
       <app-recommendations-timeline [report]="report()" />
-      <div class="lock-overlay" *ngIf="showUpgradeBanner()">
-        <lucide-angular [img]="icons.lock" size="28" />
-        <p class="lock-overlay__title">Unlock all 3 recommendations</p>
-        <p class="lock-overlay__sub">Prioritized fixes ranked by CTR impact</p>
-        <a routerLink="/pricing" class="btn-primary lock-overlay__btn">Upgrade to Unlock</a>
-      </div>
     </div>
-  </div>
+  }
 
   <!-- Competitor Section -->
-  <div id="competitor-section" class="report-section">
-    <!-- Locked: Competitor Insights -->
-    <div class="locked-wrapper" [class.locked]="showUpgradeBanner()">
+  @if (report().competitor_insights && report().competitor_insights.length > 0) {
+    <div id="competitor-section" class="report-section">
       <app-competitor-insights [report]="report()" />
-      <div class="lock-overlay" *ngIf="showUpgradeBanner()">
-        <lucide-angular [img]="icons.lock" size="28" />
-        <p class="lock-overlay__title">Unlock competitor intelligence</p>
-        <p class="lock-overlay__sub">See what top creators in your niche do differently</p>
-        <a routerLink="/pricing" class="btn-primary lock-overlay__btn">Upgrade to Unlock</a>
-      </div>
     </div>
-  </div>
+  }
 
+  <!-- Upgrade Banner -->
   @if (showUpgradeBanner()) {
-    <app-upgrade-banner />
+    <app-upgrade-banner-slim />
   }
 </div>

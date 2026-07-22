@@ -5,13 +5,12 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding-top: 140px;
+  padding: 160px 24px 100px;
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--border);
 }
 
-// ─── BACKGROUND ──────────────────────────────────────────────────────────
 .hero__bg {
   position: absolute;
   inset: 0;
@@ -38,13 +37,11 @@
   width: 800px;
   height: 800px;
   background: radial-gradient(ellipse at center, var(--glow) 0%, transparent 70%);
-  border-radius: 50%;
   animation: heroGlowBreathe 6s ease-in-out infinite;
 }
 
 @keyframes heroGlowBreathe {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0.85;
     transform: translateX(-50%) scale(1);
   }
@@ -66,43 +63,32 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 0;
-  border-radius: 100px;
+  padding: 8px 18px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 3px;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
   color: var(--accent);
-  margin-bottom: 18px;
+  margin-bottom: 32px;
   backdrop-filter: blur(8px);
-}
-
-@keyframes badgePulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
 }
 
 .hero__headline {
   position: relative;
   z-index: 1;
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3.6vw, 2.9rem);
+  font-size: clamp(2.4rem, 5.6vw, 3.8rem);
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.08;
   max-width: 900px;
   margin: 0 auto 22px;
   color: var(--text);
-  font-style: normal;
 
   &--fire {
-    font-style: italic;
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -110,28 +96,23 @@
   }
 }
 
-// ─── SUB COPY ─────────────────────────────────────────────────────────────
 .hero__sub {
   position: relative;
   z-index: 1;
   font-family: var(--font-body);
-  font-size: clamp(0.6rem, 1.3vw, 1.15rem);
-  color: var(--muted);
-  font-style: bold;
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  color: var(--muted2);
   max-width: 540px;
   line-height: 1.7;
   font-weight: 400;
   margin: 0 auto 44px;
-}
 
-.hero__sub-br {
-  display: none;
-  @media (min-width: 600px) {
-    display: block;
+  strong {
+    color: var(--text);
+    font-weight: 600;
   }
 }
 
-// ─── ACTIONS ──────────────────────────────────────────────────────────────
 .hero__actions {
   position: relative;
   z-index: 1;
@@ -140,6 +121,7 @@
   gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
+  margin-bottom: 48px;
 }
 
 .hero__cta {
@@ -148,10 +130,10 @@
   gap: 9px;
   padding: 14px 32px;
   border: none;
-  background: var(--accent);
+  background: var(--text);
   color: var(--bg);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   font-family: var(--font-body);
   letter-spacing: -0.1px;
@@ -163,18 +145,6 @@
     transform: translateY(-2px);
     box-shadow: var(--shadow-lift);
   }
-
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-.hero__cta-icon {
-  color: var(--accent);
-  flex-shrink: 0;
-}
-.hero__cta:hover .hero__cta-icon {
-  color: #fff;
 }
 
 .hero__cta-ghost {
@@ -191,31 +161,62 @@
   font-family: var(--font-body);
   transition: all 0.2s;
 
-  .hero__cta-ghost-icon {
-    transition: transform 0.3s;
-  }
-
   &:hover {
     color: var(--text);
     border-color: var(--border2);
-    .hero__cta-ghost-icon {
-      transform: translateY(3px);
-    }
   }
 }
 
-// ─── RESPONSIVE ────────────────────────────────────────────────────────────
+.hero__trust {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 32px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.hero__trust-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.hero__trust-num {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent2);
+}
+
+.hero__trust-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.hero__trust-divider {
+  width: 1px;
+  height: 30px;
+  background: var(--border);
+}
+
 @media (max-width: 600px) {
   .hero {
     padding: 120px 20px 72px;
   }
-  .hero__headline {
-    letter-spacing: -0.02em;
+  .hero__trust {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
   }
-}
-
-.logo {
-  height: 64px;
-  width: 64px;
-  margin-bottom: 32px;
+  .hero__trust-divider {
+    width: 60px;
+    height: 1px;
+  }
 }

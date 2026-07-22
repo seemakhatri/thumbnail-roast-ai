@@ -1,5 +1,4 @@
 <div class="sw-grid">
-
   <!-- Strengths -->
   <div class="sw-card sw-card--green" [@fadeLeft]>
     <div class="sw-card__heading sw-card__heading--green">
@@ -24,16 +23,19 @@
       <lucide-angular [img]="icons.alertCircle" size="16" />
       Weaknesses
     </div>
-    <ul class="sw-list">
-      @for (item of report().weaknesses; track item; let i = $index) {
-        <li class="sw-item" [style.animation-delay]="(i * 80) + 'ms'">
-          <span class="sw-item__icon sw-item__icon--red">
-            <lucide-angular [img]="icons.x" size="10" />
-          </span>
-          <span>{{ item }}</span>
-        </li>
-      }
-    </ul>
+    @if (report().weaknesses && report().weaknesses.length > 0) {
+      <ul class="sw-list">
+        @for (item of report().weaknesses; track item; let i = $index) {
+          <li class="sw-item" [style.animation-delay]="(i * 80) + 'ms'">
+            <span class="sw-item__icon sw-item__icon--red">
+              <lucide-angular [img]="icons.x" size="10" />
+            </span>
+            <span>{{ item }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="sw-empty">No weaknesses identified – this thumbnail is well executed.</p>
+    }
   </div>
-
 </div>

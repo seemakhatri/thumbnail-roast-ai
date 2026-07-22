@@ -1,3 +1,44 @@
 .page-shell--results {
   padding-top: 80px;
 }
+
+.results-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.skeleton {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+.skeleton--hero {
+  height: 420px;
+}
+
+.skeleton--bar {
+  height: 32px;
+}
+
+.skeleton--tall {
+  height: 200px;
+}
+
+.skeleton--card {
+  height: 80px;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@media (max-width: 640px) {
+  .results-skeleton { padding: 0 16px; }
+  .skeleton--hero { height: 320px; }
+}

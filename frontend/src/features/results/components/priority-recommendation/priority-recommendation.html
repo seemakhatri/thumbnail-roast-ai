@@ -11,4 +11,13 @@
       {{ topRec()!.impact }}
     </div>
   </div>
+} @else if (showPublishAsIs()) {
+  <div class="priority-rec priority-rec--positive" [@slideUp]>
+    <div class="priority-rec__label">
+      <lucide-angular [img]="icons.check" size="14" class="priority-rec__label-icon" />
+      Ready to Publish
+    </div>
+    <h3 class="priority-rec__title">No changes recommended</h3>
+    <p class="priority-rec__body">{{ whyItWorks() }}</p>
+  </div>
 }

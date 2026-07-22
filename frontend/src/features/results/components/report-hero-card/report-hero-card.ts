@@ -12,18 +12,23 @@ import {
   BarChart3,
   ThumbsUp,
   Trophy,
+  CheckCircle,
+  Clock,
+  XCircle,
 } from 'lucide-angular';
 
-// Verdict map with Lucide icons instead of emojis
-const VERDICT_MAP: Record<
-  string,
-  { label: string; icon: any; css: string }
-> = {
+const VERDICT_MAP: Record<string, { label: string; icon: any; css: string }> = {
   needs_work: { label: 'Needs Work', icon: AlertCircle, css: 'verdict--red' },
   decent: { label: 'Decent', icon: BarChart3, css: 'verdict--yellow' },
   good: { label: 'Good', icon: ThumbsUp, css: 'verdict--blue' },
   strong: { label: 'Strong', icon: Flame, css: 'verdict--orange' },
   excellent: { label: 'Excellent', icon: Trophy, css: 'verdict--green' },
+};
+
+const PUBLISH_MAP: Record<string, { label: string; icon: any; css: string }> = {
+  publish: { label: 'Publish As‑Is', icon: CheckCircle, css: 'publish--green' },
+  publish_after_minor_changes: { label: 'Minor Changes', icon: Clock, css: 'publish--yellow' },
+  rework: { label: 'Rework', icon: XCircle, css: 'publish--red' },
 };
 
 @Component({
@@ -47,14 +52,15 @@ const VERDICT_MAP: Record<
 })
 export class ReportHeroCard {
   readonly report = input.required<ThumbnailReport>();
-
   private readonly platformId = inject(PLATFORM_ID);
-
   readonly copied = signal(false);
 
   readonly icons = {
     flame: Flame,
     share: Share2,
+    checkCircle: CheckCircle,
+    clock: Clock,
+    xCircle: XCircle,
   };
 
   readonly verdictData = computed(() => {
@@ -62,19 +68,13 @@ export class ReportHeroCard {
     return VERDICT_MAP[v] ?? VERDICT_MAP['decent'];
   });
 
-  readonly summary = computed(() => {
-    const r = this.report();
-    const score = r.overall_score;
-    const ctr = r.ctr_score;
-    const emo = r.emotion_score;
+  readonly publishDecision = computed(() => {
+    const decision = this.report().publish_decision ?? 'publish';
+    return PUBLISH_MAP[decision] ?? PUBLISH_MAP['publish'];
+  });
 
-    if (score >= 80)
-      return 'Your thumbnail has elite visual impact — minor tweaks could push it further.';
-    if (score >= 65)
-      return `Strong CTR potential (${ctr}/100) but emotion and curiosity could be stronger.`;
-    if (score >= 50)
-      return 'Competent but forgettable. Readability and emotional hook need the most work.';
-    return 'Low click-through potential. The core concept and visual execution both need rebuilding.';
+  readonly summary = computed(() => {
+    return this.report().executive_summary || 'No summary available.';
   });
 
   readonly ringGlow = computed(() => {

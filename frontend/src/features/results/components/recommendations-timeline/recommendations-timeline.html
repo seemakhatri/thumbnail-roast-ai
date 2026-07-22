@@ -1,37 +1,44 @@
+@if (report().recommendations && report().recommendations.length > 0) {
 <div class="rec-timeline">
   <div class="rec-timeline__eyebrow">Roadmap to a Better Thumbnail</div>
 
   <div class="rec-timeline__list">
     @for (rec of report().recommendations; track rec.title; let i = $index; let last = $last) {
-      <div class="rec-timeline__item" [@slideUp]>
+    <div class="rec-timeline__item" [@slideUp]>
 
-        <!-- Vertical line + node -->
-        <div class="rec-timeline__track">
-          <div class="rec-timeline__node" [class]="nodeCss(rec.priority)">
-            <lucide-angular [img]="icons.circle" size="8" class="rec-timeline__node-icon" />
-          </div>
-          @if (!last) {
-            <div class="rec-timeline__line"></div>
-          }
+      <!-- Vertical line + node -->
+      <div class="rec-timeline__track">
+        <div class="rec-timeline__node" [class]="nodeCss(rec.priority)">
+          <lucide-angular [img]="icons.circle" size="8" class="rec-timeline__node-icon" />
         </div>
-
-        <!-- Content -->
-        <div class="rec-timeline__content">
-          <div class="rec-timeline__top">
-            <span class="rec-timeline__priority" [class]="priorityCss(rec.priority)">
-              {{ priorityLabel(rec.priority) }}
-            </span>
-            <span class="rec-timeline__category">{{ rec.category }}</span>
-          </div>
-          <h4 class="rec-timeline__title">{{ rec.title }}</h4>
-          <p class="rec-timeline__desc">{{ rec.description }}</p>
-          <div class="rec-timeline__impact">
-            <lucide-angular [img]="icons.trendingUp" size="14" class="rec-timeline__impact-icon" />
-            {{ rec.impact }}
-          </div>
-        </div>
-
+        @if (!last) {
+        <div class="rec-timeline__line"></div>
+        }
       </div>
+
+      <!-- Content -->
+      <div class="rec-timeline__content">
+        <div class="rec-timeline__top">
+          <span class="rec-timeline__priority" [class]="priorityCss(rec.priority)">
+            {{ priorityLabel(rec.priority) }}
+          </span>
+          <span class="rec-timeline__category">{{ rec.category }}</span>
+        </div>
+        <h4 class="rec-timeline__title">{{ rec.title }}</h4>
+        <p class="rec-timeline__desc">{{ rec.description }}</p>
+        <div class="rec-timeline__impact">
+          <lucide-angular [img]="icons.trendingUp" size="14" class="rec-timeline__impact-icon" />
+          {{ rec.impact }}
+        </div>
+      </div>
+
+    </div>
     }
   </div>
 </div>
+} @else {
+<!-- Optional: show a positive message -->
+<div class="rec-empty">
+  <p>No recommendations needed — this thumbnail is already performing well.</p>
+</div>
+}

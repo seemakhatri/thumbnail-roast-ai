@@ -1,0 +1,149 @@
+.gl-page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 120px 1.5rem 5rem;
+}
+
+.gl-header {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted2);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 4vw, 36px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 14.5px;
+    color: var(--muted2);
+    max-width: 520px;
+    margin: 0 auto 1.5rem;
+  }
+}
+
+.gl-search {
+  width: 100%;
+  max-width: 380px;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13.5px;
+  font-family: var(--font-body);
+
+  &:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+}
+
+.gl-letters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.gl-letter {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--muted2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  &--active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+}
+
+.gl-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 800px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gl-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1.1rem 1.25rem;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s;
+  display: block;
+
+  &:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  h3 {
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 0.4rem;
+  }
+
+  p {
+    font-size: 12.5px;
+    color: var(--muted2);
+    line-height: 1.5;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &--skeleton {
+    height: 110px;
+    background: linear-gradient(90deg, var(--bg2) 25%, var(--surface2) 37%, var(--bg2) 63%);
+    background-size: 400% 100%;
+    animation: gl-shimmer 1.4s ease infinite;
+  }
+}
+
+@keyframes gl-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+.gl-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--muted2);
+  font-size: 14px;
+}

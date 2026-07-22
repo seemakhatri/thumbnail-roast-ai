@@ -1,37 +1,50 @@
-<!-- cta-section.html -->
 <section class="cta" id="cta" aria-label="Call to action">
 
   <div class="cta__bg" aria-hidden="true">
     <div class="cta__glow"></div>
   </div>
 
-  <!-- Content -->
   <div class="cta__content">
 
-    <!-- Hero-style badge with typewriter -->
     <div class="cta__badge">
       <span>{{ displayedText() }}</span>
       <span class="cta__cursor">|</span>
     </div>
 
     <h2 class="cta__title">
-      Ready to stop guessing?
+      Stop guessing.<br>Start measuring.
     </h2>
 
     <p class="cta__sub">
-      Upload your thumbnail. Get a brutal AI roast, an 8‑dimension score,<br>
-      and three specific fixes that actually move your CTR.
+      Upload your thumbnail. Get a decision, not a roast.<br>
+      If it's good, we'll tell you to publish. If not, one high-impact fix.
     </p>
 
     <div class="cta__actions">
-      <button class="cta__btn" type="button" (click)="scrollToAnalyze()">
-        Roast My Thumbnail — It's Free
+      <button class="cta__btn" (click)="scrollToAnalyze()">
+        Try It Free
       </button>
     </div>
 
     <div class="cta__fine">
-      No account needed &nbsp;·&nbsp; 3 free roasts/month &nbsp;·&nbsp; Results in ~15 seconds
+      No account needed · 3 free roasts/month · Results in ~15 seconds
     </div>
+
+    <div class="cta__trust">
+      <span class="cta__trust-item">
+        <lucide-angular [img]="icons.checkCircle" size="12" />
+        12,400+ thumbnails analyzed
+      </span>
+      <span class="cta__trust-item">
+        <lucide-angular [img]="icons.checkCircle" size="12" />
+        +31% avg CTR improvement
+      </span>
+      <span class="cta__trust-item">
+        <lucide-angular [img]="icons.checkCircle" size="12" />
+        4.9/5 creator rating
+      </span>
+    </div>
+
   </div>
 
 </section>

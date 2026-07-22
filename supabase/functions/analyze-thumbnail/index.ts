@@ -298,8 +298,11 @@ Deno.serve(async (req: Request) => {
       share_slug: generateSlug(),
       overall_score: analysis.overall_score,
       verdict: analysis.verdict,
+      tier: analysis.tier,
+      changes_recommended: analysis.changes_recommended,
       roast_title: analysis.roast_title,
       roast: analysis.roast,
+      why_it_works: analysis.why_it_works,
       ctr_score: analysis.metrics.ctr_score,
       readability_score: analysis.metrics.readability_score,
       emotion_score: analysis.metrics.emotion_score,
@@ -322,6 +325,8 @@ Deno.serve(async (req: Request) => {
       has_arrow: analysis.has_arrow ?? false,
       has_circle: analysis.has_circle ?? false,
       was_cached: false,
+        publish_decision: analysis.publish_decision,
+  executive_summary: analysis.executive_summary,
     };
 
     const { data: savedReport, error: saveError } = await supabaseAdmin

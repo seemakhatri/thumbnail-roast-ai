@@ -84,3 +84,10 @@
 @media (prefers-reduced-motion: reduce) {
   .sw-item { animation: none; }
 }
+
+.sw-empty {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--muted2);
+  padding: 8px 0;
+}

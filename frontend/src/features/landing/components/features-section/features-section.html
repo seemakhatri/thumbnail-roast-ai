@@ -1,71 +1,113 @@
 <section class="features" id="how-it-works" aria-label="Features">
 
-  <!-- Header -->
-<div class="features__header fade-up d1">
-
-  <span class="features__badge">
-    What we analyze
-  </span>
-
-  <h2 class="features__title">
-    Not a generator.<br>
-    An intelligence layer.
-  </h2>
-
-  <p class="features__sub">
-    Every tool can make a thumbnail.
-    Nobody tells you exactly why yours isn't clicking—
-    until now.
-  </p>
-
-</div>
-
-  <!-- How it works — 3 steps -->
-  <div class="features__steps fade-up d2" aria-label="How it works">
-    @for (step of steps; track step.num) {
-      <div class="features__step">
-        <div class="features__step-top">
-          <div class="features__step-num">0{{ step.num }}</div>
-          <div class="features__step-icon-wrapper">
-            <lucide-angular [img]="step.icon" size="20" class="features__step-icon" />
-          </div>
-        </div>
-        <div class="features__step-body">
-          <h3 class="features__step-title">{{ step.title }}</h3>
-          <p class="features__step-desc">{{ step.desc }}</p>
-        </div>
-      </div>
-    }
+  <div class="features__header fade-up d1">
+    <span class="features__badge">How it works</span>
+    <h2 class="features__title">Stop guessing.<br>Start proving.</h2>
+    <p class="features__sub">
+      Your thumbnail gets a clear decision—not a laundry list of nitpicks.<br>
+      Sometimes the smartest advice is: <strong>"Publish it. It's already working."</strong>
+    </p>
   </div>
 
-  <!-- Feature grid — each cell gets a subtle colored accent on hover -->
-  <div class="features__grid" role="list">
-    @for (feat of features; track feat.name; let i = $index) {
-      <article
-        class="features__cell fade-up"
-      >
-        <div
-          class="features__icon"
-          aria-hidden="true"
-        >
-          <lucide-angular [img]="feat.icon" size="20" class="features__icon-svg" />
+  <!-- How it works — 3 steps -->
+  <div class="features__steps fade-up d2">
+    <div class="features__step">
+      <div class="features__step-top">
+        <span class="features__step-num">01</span>
+        <div class="features__step-icon-wrapper">
+          <lucide-angular [img]="icons.upload" size="20" />
         </div>
-        <h3 class="features__name">{{ feat.name }}</h3>
-        <p class="features__desc">{{ feat.desc }}</p>
-        @if (feat.badge) {
-          <span class="features__badge">{{ feat.badge }}</span>
-        }
-      </article>
-    }
+      </div>
+      <h3 class="features__step-title">Upload your thumbnail</h3>
+      <p class="features__step-desc">Drag & drop or click to upload. JPG, PNG, or WEBP. No account needed.</p>
+    </div>
+
+    <div class="features__step">
+      <div class="features__step-top">
+        <span class="features__step-num">02</span>
+        <div class="features__step-icon-wrapper">
+          <lucide-angular [img]="icons.brain" size="20" />
+        </div>
+      </div>
+      <h3 class="features__step-title">AI decides: fix or publish</h3>
+      <p class="features__step-desc">A decision, not a roast. If it's already great, it tells you to ship it. If not, one high-impact fix.</p>
+    </div>
+
+    <div class="features__step">
+      <div class="features__step-top">
+        <span class="features__step-num">03</span>
+        <div class="features__step-icon-wrapper">
+          <lucide-angular [img]="icons.trendingUp" size="20" />
+        </div>
+      </div>
+      <h3 class="features__step-title">Track what actually works</h3>
+      <p class="features__step-desc">Connect YouTube to see if the recommendation moved your CTR. Every upload teaches the next upload.</p>
+    </div>
+  </div>
+
+  <!-- Feature grid -->
+  <div class="features__grid" role="list">
+    <article class="features__cell">
+      <div class="features__icon">
+        <lucide-angular [img]="icons.target" size="20" />
+      </div>
+      <h3 class="features__name">Elite vs. Average</h3>
+      <p class="features__desc">No middling scores. Your thumbnail is either ready to publish or needs one decisive improvement.</p>
+    </article>
+
+    <article class="features__cell">
+      <div class="features__icon">
+        <lucide-angular [img]="icons.barChart" size="20" />
+      </div>
+      <h3 class="features__name">Measured Outcomes</h3>
+      <p class="features__desc">Connect YouTube to see if recommendations actually moved your CTR. No guesswork.</p>
+    </article>
+
+    <article class="features__cell">
+      <div class="features__icon">
+        <lucide-angular [img]="icons.users" size="20" />
+      </div>
+      <h3 class="features__name">Creator DNA</h3>
+      <p class="features__desc">Over time, the app learns what works for your specific audience. Personalized intelligence.</p>
+    </article>
+
+    <article class="features__cell">
+      <div class="features__icon">
+        <lucide-angular [img]="icons.clock" size="20" />
+      </div>
+      <h3 class="features__name">Publish with Confidence</h3>
+      <p class="features__desc">When the app says "Publish as-is", you know it's backed by data, not opinion.</p>
+    </article>
+
+    <article class="features__cell">
+      <div class="features__icon">
+        <lucide-angular [img]="icons.trendingUp" size="20" />
+      </div>
+      <h3 class="features__name">Track Performance</h3>
+      <p class="features__desc">Watch your thumbnail improvement trend over time. Every upload makes you better.</p>
+    </article>
+
+    <article class="features__cell">
+      <div class="features__icon">
+        <lucide-angular [img]="icons.share2" size="20" />
+      </div>
+      <h3 class="features__name">Shareable Reports</h3>
+      <p class="features__desc">Every analysis generates a public share card. Post your score and prove your growth.</p>
+    </article>
   </div>
 
   <!-- Metrics callout strip -->
-  <div class="features__metrics fade-up d5" aria-label="Scoring dimensions">
-    <div class="features__metrics-label">8 scored dimensions</div>
+  <div class="features__metrics fade-up d5">
+    <span class="features__metrics-label">How we evaluate</span>
     <div class="features__metrics-list">
-      @for (m of metrics; track m) {
-        <span class="features__metric-chip">{{ m }}</span>
-      }
+      <span class="features__metric-chip">CTR Potential</span>
+      <span class="features__metric-chip">Readability</span>
+      <span class="features__metric-chip">Emotion</span>
+      <span class="features__metric-chip">Curiosity</span>
+      <span class="features__metric-chip">Mobile</span>
+      <span class="features__metric-chip">Contrast</span>
+      <span class="features__metric-chip">Face Quality</span>
+      <span class="features__metric-chip">Branding</span>
     </div>
   </div>
 

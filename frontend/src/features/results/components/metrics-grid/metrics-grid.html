@@ -1,30 +1,18 @@
-<div class="metrics-grid-wrap">
-  <div class="metrics-grid-header">
-    <span class="metrics-grid-eyebrow">Performance Breakdown</span>
-  </div>
-  <div class="metrics-grid">
-    @for (m of metrics; track m.key; let i = $index) {
-      <div class="metric-card" [@stagger]="i">
-        <div class="metric-card__top">
-          <lucide-angular [img]="m.icon" size="16" class="metric-card__icon" />
-          <span class="metric-card__name">{{ m.label }}</span>
-        </div>
-        <div class="metric-card__score-row">
-          <span class="metric-card__score" [style.color]="scoreColor(getScore(m.key))">
-            {{ getScore(m.key) }}
-          </span>
-          <span class="metric-card__status" [class]="statusClass(getScore(m.key))">
-            {{ statusLabel(getScore(m.key)) }}
-          </span>
-        </div>
-        <div class="metric-card__bar-bg">
-          <div
-            class="metric-card__bar-fill"
-            [style.width.%]="getScore(m.key)"
-            [style.background]="barGradient(getScore(m.key))"
-          ></div>
-        </div>
+<div class="metrics-list">
+  @for (m of metrics; track m.key) {
+    <div class="metric-row">
+      <div class="metric-row__left">
+        <lucide-angular [img]="m.icon" size="14" class="metric-row__icon" />
+        <span class="metric-row__label">{{ m.label }}</span>
       </div>
-    }
-  </div>
+      <div class="metric-row__bar">
+        <div class="metric-row__track">
+          <div class="metric-row__fill" [style.width.%]="getScore(m.key)" [style.background]="scoreColor(getScore(m.key))"></div>
+        </div>
+        <span class="metric-row__score" [style.color]="scoreColor(getScore(m.key))">
+          {{ getScore(m.key) }}
+        </span>
+      </div>
+    </div>
+  }
 </div>

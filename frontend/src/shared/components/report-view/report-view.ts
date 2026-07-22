@@ -3,35 +3,35 @@ import { trigger, transition, style, animate } from '@angular/animations';
 import { RouterLink } from '@angular/router';
 import { ThumbnailReport } from '../../../core/models/report.model';
 import { Supabase } from '../../../core/services/supabase';
-import { ShareActions }            from '../../../features/results/components/share-actions/share-actions';
-import { ReportHeroCard }          from '../../../features/results/components/report-hero-card/report-hero-card';
-import { PriorityRecommendation }  from '../../../features/results/components/priority-recommendation/priority-recommendation';
-import { MetricsGrid }             from '../../../features/results/components/metrics-grid/metrics-grid';
-import { RoastCard }               from '../../../features/results/components/roast-card/roast-card';
-import { StrengthWeaknessGrid }    from '../../../features/results/components/strength-weakness-grid/strength-weakness-grid';
+import { ShareActions } from '../../../features/results/components/share-actions/share-actions';
+import { ReportHeroCard } from '../../../features/results/components/report-hero-card/report-hero-card';
+import { PriorityRecommendation } from '../../../features/results/components/priority-recommendation/priority-recommendation';
+import { MetricsGrid } from '../../../features/results/components/metrics-grid/metrics-grid';
+import { RoastCard } from '../../../features/results/components/roast-card/roast-card';
+import { StrengthWeaknessGrid } from '../../../features/results/components/strength-weakness-grid/strength-weakness-grid';
 import { RecommendationsTimeline } from '../../../features/results/components/recommendations-timeline/recommendations-timeline';
-import { CompetitorInsights }      from '../../../features/results/components/competitor-insights/competitor-insights';
-import { UpgradeBanner }           from '../../../features/results/components/upgrade-banner/upgrade-banner';
+import { CompetitorInsights } from '../../../features/results/components/competitor-insights/competitor-insights';
+import { UpgradeBanner } from '../../../features/results/components/upgrade-banner/upgrade-banner';
 import { LucideAngularModule, Lock } from 'lucide-angular';
 import { CommonModule } from '@angular/common';
+import { UpgradeBannerSlim } from '../../../features/results/components/upgrade-banner-slim/upgrade-banner-slim';
 
 @Component({
   selector: 'app-report-view',
   standalone: true,
   imports: [
-    RouterLink,
     LucideAngularModule,
     ShareActions,
     ReportHeroCard,
     PriorityRecommendation,
     MetricsGrid,
-    RoastCard,
     StrengthWeaknessGrid,
     RecommendationsTimeline,
     CompetitorInsights,
-    UpgradeBanner,
-    CommonModule
-  ],
+    CommonModule,
+    UpgradeBannerSlim,
+    RoastCard
+],
   templateUrl: './report-view.html',
   styleUrl: './report-view.scss',
   animations: [
@@ -44,7 +44,7 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class ReportView {
-  readonly report   = input.required<ThumbnailReport>();
+  readonly report = input.required<ThumbnailReport>();
   readonly showTabs = input(true);
 
   private readonly supabase = inject(Supabase);

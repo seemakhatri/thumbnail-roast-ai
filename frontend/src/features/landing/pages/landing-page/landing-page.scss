@@ -1,0 +1,183 @@
+// ─── HOW IT WORKS ────────────────────────────────────────────────────────
+.how-it-works {
+  padding: 80px 0 120px;
+  border-bottom: 1px solid var(--border);
+}
+
+.how-it-works__header {
+  margin-bottom: 56px;
+}
+
+.how-it-works__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.how-it-works__item {
+  padding: 24px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-align: center;
+}
+
+.how-it-works__step {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent2);
+  background: rgba(255, 77, 0, 0.08);
+  border: 1px solid rgba(255, 77, 0, 0.2);
+}
+
+.how-it-works__item h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.how-it-works__item p {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--muted2);
+  line-height: 1.6;
+}
+
+// ─── SUCCESS STORIES ─────────────────────────────────────────────────────
+.success-stories {
+  padding: 80px 0 120px;
+  border-bottom: 1px solid var(--border);
+}
+
+.success-stories__header {
+  margin-bottom: 56px;
+}
+
+.success-stories__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.success-story {
+  padding: 24px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.success-story__stats {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.success-story__change {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.success-story__label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.success-story__content p {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--muted2);
+  line-height: 1.6;
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+.success-story__author {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-body);
+  font-size: 13px;
+
+  span:first-child {
+    font-weight: 600;
+    color: var(--text);
+  }
+  span:last-child {
+    font-size: 12px;
+    color: var(--muted);
+  }
+}
+
+// ─── TRUST BADGE ──────────────────────────────────────────────────────────
+.trust-badge {
+  padding: 40px 0 80px;
+}
+
+.trust-badge__content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 48px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+}
+
+.trust-badge__icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.trust-badge__text {
+  flex: 1;
+
+  strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  p {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--muted2);
+    margin: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .how-it-works__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .success-stories__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .how-it-works__grid {
+    grid-template-columns: 1fr;
+  }
+  .success-stories__grid {
+    grid-template-columns: 1fr;
+  }
+  .trust-badge__content {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+  .trust-badge__icon {
+    font-size: 24px;
+  }
+}

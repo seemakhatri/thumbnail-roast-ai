@@ -6,12 +6,112 @@
   <app-features-section />
 </section>
 
+<!-- How It Works - Deep Dive -->
+<section class="how-it-works">
+  <div class="container">
+    <div class="how-it-works__header">
+      <span class="section-badge">The Feedback Loop</span>
+      <h2 class="section-title">Every upload teaches the next upload.</h2>
+      <p class="section-sub">Here's how the intelligence builds over time.</p>
+    </div>
+
+    <div class="how-it-works__grid">
+      <div class="how-it-works__item">
+        <div class="how-it-works__step">1</div>
+        <h3>Upload & get a decision</h3>
+        <p>AI decides: publish as-is or make one high-impact fix. No laundry list.</p>
+      </div>
+      <div class="how-it-works__item">
+        <div class="how-it-works__step">2</div>
+        <h3>Publish & connect YouTube</h3>
+        <p>Track your real CTR. See what actually moved the needle.</p>
+      </div>
+      <div class="how-it-works__item">
+        <div class="how-it-works__step">3</div>
+        <h3>AI learns from your results</h3>
+        <p>Over time, recommendations become personalized to your audience.</p>
+      </div>
+      <div class="how-it-works__item">
+        <div class="how-it-works__step">4</div>
+        <h3>Build your Creator DNA</h3>
+        <p>A personalized model of what works for your specific audience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Success Stories / Case Studies -->
+<section class="success-stories">
+  <div class="container">
+    <div class="success-stories__header">
+      <span class="section-badge">Real Results</span>
+      <h2 class="section-title">Proof, not promises.</h2>
+      <p class="section-sub">See what creators achieved after following AI recommendations.</p>
+    </div>
+
+    <div class="success-stories__grid">
+      <div class="success-story">
+        <div class="success-story__stats">
+          <span class="success-story__change">+4.1% → 6.8%</span>
+          <span class="success-story__label">CTR improvement in 2 weeks</span>
+        </div>
+        <div class="success-story__content">
+          <p>"The roast humbled me — and my CTR went from 4.1% to 6.8% in two weeks."</p>
+          <div class="success-story__author">
+            <span>Alex K.</span>
+            <span>Gaming · 340K subscribers</span>
+          </div>
+        </div>
+      </div>
+      <div class="success-story">
+        <div class="success-story__stats">
+          <span class="success-story__change">+2.9% → 5.4%</span>
+          <span class="success-story__label">CTR improvement in 30 days</span>
+        </div>
+        <div class="success-story__content">
+          <p>"The curiosity gap insight made me rethink my entire strategy. Best video this month."</p>
+          <div class="success-story__author">
+            <span>Priya M.</span>
+            <span>Food · 82K subscribers</span>
+          </div>
+        </div>
+      </div>
+      <div class="success-story">
+        <div class="success-story__stats">
+          <span class="success-story__change">Agency-wide +38%</span>
+          <span class="success-story__label">Average CTR improvement</span>
+        </div>
+        <div class="success-story__content">
+          <p>"Replaced a junior editor we were paying $1,800/mo to review thumbnails."</p>
+          <div class="success-story__author">
+            <span>Marcus W.</span>
+            <span>Agency · 12 channels</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="pricing">
   <app-pricing-section />
 </section>
 
-<app-testimonials-section />
-
-<app-faq-section />
+<section class="faq-wrapper">
+  <app-faq-section />
+</section>
 
 <app-cta-section />
+
+<!-- Creator Trust Badge -->
+<section class="trust-badge">
+  <div class="container">
+    <div class="trust-badge__content">
+      <div class="trust-badge__text">
+        <strong>Used by 12,400+ creators</strong>
+        <p>Join the community proving what works for their channel.</p>
+      </div>
+      <button class="btn-primary" (click)="scrollToAnalyze()">Analyze Your Thumbnail →</button>
+    </div>
+  </div>
+</section>

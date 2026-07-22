@@ -1,20 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { LucideAngularModule, CheckCircle } from 'lucide-angular';
 
 @Component({
   selector: 'app-cta-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './cta-section.html',
   styleUrl: './cta-section.scss',
 })
 export class CtaSection implements OnInit, OnDestroy {
-  // Typewriter lines (matching Hero badge energy)
+  readonly icons = {
+    checkCircle: CheckCircle,
+  };
+
   private readonly lines = [
-    'It\'s free to start',
-    'No credit card required',
-    '12,400+ thumbnails roasted',
-    'Results in under 15 seconds',
+    'Prove what works.',
+    'Stop guessing.',
+    '12,400+ thumbnails analyzed.',
+    'Publish with confidence.',
   ];
 
   readonly displayedText = signal('');
@@ -37,7 +41,6 @@ export class CtaSection implements OnInit, OnDestroy {
     const currentLine = this.lines[this.lineIndex];
     const isAtEnd = this.charIndex === currentLine.length;
 
-    // If we're not deleting and haven't finished typing the current line
     if (!this.isDeleting && !isAtEnd) {
       this.displayedText.set(currentLine.substring(0, this.charIndex + 1));
       this.charIndex++;
@@ -45,7 +48,6 @@ export class CtaSection implements OnInit, OnDestroy {
       return;
     }
 
-    // If we're at the end of the line, wait before deleting
     if (!this.isDeleting && isAtEnd) {
       this.typewriterTimeout = setTimeout(() => {
         this.isDeleting = true;
@@ -54,7 +56,6 @@ export class CtaSection implements OnInit, OnDestroy {
       return;
     }
 
-    // If we're deleting characters
     if (this.isDeleting && this.charIndex > 0) {
       this.displayedText.set(currentLine.substring(0, this.charIndex - 1));
       this.charIndex--;
@@ -62,7 +63,6 @@ export class CtaSection implements OnInit, OnDestroy {
       return;
     }
 
-    // If we've deleted everything, move to the next line
     if (this.isDeleting && this.charIndex === 0) {
       this.isDeleting = false;
       this.lineIndex = (this.lineIndex + 1) % this.lines.length;

@@ -30,6 +30,7 @@ Deno.serve(async (req: Request) => {
       .from('reports')
       .select(`
         id, share_slug, image_url, overall_score, verdict,
+        tier, changes_recommended, why_it_works,
         roast_title, roast, ctr_score, readability_score,
         emotion_score, curiosity_score, mobile_score,
         contrast_score, face_score, brand_score,

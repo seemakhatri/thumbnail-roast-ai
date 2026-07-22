@@ -1,1 +1,49 @@
-<p>glossary-index works!</p>
+<div class="gl-page">
+  <header class="gl-header">
+    <span class="eyebrow">Glossary</span>
+    <h1>YouTube Thumbnail &amp; CTR Terms, Explained</h1>
+    <p>Plain-language definitions for every term you'll see across Thumbnail Roast — from AI scoring dimensions to channel analytics.</p>
+
+    <input
+      type="text"
+      class="gl-search"
+      placeholder="Search terms…"
+      [value]="search()"
+      (input)="search.set($any($event.target).value)"
+    />
+  </header>
+
+  @if (!loading() && letters().length > 0) {
+    <div class="gl-letters">
+      @for (letter of letters(); track letter) {
+        <button
+          type="button"
+          class="gl-letter"
+          [class.gl-letter--active]="activeLetter() === letter"
+          (click)="setLetter(letter)"
+        >{{ letter }}</button>
+      }
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="gl-grid">
+      @for (n of [1,2,3,4,5,6,7,8]; track n) {
+        <div class="gl-card gl-card--skeleton"></div>
+      }
+    </div>
+  } @else if (filteredTerms().length === 0) {
+    <div class="gl-empty">
+      <p>No terms match your search yet.</p>
+    </div>
+  } @else {
+    <div class="gl-grid">
+      @for (term of filteredTerms(); track term.slug) {
+        <a [routerLink]="['/glossary', term.slug]" class="gl-card">
+          <h3>{{ term.term }}</h3>
+          <p>{{ term.definition }}</p>
+        </a>
+      }
+    </div>
+  }
+</div>

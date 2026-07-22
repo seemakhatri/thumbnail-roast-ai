@@ -10,7 +10,7 @@ import {
   Sun,
   Moon,
   Lock,
-  Gauge
+  Gauge,
 } from 'lucide-angular';
 import { ThemeService } from '../../../core/services/theme';
 
@@ -38,7 +38,7 @@ export class Navbar {
     sun: Sun,
     moon: Moon,
     lock: Lock,
-      gauge: Gauge, 
+    gauge: Gauge,
   };
 
   @HostListener('window:scroll')
@@ -108,21 +108,21 @@ export class Navbar {
   }
 
   toggleTheme(): void {
-  this.theme.toggle();
-}
+    this.theme.toggle();
+  }
 
-readonly canCompare = computed(() => {
-  const plan = this.supabase.userPlan();
-  return plan !== 'free' && plan !== undefined; 
-});
+  readonly canCompare = computed(() => {
+    const plan = this.supabase.userPlan();
+    return plan !== 'free' && plan !== undefined;
+  });
 
-readonly canResearch = computed(() => {
-  const plan = this.supabase.userPlan();
-  return plan !== 'free' && plan !== undefined;
-});
+  readonly canResearch = computed(() => {
+    const plan = this.supabase.userPlan();
+    return plan !== 'free' && plan !== undefined;
+  });
 
-readonly canChannelAudit = computed(() => {
-  const plan = this.supabase.userPlan();
-  return plan !== 'free' && plan !== undefined;
-});
+  readonly canChannelAudit = computed(() => {
+    const plan = this.supabase.userPlan();
+    return plan !== 'free' && plan !== undefined;
+  });
 }
