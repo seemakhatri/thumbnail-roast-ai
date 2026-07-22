@@ -40,13 +40,13 @@ export class GlossaryIndex implements OnInit {
       title: 'YouTube Thumbnail Glossary — Terms & Definitions',
       description:
         'Clear definitions for every YouTube thumbnail, CTR, and creator-analytics term — from AI thumbnail scoring to watch time.',
-      canonical: 'https://thumbnailroast.com/glossary',
+      canonical: 'https://thumbnail-roast.com/glossary',
     });
 
     this.schema.clear();
     this.schema.breadcrumb([
-      { name: 'Home', url: 'https://thumbnailroast.com' },
-      { name: 'Glossary', url: 'https://thumbnailroast.com/glossary' },
+      { name: 'Home', url: 'https://thumbnail-roast.com' },
+      { name: 'Glossary', url: 'https://thumbnail-roast.com/glossary' },
     ]);
 
     try {
