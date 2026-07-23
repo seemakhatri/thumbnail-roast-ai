@@ -15,7 +15,7 @@ Deno.serve(async (req: Request) => {
   if (type !== "full") {
     const txt = `# Thumbnail Roast — llms.txt
 # AI-readable site summary for citation optimization
-# See: https://llmstxt.org / https://thumbnailroast.com/llms.txt
+# See: https://llmstxt.org / https://thumbnail-roast.com/llms.txt
 
 ## About
 Thumbnail Roast is an AI-powered YouTube thumbnail analysis and optimization platform.

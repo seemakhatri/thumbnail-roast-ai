@@ -1,4 +1,4 @@
-import { createClient } from "../_shared/deps.ts";
+import { createClient, SupabaseClient } from "../_shared/deps.ts";
 import { handleCors, jsonResponse, errorResponse } from "../_shared/cors.ts";
 import {
   compareWithFallback,
@@ -26,14 +26,12 @@ interface RecurringPattern {
 
 /**
  * Looks at the user's last N comparison_sessions and tallies which factor
- * they lose on most often. This is what turns Compare from a one-off
- * novelty into a running coaching signal — "you consistently lose on Text
- * Legibility" is more useful than any single A/B result.
+ * they lose on most often.
  */
+// deno-lint-ignore no-explicit-any – SupabaseClient generic parameters are complex
 async function computeRecurringPattern(
-  supabaseAdmin: ReturnType<typeof createClient>,
+  supabaseAdmin: SupabaseClient<any, "public", "public">,
   userId: string,
-  excludeSessionThumbIds: string[],
 ): Promise<RecurringPattern | null> {
   const { data: past } = await supabaseAdmin
     .from("comparison_sessions")
@@ -52,14 +50,6 @@ async function computeRecurringPattern(
     const result = session.comparison_result as CompareVerdict | null;
     if (!result?.factorBattles) continue;
 
-    // Figure out which report id corresponds to which label in this session
-    const idsByLabel: Partial<Record<Label, string>> = {
-      A: session.thumbnail_a, B: session.thumbnail_b, C: session.thumbnail_c ?? undefined,
-    };
-    // We only know report ids, not the *creator's own thumbnail* across
-    // different comparisons, so this aggregates across the reports the
-    // user has chosen to compare — a solid proxy for their recurring
-    // weak spot since they keep pitting their own work against itself.
     for (const fb of result.factorBattles) {
       for (const label of result.contenders) {
         const key = fb.factor;
@@ -74,7 +64,7 @@ async function computeRecurringPattern(
   let worst: { factor: string; rate: number; n: number } | null = null;
   for (const factor of Object.keys(appearances)) {
     const n = appearances[factor];
-    if (n < 6) continue; // not enough signal yet
+    if (n < 6) continue;
     const rate = (losses[factor] ?? 0) / n;
     if (!worst || rate > worst.rate) worst = { factor, rate, n };
   }
@@ -133,7 +123,7 @@ Deno.serve(async (req: Request) => {
       { auth: { persistSession: false } },
     );
 
-    // ── Fetch reports (need full metrics for grounding, not just display fields) ──
+    // ── Fetch reports ────────────────────────────────────────────────────
     const { data: reports, error: reportsError } = await supabaseAdmin
       .from("reports")
       .select(REPORT_FIELDS)
@@ -153,7 +143,7 @@ Deno.serve(async (req: Request) => {
     const reportB = byId.get(thumbnailB)!;
     const reportC = thumbnailC ? byId.get(thumbnailC)! : null;
 
-    // ── Cache check — exact same set of ids, either order, same arity ────
+    // ── Cache check ──────────────────────────────────────────────────────
     const cacheFilter = thumbnailC
       ? `and(thumbnail_a.eq.${thumbnailA},thumbnail_b.eq.${thumbnailB},thumbnail_c.eq.${thumbnailC}),and(thumbnail_a.eq.${thumbnailB},thumbnail_b.eq.${thumbnailA},thumbnail_c.eq.${thumbnailC})`
       : `and(thumbnail_a.eq.${thumbnailA},thumbnail_b.eq.${thumbnailB},thumbnail_c.is.null),and(thumbnail_a.eq.${thumbnailB},thumbnail_b.eq.${thumbnailA},thumbnail_c.is.null)`;
@@ -203,7 +193,7 @@ Deno.serve(async (req: Request) => {
       null;
     const winnerId = winnerReport?.id ?? null;
 
-    // ── Save the session (skip if served from cache) ──────────────────────
+    // ── Save session ──────────────────────────────────────────────────────
     if (!existingSession?.comparison_result) {
       const { error: sessionError } = await supabaseAdmin.from("comparison_sessions").insert({
         user_id: user.id,
@@ -213,15 +203,15 @@ Deno.serve(async (req: Request) => {
         winner_id: winnerId,
         comparison_result: verdict,
       });
-      if (sessionError) console.error("Session save error:", sessionError); // non-fatal
+      if (sessionError) console.error("Session save error:", sessionError);
     }
 
-    // ── Recurring pattern across this user's history (best-effort) ────────
+    // ── Recurring pattern ───────────────────────────────────────────────
     let recurringPattern: RecurringPattern | null = null;
     try {
-      recurringPattern = await computeRecurringPattern(supabaseAdmin, user.id, ids);
+      recurringPattern = await computeRecurringPattern(supabaseAdmin, user.id);
     } catch (err) {
-      console.error("Pattern computation error:", err); // non-fatal
+      console.error("Pattern computation error:", err);
     }
 
     // ── Response ─────────────────────────────────────────────────────────
@@ -231,16 +221,16 @@ Deno.serve(async (req: Request) => {
       ...(reportC ? [{ ...reportC, label: "C" as const }] : []),
     ];
 
-return jsonResponse(
-  {
-    thumbnails,
-    winner: winnerId,
-    verdict,
-    recurringPattern,
-  },
-  200,
-  req,
-);
+    return jsonResponse(
+      {
+        thumbnails,
+        winner: winnerId,
+        verdict,
+        recurringPattern,
+      },
+      200,
+      req,
+    );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Internal server error";
     console.error("Unhandled error in compare-thumbnails:", message);

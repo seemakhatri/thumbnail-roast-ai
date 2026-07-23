@@ -26,7 +26,7 @@ export class SchemaService {
       '@type': 'Organization',
       name: 'Thumbnail Roast',
       url: 'https://thumbnailroast.com',
-      logo: 'https://thumbnailroast.com/assets/logo.png',
+      logo: 'https://thumbnail-roast.com/assets/logo.png',
       sameAs: [],
     });
   }
@@ -63,8 +63,8 @@ export class SchemaService {
       '@type': 'Article',
       headline: post.title,
       description: post.excerpt,
-      url: `https://thumbnailroast.com/blog/${post.slug}`,
-      image: post.cover_image_url ?? 'https://thumbnailroast.com/assets/og-default.jpg',
+      url: `https://thumbnail-roast.com/blog/${post.slug}`,
+      image: post.cover_image_url ?? 'https://thumbnail-roast.com/assets/og-default.jpg',
       author: {
         '@type': 'Person',
         name: post.author_name ?? 'Thumbnail Roast Team',
@@ -111,11 +111,11 @@ export class SchemaService {
       '@type': 'DefinedTerm',
       name: term.term,
       description: term.definition,
-      url: `https://thumbnailroast.com/glossary/${term.slug}`,
+      url: `https://thumbnail-roast.com/glossary/${term.slug}`,
       inDefinedTermSet: {
         '@type': 'DefinedTermSet',
         name: 'YouTube Thumbnail Optimization Glossary',
-        url: 'https://thumbnailroast.com/glossary',
+        url: 'https://thumbnail-roast.com/glossary',
       },
     });
   }
@@ -126,7 +126,7 @@ export class SchemaService {
       '@type': 'HowTo',
       name: tool.name,
       description: tool.description,
-      url: `https://thumbnailroast.com/tools/${tool.slug}`,
+      url: `https://thumbnail-roast.com/tools/${tool.slug}`,
       step: tool.steps.map((s, i) => ({
         '@type': 'HowToStep',
         position: i + 1,

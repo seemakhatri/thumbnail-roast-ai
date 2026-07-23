@@ -1,28 +1,3 @@
-// _shared/vision-comparator.ts
-//
-// EXPERT REWRITE. The old version asked a vision model "which is better
-// and why" in one shot and trusted whatever it said, including the
-// winner and confidence number. Two problems with that:
-//   1. It's unauditable — you can't tell a user WHY B won beyond "the AI
-//      said so," and identical requests can flip on model noise.
-//   2. It ignores everything the analyzer already knows about each
-//      image (niche, calibrated per-factor scores) and re-derives
-//      judgment from zero, which can silently contradict the original
-//      report.
-//
-// New design: the vision model's ONLY job is to score 8 concrete visual
-// factors per thumbnail, side by side (that's what vision models are
-// actually good at — relative perception, not arithmetic or business
-// logic). Every downstream decision — the weighting, the winner, the
-// confidence tier, the per-placement verdicts — is deterministic code
-// in this file. That means:
-//   - The same inputs always produce the same verdict.
-//   - Every verdict can be explained factor-by-factor with real numbers.
-//   - The verdict can never silently contradict the original reports,
-//     because it's blended with their calibrated stored scores.
-//
-// Supports 2-way (A/B) and 3-way (A/B/C) comparisons in a single call.
-
 import { CALIBRATION_PREAMBLE, ProviderError } from "./vision-analyzer.ts";
 import {
   FactorWeights,
@@ -58,7 +33,6 @@ export interface ThumbnailInput {
   stored?: StoredMetrics;
 }
 
-// ── Raw shape returned by the vision model ─────────────────────────────
 interface RawFactorEntry {
   A: number;
   B: number;
@@ -71,7 +45,6 @@ interface RawComparisonResponse {
   improvement_bullets: Partial<Record<Label, string[]>>;
 }
 
-// ── Final, deterministic output shape ───────────────────────────────────
 export interface FactorBattle {
   factor: keyof FactorWeights;
   label: string;
@@ -99,9 +72,9 @@ export interface CompareVerdict {
   contenders: Label[];
   overallWinner: Label | "tie";
   confidenceTier: "clear_winner" | "close_call" | "context_dependent";
-  confidence: number; // 0-100
+  confidence: number;
   headline: string;
-  compositeScores: Partial<Record<Label, number>>; // 0-100, niche-weighted
+  compositeScores: Partial<Record<Label, number>>;
   factorBattles: FactorBattle[];
   placementVerdicts: PlacementVerdict[];
   improvementRoadmap: ImprovementStep[];
@@ -111,9 +84,8 @@ export interface CompareVerdict {
   provider: string;
 }
 
-// ─────────────────────────────────────────────────────────────────────────
-// Prompt building
-// ─────────────────────────────────────────────────────────────────────────
+// ─── Prompt building ─────────────────────────────────────────────────────
+
 function buildFactorSchema(labels: Label[]): string {
   const perLabel = labels.map((l) => `"${l}": number`).join(", ");
   return FACTOR_KEYS.map((k) =>
@@ -173,9 +145,8 @@ function safeParseComparison(raw: string, provider: string): RawComparisonRespon
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────
-// Providers
-// ─────────────────────────────────────────────────────────────────────────
+// ─── Providers ────────────────────────────────────────────────────────────
+
 export interface VisionComparator {
   readonly name: string;
   compare(inputs: ThumbnailInput[], apiKey: string): Promise<RawComparisonResponse>;
@@ -183,7 +154,8 @@ export interface VisionComparator {
 
 const GEMINI_MODEL = "gemini-flash-lite-latest";
 
-export class OpenRouterComparator implements VisionComparator {
+// ─── FIX: Renamed to GeminiComparator ────────────────────────────────────
+export class GeminiComparator implements VisionComparator {
   readonly name = "gemini";
 
   async compare(inputs: ThumbnailInput[], apiKey: string): Promise<RawComparisonResponse> {
@@ -255,9 +227,8 @@ export class GroqComparator implements VisionComparator {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────
-// Deterministic verdict computation — the trust-building core
-// ─────────────────────────────────────────────────────────────────────────
+// ─── Deterministic verdict computation ────────────────────────────────────
+
 function clamp(n: number): number {
   return Math.max(0, Math.min(100, Math.round(n)));
 }
@@ -343,7 +314,7 @@ function computeVerdict(
   }
   const confidence = clamp(50 + gap * 2.2);
 
-  // ── Headline: name the factor that drove the win ───────────────────────
+  // ── Headline ──────────────────────────────────────────────────────────────
   let headline: string;
   if (overallWinner === "tie") {
     headline = `Too close to call overall — the right pick depends on where this video will be seen.`;
@@ -356,7 +327,7 @@ function computeVerdict(
     headline = `Thumbnail ${overallWinner} wins by ${margin}, driven mainly by ${driverName}.`;
   }
 
-  // ── Placement verdicts ─────────────────────────────────────────────────
+  // ── Placement verdicts ───────────────────────────────────────────────────
   const placementVerdicts: PlacementVerdict[] = PLACEMENT_CONTEXTS.map((ctx) => {
     const placementWeights = applyPlacement(weights, ctx.id);
     const scores: Partial<Record<Label, number>> = {};
@@ -381,7 +352,7 @@ function computeVerdict(
     return { context: ctx.id, label: ctx.label, blurb: ctx.blurb, winner, reason };
   });
 
-  // ── Improvement roadmap — surfaced for whoever isn't the clear winner ──
+  // ── Improvement roadmap ──────────────────────────────────────────────────
   const needsRoadmap = overallWinner === "tie" ? labels : labels.filter((l) => l !== overallWinner);
   const improvementRoadmap: ImprovementStep[] = needsRoadmap.map((l) => {
     const bullets = raw.improvement_bullets?.[l] ?? [];
@@ -411,9 +382,8 @@ function computeVerdict(
   };
 }
 
-// ─────────────────────────────────────────────────────────────────────────
-// Resilient wrapper
-// ─────────────────────────────────────────────────────────────────────────
+// ─── Resilient wrapper ────────────────────────────────────────────────────
+
 export interface ComparatorConfig {
   comparator: VisionComparator;
   apiKey: string | undefined;
